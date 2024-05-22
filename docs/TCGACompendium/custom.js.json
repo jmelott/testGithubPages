@@ -1,0 +1,457 @@
+{
+  "filename": "custom.js",
+  "namespace": [],
+  "description": [
+    "This module provides various linkout functionalities for the NGCHM TCGA Compendium Maps. It includes functions to open different types of plots, search external databases, and view detailed information about genes, samples, and other biological entities."
+  ],
+  "declares_functions_in": [
+    "pointsplot(labels)",
+    "boxplot(labels)",
+    "ideogram(labels)",
+    "ideogramMIRNA(labels)",
+    "openCBIOGenes(genes)",
+    "openCBIOSamp(id)",
+    "openNCBIEntrezIDPage(eids)",
+    "openNCBIGenePage(names)",
+    "pointsplot(labels)",
+    "removeDuplicates(labels)",
+    "scatterplot(labels)",
+    "searchClinicalTrials(labels)",
+    "searchGeneCards(labels)",
+    "searchGoogle(selection)",
+    "searchGoogleScholar(labels)",
+    "searchPubMedForAll(labels)",
+    "searchPubMedForAny(labels)",
+    "viewMiRBasePage(eids)"
+  ],
+  "interacts_with": [
+    "linkouts",
+    "NgChm.LNK",
+    "NgChm.heatMap"
+  ],
+  "classes": [],
+  "member_variables": [],
+  "global_variables": [
+    {
+      "name": "linkouts",
+      "description": "An object that manages linkout functionalities for various biological entities."
+    },
+    {
+      "name": "NgChm",
+      "description": "An object that provides functionalities for NGCHM (Next Generation Clustered Heat Map)."
+    }
+  ],
+  "functions": [
+    {
+      "name": "pointsplot",
+      "namespace": "None",
+      "signature": "pointsplot(labels)",
+      "description": "Opens a new window to display a points plot for the given labels using the dataset and map name from the linkouts object.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "string",
+          "description": "A string representing the labels to be included in the points plot."
+        }
+      ],
+      "called_urls": [
+        "http://bioinformatics.mdanderson.org/chmv/pointsplot.html"
+      ],
+      "side_effects": [
+        "Opens a new browser window to display the points plot."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "boxplot",
+      "namespace": "None",
+      "signature": "boxplot(labels)",
+      "description": "Generates a URL for a boxplot visualization based on the provided labels and opens it in a new window.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "String",
+          "description": "A string representing the labels to be included in the boxplot."
+        }
+      ],
+      "called_urls": [
+        "http://bioinformatics.mdanderson.org/chmv/boxplot.html"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the generated URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "ideogram",
+      "namespace": "None",
+      "signature": "ideogram(labels)",
+      "description": "Opens a new window to display an ideogram viewer with the provided gene labels.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of gene labels to be displayed in the ideogram viewer."
+        }
+      ],
+      "called_urls": [
+        "http://bioinformatics.mdanderson.org/ideogramviewer/Ideogram.html"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the ideogram viewer."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "ideogramMIRNA",
+      "namespace": "None",
+      "signature": "ideogramMIRNA(labels)",
+      "description": "Opens a new browser window to display an ideogram viewer with a list of miRNA labels.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array<String>",
+          "description": "An array of miRNA labels to be displayed in the ideogram viewer."
+        }
+      ],
+      "called_urls": [
+        "http://bioinformatics.mdanderson.org/ideogramviewer/Ideogram.html"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the specified URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchGoogle",
+      "namespace": "None",
+      "signature": "function searchGoogle(selection)",
+      "description": "Opens a new browser window or tab to search Google with the provided selection of keywords.",
+      "parameters": [
+        {
+          "name": "selection",
+          "type": "Array",
+          "description": "An array of strings representing the keywords to search for on Google."
+        }
+      ],
+      "called_urls": [
+        "https://www.google.com/#q="
+      ],
+      "side_effects": [
+        "Opens a new browser window or tab with the Google search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchGeneCards",
+      "namespace": "None",
+      "signature": "searchGeneCards(labels)",
+      "description": "Opens a new browser window to search for the first label in the GeneCards database.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings where the first element is used as the search query."
+        }
+      ],
+      "called_urls": [
+        "http://www.genecards.org/Search/Keyword?queryString="
+      ],
+      "side_effects": [
+        "Opens a new browser window with the search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchPubMedForAll",
+      "namespace": "None",
+      "signature": "searchPubMedForAll(labels)",
+      "description": "Opens a new browser window to search PubMed for all the provided labels combined with the AND operator.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings representing the search terms to be combined with the AND operator."
+        }
+      ],
+      "called_urls": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/?term="
+      ],
+      "side_effects": [
+        "Opens a new browser window with the PubMed search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchPubMedForAny",
+      "namespace": "None",
+      "signature": "searchPubMedForAny(labels)",
+      "description": "Opens a new browser window to search PubMed for any of the provided labels.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings representing the search terms."
+        }
+      ],
+      "called_urls": [
+        "http://www.ncbi.nlm.nih.gov/pubmed/?term="
+      ],
+      "side_effects": [
+        "Opens a new browser window with the PubMed search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchClinicalTrials",
+      "namespace": "None",
+      "signature": "searchClinicalTrials(labels)",
+      "description": "Opens a new browser window to search for clinical trials on clinicaltrials.gov using the provided labels.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings representing the search terms to be used in the clinical trials search."
+        }
+      ],
+      "called_urls": [
+        "http://clinicaltrials.gov/ct2/results"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the search results from clinicaltrials.gov"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openNCBIGenePage",
+      "namespace": "None",
+      "signature": "openNCBIGenePage(names)",
+      "description": "Opens a new browser window to the NCBI gene page for the first gene name provided in the input array.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "http://www.ncbi.nlm.nih.gov/gene?term=(homo%20sapiens%5BOrganism%5D)%20AND%20{gname}%5BGene%20Name%5D"
+      ],
+      "side_effects": [
+        "Opens a new browser window."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openNCBIEntrezIDPage",
+      "namespace": "None",
+      "signature": "openNCBIEntrezIDPage(eids)",
+      "description": "Opens a new browser window or tab to the NCBI Gene database page for the first Entrez ID in the provided list.",
+      "parameters": [
+        {
+          "name": "eids",
+          "type": "Array",
+          "description": "An array of Entrez IDs, where the first ID in the array will be used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "http://www.ncbi.nlm.nih.gov/gene/"
+      ],
+      "side_effects": [
+        "Opens a new browser window or tab to the specified URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchGoogleScholar",
+      "namespace": "None",
+      "signature": "searchGoogleScholar(labels)",
+      "description": "Opens a new browser window or tab to search Google Scholar with the provided labels.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings representing the search terms to be used in the Google Scholar query."
+        }
+      ],
+      "called_urls": [
+        "http://scholar.google.com/scholar?q="
+      ],
+      "side_effects": [
+        "Opens a new browser window or tab with the search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "viewMiRBasePage",
+      "namespace": "None",
+      "signature": "viewMiRBasePage(eids)",
+      "description": "Opens a new browser window or tab to the miRBase website with a query for the given gene ID.",
+      "parameters": [
+        {
+          "name": "eids",
+          "type": "Array",
+          "description": "An array of gene IDs, where the first element is used for the query."
+        }
+      ],
+      "called_urls": [
+        "http://www.mirbase.org/cgi-bin/query.pl?terms="
+      ],
+      "side_effects": [
+        "Opens a new browser window or tab to the miRBase website."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openCBIOGenes",
+      "namespace": "None",
+      "signature": "openCBIOGenes(genes)",
+      "description": "Opens a new window to the cBioPortal website with a specified list of genes for a given cancer study.",
+      "parameters": [
+        {
+          "name": "genes",
+          "type": "Array",
+          "description": "An array of gene names to be queried on the cBioPortal website."
+        }
+      ],
+      "called_urls": [
+        "http://www.cbioportal.org/ln"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the specified URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openCBIOSamp",
+      "namespace": "None",
+      "signature": "openCBIOSamp(id)",
+      "description": "Opens a new window to the cBioPortal with a specific case ID and study ID.",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "Array",
+          "description": "An array where the first element is a string containing the case ID."
+        }
+      ],
+      "called_urls": [
+        "http://www.cbioportal.org/case.do"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the specified URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "scatterplot",
+      "namespace": "None",
+      "signature": "scatterplot(labels)",
+      "description": "Generates a scatter plot visualization by opening a new window with a URL constructed from the provided labels and dataset information.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of labels to be included in the scatter plot."
+        }
+      ],
+      "called_urls": [
+        "http://bioinformatics.mdanderson.org/chmv/scatterplot.html"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the constructed URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "cordistplot",
+      "namespace": "None",
+      "signature": "cordistplot(labels)",
+      "description": "Generates a URL for a correlation distance plot based on provided labels and opens it in a new browser window.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "object",
+          "description": "An object containing 'Row' and 'Column' arrays with label values."
+        }
+      ],
+      "called_urls": [
+        "http://bioinformatics.mdanderson.org/chmv/cordistplot.html"
+      ],
+      "side_effects": [
+        "Opens a new browser window with the generated URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removeDuplicates",
+      "namespace": "None",
+      "signature": "removeDuplicates(labels)",
+      "defined_section": "HELPER FUNCTIONS",
+      "description": "This function removes duplicate entries from the 'Column' array in the input object and appends unique entries to the 'Row' array. The function returns the updated 'Row' array.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "object",
+          "description": "An object containing 'Row' and 'Column' arrays."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "The updated 'Row' array with unique entries from the 'Column' array appended."
+      }
+    }
+  ]
+}

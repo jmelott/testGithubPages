@@ -1,0 +1,3780 @@
+{
+  "filename": "Linkout.js",
+  "namespace": "NgChm.LNK",
+  "description": [
+    "This module manages linkouts within the NGCHM (Next Generation Clustered Heat Map) framework. It provides functionalities to add, manage, and interact with linkouts, which are external references or actions associated with specific labels or selections within the heat map. The module supports various types of linkouts, including those for rows, columns, covariates, and matrices. It also integrates with plugins and handles the creation and management of pane plugins."
+  ],
+  "declares_functions_in": [
+    "LNK"
+  ],
+  "interacts_with": [
+    "NgChm.CUST",
+    "NgChm.MAPREP",
+    "NgChm.MMGR",
+    "NgChm.UTIL",
+    "NgChm.SRCHSTATE",
+    "NgChm.SRCH",
+    "NgChm.Pane",
+    "NgChm.UHM",
+    "NgChm.DVW",
+    "NgChm.DET",
+    "NgChm.PIM",
+    "NgChm.CMM"
+  ],
+  "classes": [
+    {
+      "name": "PanePlugin",
+      "description": "Represents a plugin that can be added to a pane within the NGCHM framework. It includes properties such as name, helpText, params, and src."
+    }
+  ],
+  "member_variables": [
+    {
+      "name": "LNK.EMPTY_SELECT",
+      "description": "Represents an empty selection state for linkouts."
+    },
+    {
+      "name": "LNK.enableBuilderUploads",
+      "description": "Flag to enable or disable uploads to the builder."
+    },
+    {
+      "name": "LNK.hamburgerLinkCtr",
+      "description": "Counter for placing items into the hamburger menu, starting from 10."
+    },
+    {
+      "name": "LNK.linkoutElement",
+      "description": "Element used to store the current linkout element."
+    },
+    {
+      "name": "LNK.selection",
+      "description": "Stores the label item that the user clicked on."
+    }
+  ],
+  "global_variables": [
+    {
+      "name": "linkouts",
+      "description": "Global object to store linkout definitions and functions."
+    },
+    {
+      "name": "linkoutsVersion",
+      "description": "Version of the linkouts, initially set to 'undefined'."
+    }
+  ],
+  "functions": [
+    {
+      "name": "getAttribute",
+      "namespace": "linkouts",
+      "signature": "linkouts.getAttribute(attribute)",
+      "description": "Retrieves the value of a specified attribute from the heat map's map information.",
+      "parameters": [
+        {
+          "name": "attribute",
+          "type": "String",
+          "description": "The name of the attribute to retrieve."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Any",
+        "description": "The value of the specified attribute from the heat map's map information."
+      }
+    },
+    {
+      "name": "setVersion",
+      "namespace": "linkouts",
+      "signature": "linkouts.setVersion(v)",
+      "description": "Sets the version of the linkouts by updating the global variable linkoutsVersion with the provided version string.",
+      "parameters": [
+        {
+          "name": "v",
+          "type": "string",
+          "description": "The version string to set for linkouts."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the global variable linkoutsVersion with the provided version string."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getVersion",
+      "namespace": "linkouts",
+      "signature": "linkouts.getVersion()",
+      "description": "Retrieves the current version of the linkouts module.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The current version of the linkouts module."
+      }
+    },
+    {
+      "name": "getMapName",
+      "namespace": "linkouts",
+      "signature": "linkouts.getMapName()",
+      "description": "Retrieves the name of the current heat map from the MMGR object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "The name of the current heat map."
+      }
+    },
+    {
+      "name": "getMapFileName",
+      "namespace": "linkouts",
+      "signature": "linkouts.getMapFileName()",
+      "description": "Retrieves the map file name by returning the value of the global variable UTIL.mapId.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "The map file name stored in the global variable UTIL.mapId."
+      }
+    },
+    {
+      "name": "getSourceObjectType",
+      "namespace": "linkouts",
+      "signature": "linkouts.getSourceObjectType()",
+      "description": "Returns the type of object from which the link is originating.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The type of the source object, which is 'chm'."
+      }
+    },
+    {
+      "name": "getSourceObjectUniqueId",
+      "namespace": "linkouts",
+      "signature": "linkouts.getSourceObjectUniqueId()",
+      "description": "Returns a 'unique' identifier for the current source object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "A unique identifier for the current source object."
+      }
+    },
+    {
+      "name": "addLinkout",
+      "namespace": "linkouts",
+      "signature": "linkouts.addLinkout(name, labelType, selectType, callback, reqAttributes, index)",
+      "description": "Adds axis linkout objects to the linkouts global variable by calling the LNK.addLinkout function with the provided parameters.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the linkout."
+        },
+        {
+          "name": "labelType",
+          "type": "String",
+          "description": "The type of label for the linkout."
+        },
+        {
+          "name": "selectType",
+          "type": "String",
+          "description": "The type of selection for the linkout."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "The callback function to be executed."
+        },
+        {
+          "name": "reqAttributes",
+          "type": "Array",
+          "description": "The required attributes for the linkout."
+        },
+        {
+          "name": "index",
+          "type": "Number",
+          "description": "The index at which to add the linkout."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the linkouts global variable by adding new linkout objects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "addMatrixLinkout",
+      "namespace": "linkouts",
+      "signature": "linkouts.addMatrixLinkout(name, rowType, colType, selectType, callback, reqAttributes, index)",
+      "description": "Adds matrix linkout objects to the linkouts global variable by calling the LNK.addMatrixLinkout function with the provided parameters.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the matrix linkout."
+        },
+        {
+          "name": "rowType",
+          "type": "String",
+          "description": "The type of the row in the matrix."
+        },
+        {
+          "name": "colType",
+          "type": "String",
+          "description": "The type of the column in the matrix."
+        },
+        {
+          "name": "selectType",
+          "type": "String",
+          "description": "The type of selection for the matrix linkout."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "The callback function to be executed."
+        },
+        {
+          "name": "reqAttributes",
+          "type": "Array",
+          "description": "The required attributes for the matrix linkout."
+        },
+        {
+          "name": "index",
+          "type": "Number",
+          "description": "The index at which to add the matrix linkout."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the linkouts global variable by adding matrix linkout objects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addPanePlugin",
+      "namespace": "linkouts",
+      "signature": "linkouts.addPanePlugin(p)",
+      "description": "Registers a new pane plugin by calling the LNK.registerPanePlugin function with the provided plugin object.",
+      "parameters": [
+        {
+          "name": "p",
+          "type": "object",
+          "description": "The plugin object to be registered."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls LNK.registerPanePlugin with the provided plugin object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openUrl",
+      "namespace": "linkouts",
+      "signature": "linkouts.openUrl(url, name, options)",
+      "description": "Linkout to the specified URL in a suitable 'window'. The function delegates the task to LNK.openUrl, which handles the actual opening of the URL.",
+      "parameters": [
+        {
+          "name": "url",
+          "type": "string",
+          "description": "The URL to be opened."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "Identifies the linkout group. Subsequent linkouts in the same group should display in the same window."
+        },
+        {
+          "name": "options",
+          "type": "object",
+          "description": "Fine-tunes the window display."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "simplifyLabels",
+      "namespace": "linkouts",
+      "signature": "linkouts.simplifyLabels(labels)",
+      "description": "Simplifies a list of labels by removing duplicates and sorting them. If the input is not an array, it concatenates the 'Row' and 'Column' properties of the input object.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array or Object",
+          "description": "An array of labels or an object containing 'Row' and 'Column' arrays."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "A sorted array of unique labels."
+      }
+    },
+    {
+      "name": "addHamburgerLinkout",
+      "namespace": "linkouts",
+      "signature": "linkouts.addHamburgerLinkout(params)",
+      "description": "This function adds a hamburger menu linkout by delegating the task to the LNK.addHamburgerLinkout function.",
+      "parameters": [
+        {
+          "name": "params",
+          "type": "object",
+          "description": "An object containing parameters required by the LNK.addHamburgerLinkout function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addSubtype",
+      "namespace": "linkouts",
+      "signature": "linkouts.addSubtype(subtype, supertype)",
+      "description": "Defines a subtype such that any linkouts defined for the supertype will also be defined for the subtype. No transformation will be applied to the labels.",
+      "parameters": [
+        {
+          "name": "subtype",
+          "type": "String",
+          "description": "The subtype for which linkouts will be defined based on the supertype."
+        },
+        {
+          "name": "supertype",
+          "type": "String",
+          "description": "The supertype whose linkouts will be applied to the subtype."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addPlugin",
+      "namespace": "linkouts",
+      "signature": "linkouts.addPlugin(plugin)",
+      "description": "Adds a specified plugin to the custom plugins list. If a plugin with the same name already exists, it is removed before adding the new one.",
+      "parameters": [
+        {
+          "name": "plugin",
+          "type": "object",
+          "description": "The plugin object to be added. It should have at least a 'name' property."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the CUST.customPlugins array by removing any existing plugin with the same name and adding the new plugin.",
+        "Logs a message to the console if CUST.verbose is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "describeTypes",
+      "namespace": "linkouts",
+      "signature": "linkouts.describeTypes(typelist)",
+      "description": "This function describes plugin types by delegating the task to the CUST.describeTypes function.",
+      "parameters": [
+        {
+          "name": "typelist",
+          "type": "Array",
+          "description": "An array of types to be described."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openUrl",
+      "namespace": "LNK",
+      "signature": "LNK.openUrl(url, name, options)",
+      "description": "Opens a given URL either in a new window or within an iframe in the current page, depending on the provided options and the state of the application.",
+      "parameters": [
+        {
+          "name": "url",
+          "type": "string",
+          "description": "The URL to be opened."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The name to be assigned to the new window or iframe."
+        },
+        {
+          "name": "options",
+          "type": "object",
+          "description": "Additional options for opening the URL. If 'noframe' is true, the URL will be opened in a new window."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding or removing child elements from LNK.linkoutElement.",
+        "Calls PANE.setPaneTitle to set the title of the pane.",
+        "Calls MMGR.getHeatMap().saveLinkoutPaneToMapConfig to save the pane configuration."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addHamburgerLinkout",
+      "namespace": "LNK",
+      "signature": "LNK.addHamburgerLinkout(params)",
+      "description": "Adds a linkout item to the Hamburger menu with specified parameters such as name, label, icon, and action.",
+      "parameters": [
+        {
+          "name": "params",
+          "type": "object",
+          "description": "An object containing the properties for the linkout item. Properties include 'name' (string), 'label' (string), 'icon' (string URL or undefined), and 'action' (function)."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding a new linkout item to the Hamburger menu.",
+        "Increments the global counter LNK.hamburgerLinkCtr."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "linkout",
+      "namespace": "LNK",
+      "signature": "LNK.linkout(title, labelType, selectType, reqAttributes, callback)",
+      "description": "Initializes a new linkout object with the specified parameters.",
+      "parameters": [
+        {
+          "name": "title",
+          "type": "String",
+          "description": "The title of the linkout."
+        },
+        {
+          "name": "labelType",
+          "type": "String",
+          "description": "The input type of the callback function."
+        },
+        {
+          "name": "selectType",
+          "type": "String",
+          "description": "The selection type for the linkout."
+        },
+        {
+          "name": "reqAttributes",
+          "type": "Object",
+          "description": "The required attributes for the linkout."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "The callback function to be executed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the title property of the linkout object.",
+        "Sets the labelType property of the linkout object.",
+        "Sets the selectType property of the linkout object.",
+        "Sets the reqAttributes property of the linkout object.",
+        "Sets the callback property of the linkout object."
+      ],
+      "returns": {
+        "type": "None",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "matrixLinkout",
+      "namespace": "LNK",
+      "signature": "LNK.matrixLinkout(title, rowType, colType, selectType, reqAttributes, callback)",
+      "description": "Initializes a matrix linkout with the provided parameters and assigns them to the instance properties.",
+      "parameters": [
+        {
+          "name": "title",
+          "type": "String",
+          "description": "The title of the matrix linkout."
+        },
+        {
+          "name": "rowType",
+          "type": "String",
+          "description": "The type of rows in the matrix."
+        },
+        {
+          "name": "colType",
+          "type": "String",
+          "description": "The type of columns in the matrix."
+        },
+        {
+          "name": "selectType",
+          "type": "String",
+          "description": "The selection type for the matrix."
+        },
+        {
+          "name": "reqAttributes",
+          "type": "Array",
+          "description": "The required attributes for the matrix linkout."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "The callback function to be executed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Assigns the provided parameters to the instance properties."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addLinkout",
+      "namespace": "LNK",
+      "signature": "LNK.addLinkout(name, labelType, selectType, callback, reqAttributes, index)",
+      "description": "This function is used to add standard linkouts to the row/col, covariate, and matrix menu. It creates a new linkout and places it in the appropriate menu based on the labelType. The selectType parameter determines when the linkout is executable.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the linkout."
+        },
+        {
+          "name": "labelType",
+          "type": "String",
+          "description": "Determines which menu to place the linkout in."
+        },
+        {
+          "name": "selectType",
+          "type": "String",
+          "description": "Decides when the linkout is executable. Passing in null, undefined, or false will allow the function to be executable for all selection types."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "The callback function to be executed when the linkout is triggered."
+        },
+        {
+          "name": "reqAttributes",
+          "type": "Array",
+          "description": "An array of required attributes for the linkout."
+        },
+        {
+          "name": "index",
+          "type": "Number",
+          "description": "Optional index to specify the position where the linkout should be inserted in the menu."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global linkouts object by adding a new linkout to the appropriate menu based on labelType.",
+        "If index is provided, inserts the linkout at the specified position in the menu."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dupeLinkout",
+      "namespace": "LNK",
+      "signature": "LNK.dupeLinkout(linkouts, linkout)",
+      "description": "Checks if a linkout being added already exists in the list of linkouts. If it does, the existing linkout is removed to allow the new linkout to be added in its place.",
+      "parameters": [
+        {
+          "name": "linkouts",
+          "type": "Array",
+          "description": "An array of linkout objects currently present."
+        },
+        {
+          "name": "linkout",
+          "type": "Object",
+          "description": "The new linkout object to be added."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the input array 'linkouts' by removing an existing linkout if its title matches the title of the new linkout."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "addMatrixLinkout",
+      "namespace": "LNK",
+      "signature": "LNK.addMatrixLinkout(name, rowType, colType, selectType, callback, reqAttributes, index)",
+      "description": "This function is used to add linkouts to the matrix menu when the linkout needs a specific criteria for the row and column (e.g., same attribute).",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the linkout."
+        },
+        {
+          "name": "rowType",
+          "type": "String",
+          "description": "The type of the row for the linkout."
+        },
+        {
+          "name": "colType",
+          "type": "String",
+          "description": "The type of the column for the linkout."
+        },
+        {
+          "name": "selectType",
+          "type": "String",
+          "description": "The selection type for the linkout."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "The callback function to be executed for the linkout."
+        },
+        {
+          "name": "reqAttributes",
+          "type": "Array",
+          "description": "The required attributes for the linkout."
+        },
+        {
+          "name": "index",
+          "type": "Number",
+          "description": "The index at which to insert the linkout. If undefined, the linkout is added to the end."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global 'linkouts' object by adding a new linkout to the 'Matrix' array."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "getLabelsByType",
+      "namespace": "LNK",
+      "signature": "LNK.getLabelsByType(axis, linkout)",
+      "description": "This function retrieves the appropriate labels based on the specified axis and linkout configuration. It supports both standard and matrix linkouts, handling single and multi-select scenarios.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which labels are to be retrieved. Possible values are 'Row', 'Column', 'ColumnCovar', 'RowCovar', or 'Matrix'."
+        },
+        {
+          "name": "linkout",
+          "type": "Object",
+          "description": "The linkout configuration object containing labelType, selectType, rowType, colType, and title properties."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array or Object",
+        "description": "An array or object containing the appropriate labels based on the axis and linkout configuration. For 'Matrix' axis, it returns an object with 'Row' and 'Column' properties."
+      }
+    },
+    {
+      "name": "generateSearchLabel",
+      "namespace": "None",
+      "signature": "function generateSearchLabel(label, indexes)",
+      "description": "Generates a search label by concatenating specific parts of the input label based on the provided indexes.",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "string",
+          "description": "The input label string, with parts separated by the '|' character."
+        },
+        {
+          "name": "indexes",
+          "type": "array",
+          "description": "An array of indexes specifying which parts of the label to concatenate."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The concatenated search label string."
+      }
+    },
+    {
+      "name": "downloadAllMatrixData",
+      "namespace": "None",
+      "signature": "function downloadAllMatrixData(selectedLabels, axis)",
+      "description": "This function retrieves the heat map data and the actual labels for rows and columns, then creates matrix data based on the selection.",
+      "parameters": [
+        {
+          "name": "selectedLabels",
+          "type": "Array",
+          "description": "An array of selected labels for the matrix."
+        },
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the data is being downloaded, either 'row' or 'column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "downloadSelectedMatrixData",
+      "namespace": "None",
+      "signature": "downloadSelectedMatrixData(selectedLabels, axis)",
+      "description": "This function prepares and initiates the download of matrix data based on selected labels for rows and columns. It retrieves the heat map data and constructs a selection object containing row and column labels and items. It then calls a function to create the matrix data for download.",
+      "parameters": [
+        {
+          "name": "selectedLabels",
+          "type": "object",
+          "description": "An object containing the selected labels for rows and columns."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which the data is being downloaded, either 'Row' or 'Column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getAxisItems",
+      "namespace": "None",
+      "signature": "getAxisItems(axis)",
+      "description": "Retrieves search items for a given axis. If there are no search items selected on the opposing axis, it returns the entire axis search items.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which to retrieve search items."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of search items for the specified axis."
+      }
+    },
+    {
+      "name": "createMatrixData",
+      "namespace": "None",
+      "signature": "createMatrixData(heatMap, selection)",
+      "description": "This function creates a two-dimensional array (matrix) containing all of the row and column labels along with the data for a given selection. It processes the data row by row and handles large data sets by showing a warning message if the data size exceeds a certain threshold.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "HeatMap",
+          "description": "The heat map object that provides access to the data."
+        },
+        {
+          "name": "selection",
+          "type": "Selection",
+          "description": "An object containing the row and column labels and items to be included in the matrix."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a warning message if the data size is very large.",
+        "Modifies the 'canceled' variable to control the download process."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value but initiates the download of the matrix data."
+      }
+    },
+    {
+      "name": "showDownloadWarning",
+      "namespace": "None",
+      "signature": "showDownloadWarning()",
+      "description": "Displays a warning message box to the user about the potential risks of downloading a large file, including the possibility of exhausting the browser's memory and crashing.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes and displays a message box using the UHM library.",
+        "Sets the message box header and text.",
+        "Defines and sets actions for 'Cancel' and 'Proceed' buttons in the message box.",
+        "Sets a global variable 'canceled' to true if the 'Cancel' button is clicked."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "processRow",
+      "namespace": "None",
+      "signature": "processRow(row)",
+      "description": "Processes a specific row in a dataset, updating a progress meter, and eventually making the matrix available for download.",
+      "parameters": [
+        {
+          "name": "row",
+          "type": "number",
+          "description": "The index of the row to be processed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the progress meter using UHM.msgBoxProgressMeter.",
+        "Makes the matrix available for download using downloadSelectedData.",
+        "Recursively calls itself to process the next row."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "deGap",
+      "namespace": "None",
+      "signature": "deGap(labels, items)",
+      "description": "Removes gaps from the provided labels and items arrays. Gaps are indicated by an empty label (''). If the lengths of the labels and items arrays do not match, an error is logged and empty arrays are returned.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of labels, where gaps are indicated by empty strings."
+        },
+        {
+          "name": "items",
+          "type": "Array",
+          "description": "An array of items corresponding to the labels."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error message if the lengths of labels and items do not match."
+      ],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing two arrays: 'labels' and 'items', with gaps removed."
+      }
+    },
+    {
+      "name": "getEntireAxisSearchItems",
+      "namespace": "LNK",
+      "signature": "LNK.getEntireAxisSearchItems(searchLabels, axis)",
+      "description": "This function generates an array of indices representing non-empty search items along a specified axis. It is typically called when the selection box spans an entire axis, such as in the case of a dendrogram selection on one axis with nothing selected on the other.",
+      "parameters": [
+        {
+          "name": "searchLabels",
+          "type": "Array",
+          "description": "An array of labels where each label corresponds to an item along the axis."
+        },
+        {
+          "name": "axis",
+          "type": "Number",
+          "description": "The index of the axis to search within the searchLabels array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of indices representing the non-empty search items along the specified axis."
+      }
+    },
+    {
+      "name": "createLabelMenus",
+      "namespace": "LNK",
+      "signature": "LNK.createLabelMenus()",
+      "description": "Creates label menus for various categories if they do not already exist in the document. This function ensures that the necessary menu divs are present and initializes them if they are missing.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Creates menu divs for 'Column', 'ColumnCovar', 'Row', 'RowCovar', and 'Matrix' if they do not exist.",
+        "Calls LNK.getDefaultLinkouts() to initialize default linkouts."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "labelHelpCloseAll",
+      "namespace": "LNK",
+      "signature": "LNK.labelHelpCloseAll()",
+      "description": "Closes all label help sections for Matrix, Column, and Row.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "labelHelpClose",
+      "namespace": "LNK",
+      "signature": "LNK.labelHelpClose(axis)",
+      "description": "Closes the label help menu for a specified axis by hiding the menu and replacing its table body with a new one to clear its contents.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the label help menu should be closed. If the axis is 'Matrix', the 'MatrixMenu' will be targeted."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Replaces the table body of the specified label menu with a new empty table body.",
+        "Adds the 'hide' class to the specified label menu to hide it."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "labelHelpOpen",
+      "namespace": "LNK",
+      "signature": "LNK.labelHelpOpen(axis, e)",
+      "description": "Opens a label help menu based on the specified axis and event. It retrieves the relevant labels from the heat map, updates the selection, and displays the label menu at the appropriate position on the screen.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "Specifies the axis for which the label help menu should be opened. Possible values are 'Row', 'Column', 'RowCovar', 'ColumnCovar', and 'Matrix'."
+        },
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function, used to determine the position and target of the menu."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the global variable 'menuOpenCanvas' with the current target of the event.",
+        "Updates the global variable 'LNK.selection' with the selected label based on the axis.",
+        "Modifies the DOM to display the label help menu at the appropriate position."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createLabelMenu",
+      "namespace": "LNK",
+      "signature": "LNK.createLabelMenu(axis)",
+      "description": "Creates and displays a label menu for a given axis. The menu is appended to the document body and includes a close button, a table structure, and event listeners for closing the menu and preventing the default context menu.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the label menu is created. If the axis is 'Matrix', a different menu structure is used."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends the created label menu to the document body.",
+        "Adds event listeners for closing the menu and preventing the default context menu.",
+        "Modifies the display and position styles of the label menu."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "itemInSelection",
+      "namespace": "LNK",
+      "signature": "LNK.itemInSelection(axis)",
+      "description": "Checks if the item that the user clicked on is part of the selected labels group for a given axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis to check for the selected item. Possible values are 'Row', 'Column', 'RowCovar', and 'ColumnCovar'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns true if the selected item is part of the labels group for the specified axis, otherwise returns false."
+      }
+    },
+    {
+      "name": "hasSelection",
+      "namespace": "LNK",
+      "signature": "LNK.hasSelection(axis)",
+      "description": "Checks if there are any selections in the specified axis by verifying if there are any search results for that axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis to check for selections."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns true if there are selections in the specified axis, otherwise false."
+      }
+    },
+    {
+      "name": "populateLabelMenu",
+      "namespace": "LNK",
+      "signature": "LNK.populateLabelMenu(axis, axisLabelsLength)",
+      "description": "Populates the label menu with appropriate linkouts based on the specified axis and the length of axis labels. It categorizes linkouts into individual and group linkouts and adds them to the menu table.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the label menu is being populated. It can be 'Row', 'Column', 'Matrix', 'RowCovar', or 'ColumnCovar'."
+        },
+        {
+          "name": "axisLabelsLength",
+          "type": "Object",
+          "description": "An object containing the lengths of the labels for 'Row' and 'Column' axes."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding menu items to the label menu table.",
+        "Adds a blank row to the label menu table to prevent overlay on the close button."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "handleMatrixLinkout",
+      "namespace": "None",
+      "signature": "handleMatrixLinkout(axis, table, linkout, grpLinkouts)",
+      "description": "Handles the linkout functionality for a matrix by verifying the row and column label types against the provided linkout object and adding the linkout to the group linkouts if the types match.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "str",
+          "description": "The axis of the matrix to handle the linkout for."
+        },
+        {
+          "name": "table",
+          "type": "str",
+          "description": "The table associated with the matrix."
+        },
+        {
+          "name": "linkout",
+          "type": "object",
+          "description": "The linkout object containing rowType and colType to be verified."
+        },
+        {
+          "name": "grpLinkouts",
+          "type": "array",
+          "description": "The array to which the linkout will be added if the types match."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the grpLinkouts array by adding the linkout object if the row and column types match."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "addTextRowToTable",
+      "namespace": "LNK",
+      "signature": "LNK.addTextRowToTable(table, type, axis)",
+      "description": "Adds a text row to a specified table element. The content of the row depends on the type parameter. If the type is 'multi', it adds a header for the entire selection. Otherwise, it adds a header for a specific label determined by the selection and axis.",
+      "parameters": [
+        {
+          "name": "table",
+          "type": "HTMLTableElement",
+          "description": "The table element to which the text row will be added."
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "description": "Determines the type of header to add. If 'multi', a general header for the entire selection is added. Otherwise, a specific header for a label is added."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis used to get the label text."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of a cell in the provided table element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addMenuItemToTable",
+      "namespace": "LNK",
+      "signature": "LNK.addMenuItemToTable(axis, table, linkout, addedHeader)",
+      "description": "Adds a menu item to a table based on the provided axis, linkout configuration, and whether a header has already been added. The function dynamically creates and inserts rows into the table, and attaches click event listeners to the menu items.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the menu item is being added (e.g., 'Row', 'Column')."
+        },
+        {
+          "name": "table",
+          "type": "HTMLTableElement",
+          "description": "The table element to which the menu item will be added."
+        },
+        {
+          "name": "linkout",
+          "type": "Object",
+          "description": "The configuration object for the linkout, containing properties like title, callback, reqAttributes, and selectType."
+        },
+        {
+          "name": "addedHeader",
+          "type": "Boolean",
+          "description": "A flag indicating whether a header has already been added to the table."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the provided table by adding rows and cells.",
+        "Attaches click event listeners to the newly created cells.",
+        "May modify the addedHeader flag."
+      ],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns true if a header was added during the function execution, otherwise returns the original value of addedHeader."
+      }
+    },
+    {
+      "name": "selectionError",
+      "namespace": "LNK",
+      "signature": "LNK.selectionError(e)",
+      "description": "Displays an error message when multiple labels are selected on an axis, indicating that only one label should be selected for the linkout operation.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object containing details about the current event, including the target element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.linkoutError to display an error message."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getDefaultLinkouts",
+      "namespace": "LNK",
+      "signature": "LNK.getDefaultLinkouts()",
+      "description": "This function sets up default linkout actions for a heatmap visualization. It adds various linkout options for copying labels to the clipboard and downloading covariate and matrix data.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Adds multiple linkout options for heatmap visualization.",
+        "Potentially modifies global linkout settings."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getMenuOpenCanvas",
+      "namespace": "LNK",
+      "signature": "LNK.getMenuOpenCanvas()",
+      "description": "Returns and clears a reference to the last canvas on which a label help menu was opened. This is used to determine which detail map an operation chosen from that menu should apply to, such as zooming to a selection.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Clears the global variable 'menuOpenCanvas' by setting it to null."
+      ],
+      "returns": {
+        "type": "Canvas",
+        "description": "The last canvas on which the menu popup was opened, or null if it was not set."
+      }
+    },
+    {
+      "name": "copyToClipBoard",
+      "namespace": "LNK",
+      "signature": "LNK.copyToClipBoard(labels, axis)",
+      "defined_section": "DEFAULT FUNCTIONS",
+      "description": "Opens a new window and writes the provided labels into it, each label separated by a line break.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings to be copied to the clipboard."
+        },
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "An axis parameter, though it is not used in the function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Opens a new browser window.",
+        "Writes the labels to the new window's document."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "downloadEntireClassBar",
+      "namespace": "None",
+      "signature": "downloadEntireClassBar(labels, covarAxis)",
+      "description": "This function generates and downloads a tab-separated values (TSV) file containing covariate data for a specified axis (row or column) from a heatmap. The data includes labels and their corresponding values.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of labels to be included in the covariate data."
+        },
+        {
+          "name": "covarAxis",
+          "type": "String",
+          "description": "Specifies the axis for which covariate data is to be downloaded. It can be either 'ColumnCovar' or another value indicating 'Row'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value. It triggers a download of the covariate data as a TSV file."
+      }
+    },
+    {
+      "name": "downloadPartialClassBar",
+      "namespace": "None",
+      "signature": "downloadPartialClassBar(labels, covarAxis)",
+      "description": "Generates and downloads a tab-separated values (TSV) file containing covariate data for a specified axis (row or column) based on provided labels.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of labels used to extract covariate data."
+        },
+        {
+          "name": "covarAxis",
+          "type": "String",
+          "description": "Specifies the axis ('ColumnCovar' or other) to determine whether to use column or row covariate data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls downloadSelectedData to trigger the download of the generated TSV file."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "copySelectionToClipboard",
+      "namespace": "LNK",
+      "signature": "LNK.copySelectionToClipboard(labels, axis)",
+      "description": "Opens a new window and writes the selected rows and columns from the provided labels object into the document of the new window.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "object",
+          "description": "An object containing arrays of labels for rows and columns. Expected keys are 'Row' and 'Column'."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "A string representing the axis, though it is not used in the function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Opens a new browser window and writes HTML content to it."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "uploadAllToBuilder",
+      "namespace": "None",
+      "signature": "uploadAllToBuilder(data, axis)",
+      "description": "Uploads all data to the builder by calling the uploadToBuilder function with specific parameters.",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "Array",
+          "description": "The data to be uploaded to the builder."
+        },
+        {
+          "name": "axis",
+          "type": "Array",
+          "description": "The axis information, though it is not used in this function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "uploadSelectedToBuilder",
+      "namespace": "None",
+      "signature": "uploadSelectedToBuilder(data, axis)",
+      "description": "Uploads selected data to the builder, using contiguous ranges from search results for rows and columns.",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "object",
+          "description": "The data to be uploaded."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which the data is being uploaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "uploadToBuilder",
+      "namespace": "None",
+      "signature": "uploadToBuilder(selectType, data, rowSelection, colSelection)",
+      "description": "Uploads NG-CHM data to the NG-CHM Builder. It displays a message box for the user to input the builder URL and handles the data transfer to the builder.",
+      "parameters": [
+        {
+          "name": "selectType",
+          "type": "String",
+          "description": "The type of selection being uploaded."
+        },
+        {
+          "name": "data",
+          "type": "Object",
+          "description": "The data to be uploaded."
+        },
+        {
+          "name": "rowSelection",
+          "type": "Array",
+          "description": "Array of row selections."
+        },
+        {
+          "name": "colSelection",
+          "type": "Array",
+          "description": "Array of column selections."
+        }
+      ],
+      "called_urls": [
+        "URL derived from user input"
+      ],
+      "side_effects": [
+        "Modifies rowSelection and colSelection if they are empty.",
+        "Stores the builder URL in UTIL key data.",
+        "Opens a new window for the NG-CHM Builder.",
+        "Sends data to the NG-CHM Builder."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "sendDataToBuilder",
+      "namespace": "None",
+      "signature": "sendDataToBuilder()",
+      "description": "This function initiates communication with a builder window to send heat map data and configuration. It opens a new window, sends probe messages to establish communication, and upon successful connection, sends the necessary data for the heat map.",
+      "parameters": [],
+      "called_urls": [
+        "url.href + \"/Upload_Matrix.html?adv=Y&nonce=\" + nonce"
+      ],
+      "side_effects": [
+        "Opens a new window for the builder",
+        "Adds an event listener for messages",
+        "Sends heat map data and configuration to the builder window"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "sendProbe",
+      "namespace": "None",
+      "signature": "sendProbe()",
+      "description": "Sends a probe message to a specified URL at regular intervals until a connection is established or a maximum number of probes is reached.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Increments the global variable numProbes.",
+        "Calls the builder.postMessage method with a probe operation and nonce.",
+        "Schedules itself to run again after 50 milliseconds if conditions are met."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "processMessage",
+      "namespace": "None",
+      "signature": "processMessage(msg)",
+      "description": "Processes incoming messages from a builder, verifies their source and nonce, and handles the 'ready' operation by establishing communication, preparing access windows, and sending necessary data tiles.",
+      "parameters": [
+        {
+          "name": "msg",
+          "type": "object",
+          "description": "The message object received, containing data and source information."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs messages to the console if debug mode is enabled.",
+        "Sets the 'established' flag to true when communication is established.",
+        "Sends NG-CHM configuration and tile data to the builder.",
+        "Closes the new message box using UHM.closeNewMessageBox."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "downloadSelectedData",
+      "namespace": "None",
+      "signature": "downloadSelectedData(heatMap, rows, axis, warningShown)",
+      "description": "This function attempts to download selected data from a heat map as a TSV file. If the download fails, it logs an error and optionally displays a warning message.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "object",
+          "description": "An object representing the heat map from which data is being downloaded."
+        },
+        {
+          "name": "rows",
+          "type": "array",
+          "description": "An array of tab-separated row data. The first row should contain column labels, and the first field in each row should be a row label."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "A string representing the axis of the heat map data to be downloaded."
+        },
+        {
+          "name": "warningShown",
+          "type": "boolean",
+          "description": "A boolean indicating whether a warning message should be shown if the download fails."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error message if the download fails.",
+        "Displays a warning message if the download fails and warningShown is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "download",
+      "namespace": "None",
+      "signature": "function download(filename, text, warningShown)",
+      "description": "This function creates a downloadable file from the provided text content and triggers a download in the browser. If a warning is shown, it will be canceled after the download.",
+      "parameters": [
+        {
+          "name": "filename",
+          "type": "string",
+          "description": "The name of the file to be downloaded."
+        },
+        {
+          "name": "text",
+          "type": "array",
+          "description": "The text content to be included in the file."
+        },
+        {
+          "name": "warningShown",
+          "type": "boolean",
+          "description": "A flag indicating whether a warning message is shown, which will be canceled after the download."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Creates a temporary anchor element in the DOM to trigger the download.",
+        "Removes the temporary anchor element from the DOM after the download.",
+        "Calls UHM.messageBoxCancel() if warningShown is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onerror",
+      "namespace": "reader",
+      "signature": "reader.onerror(e)",
+      "description": "Handles errors that occur during the file reading process by logging the error and rethrowing it.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Error",
+          "description": "The error object that contains details about the error that occurred."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs the error to the console.",
+        "Throws the error to be handled by the calling code."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "reader",
+      "signature": "reader.onload(e)",
+      "description": "Handles the 'load' event for a FileReader object, creating a downloadable link for the file content and triggering a download. If a warning is shown, it cancels the message box.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the 'load' event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Creates and appends an anchor element to the document body.",
+        "Triggers a download of the file content.",
+        "Removes the anchor element from the document body.",
+        "Calls UHM.messageBoxCancel() if warningShown is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "switchPaneToLinkouts",
+      "namespace": "LNK",
+      "signature": "LNK.switchPaneToLinkouts(loc)",
+      "description": "Switches the specified pane to display linkouts. Clears existing dialogs, updates pane titles, and saves the new configuration.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object representing the location of the pane to be switched. It contains pane details such as id and title."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears existing dialogs in the specified pane.",
+        "Updates the title of the old linkout pane to 'Empty' if it exists.",
+        "Empties the specified pane location.",
+        "Creates a new DIV element for linkouts and appends it to the specified pane.",
+        "Saves the new linkout pane configuration to the heat map."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "constructor",
+      "namespace": "PanePlugin",
+      "signature": "PanePlugin:constructor()",
+      "description": "Initializes a new instance of the PanePlugin class with the provided configuration options.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The name of the pane plugin."
+        },
+        {
+          "name": "helpText",
+          "type": "string",
+          "description": "The help text associated with the pane plugin."
+        },
+        {
+          "name": "params",
+          "type": "object",
+          "description": "Additional parameters for the pane plugin."
+        },
+        {
+          "name": "src",
+          "type": "string",
+          "description": "The source URL or path for the pane plugin."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "PanePlugin",
+        "description": "A new instance of the PanePlugin class."
+      }
+    },
+    {
+      "name": "registerPanePlugin",
+      "namespace": "LNK",
+      "signature": "LNK.registerPanePlugin(p)",
+      "description": "Registers a new pane plugin or replaces an existing one with the same name in the panePlugins array.",
+      "parameters": [
+        {
+          "name": "p",
+          "type": "PanePlugin",
+          "description": "The pane plugin object to be registered."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global panePlugins array by adding or replacing a pane plugin."
+      ],
+      "returns": {
+        "type": "PanePlugin",
+        "description": "The registered pane plugin object."
+      }
+    },
+    {
+      "name": "getPanePlugins",
+      "namespace": "LNK",
+      "signature": "LNK.getPanePlugins()",
+      "description": "Retrieves a list of unique pane plugins by their names.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of unique pane plugin objects."
+      }
+    },
+    {
+      "name": "switchPaneToPlugin",
+      "namespace": "LNK",
+      "signature": "LNK.switchPaneToPlugin(loc, plugin, restoreInfo)",
+      "description": "Switches the empty pane identified by PaneLocation loc to a new instance of the specified panel plugin. It optionally stores restore information, updates the heat map, and sets up the plugin interface within the pane.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "PaneLocation",
+          "description": "The location object identifying the pane to switch."
+        },
+        {
+          "name": "plugin",
+          "type": "Plugin",
+          "description": "The plugin object containing the name and parameters of the plugin to be instantiated."
+        },
+        {
+          "name": "restoreInfo",
+          "type": "object",
+          "description": "Optional information to restore the plugin state."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Stores restore information in pluginRestoreInfo if provided.",
+        "Calls switchToPlugin to switch the pane to the specified plugin.",
+        "Updates the heat map's unapplied changes status.",
+        "Modifies the DOM by appending elements to the pane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getDiscCovariateColors",
+      "namespace": "None",
+      "signature": "getDiscCovariateColors(axis, label, values, colorMapMgr)",
+      "description": "For a discrete covariate, this function returns an array of hex colors for each value. It retrieves the color map for the specified axis and label, determines unique class values, and maps these values to their corresponding colors. It then matches the input values to these colors and returns both the class colors and the colors for the input values.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "'row' or 'column', indicating the axis of the covariate bar."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "description": "The name of the covariate bar."
+        },
+        {
+          "name": "values",
+          "type": "array",
+          "description": "An array of values for the covariate bar."
+        },
+        {
+          "name": "colorMapMgr",
+          "type": "object",
+          "description": "The color map manager used to retrieve color mappings."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing two properties: 'classColors', an array of objects mapping class values to their colors, and 'colors', an array of hex color values corresponding to the input 'values'."
+      }
+    },
+    {
+      "name": "getContCovariateColors",
+      "namespace": "None",
+      "signature": "getContCovariateColors(cfg, vals)",
+      "description": "Returns an object containing class values and corresponding hex colors for a given set of values based on a continuous color map configuration.",
+      "parameters": [
+        {
+          "name": "cfg",
+          "type": "object",
+          "description": "Configuration object containing color map thresholds and colors."
+        },
+        {
+          "name": "vals",
+          "type": "array",
+          "description": "Array of values to be mapped to class values and corresponding hex colors."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing arrays of class values and corresponding hex colors for the input values."
+      }
+    },
+    {
+      "name": "getVanodiColorMap",
+      "namespace": "None",
+      "signature": "getVanodiColorMap(thresholds, colors)",
+      "description": "Generates a mapping of class thresholds to their corresponding colors, excluding any thresholds marked with '!CUT!'.",
+      "parameters": [
+        {
+          "name": "thresholds",
+          "type": "Array<String>",
+          "description": "An array of class thresholds, where each threshold is a string. Thresholds marked with '!CUT!' will be excluded from the result."
+        },
+        {
+          "name": "colors",
+          "type": "Array<String>",
+          "description": "An array of colors corresponding to each class threshold."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array<Object>",
+        "description": "An array of objects, each containing a 'Class' and 'Color' property, representing the mapping of class thresholds to colors."
+      }
+    },
+    {
+      "name": "getDataValues",
+      "namespace": "None",
+      "signature": "getDataValues(axis, idx)",
+      "description": "Returns an array of averaged values for the rows or columns specified by idx along the given axis. The function retrieves data from a heat map, processes it, and computes the average values for the specified rows or columns.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "Specifies whether to retrieve data for rows or columns. Expected values are 'row' or 'column'."
+        },
+        {
+          "name": "idx",
+          "type": "Array",
+          "description": "An array of indices specifying which rows or columns to retrieve data for. If a single index is provided, it will be converted to an array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Promise<Array<Number>>",
+        "description": "A promise that resolves to an array of averaged values for the specified rows or columns. Each value is the average of the data points in the corresponding row or column."
+      }
+    },
+    {
+      "name": "getSummaryStatistics",
+      "namespace": "None",
+      "signature": "getSummaryStatistics(axis, axisIdx, groupIdx)",
+      "description": "Function to return mean, variance, and number of items in a group of rows or columns from a heatmap. It retrieves data from specified rows or columns and calculates summary statistics for each group of indices.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "'column' or 'row' indicating whether to summarize data by columns or rows."
+        },
+        {
+          "name": "axisIdx",
+          "type": "array",
+          "description": "List of indices in the specified axis (row or column) to summarize. If undefined, defaults to an empty array."
+        },
+        {
+          "name": "groupIdx",
+          "type": "array",
+          "description": "List of indices in the opposite axis to include in the summary. If undefined, defaults to an empty array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Promise",
+        "description": "A promise that resolves to a list of objects, each containing the mean, variance, and number of items for the specified rows or columns."
+      }
+    },
+    {
+      "name": "getDiscMapFromContMap",
+      "namespace": "None",
+      "signature": "getDiscMapFromContMap(colorThresholds, colorVec)",
+      "description": "Generates a discrete color map from a continuous color map by interpolating colors and thresholds. It adjusts the color vector by darkening colors if needed, calculates precision for threshold values, and interpolates colors and thresholds to create a detailed color classification.",
+      "parameters": [
+        {
+          "name": "colorThresholds",
+          "type": "Array<number>",
+          "description": "An array of numerical thresholds representing the continuous color map."
+        },
+        {
+          "name": "colorVec",
+          "type": "Array<string>",
+          "description": "An array of color values in hexadecimal format representing the continuous color map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing two arrays: 'breaks' which holds the interpolated threshold values, and 'classColors' which holds objects with 'Class' and 'Color' properties representing the interpolated color map."
+      }
+    },
+    {
+      "name": "getValueClassesColors",
+      "namespace": "None",
+      "signature": "getValueClassesColors(values, breaks, classColors, naColor, wantClassOrColor)",
+      "description": "Maps continuous values into discrete class colors according to specified breakpoints. If the values array contains at least one NA, 'NA' is added to classColors. Returns either the class value or color value based on the 'wantClassOrColor' parameter.",
+      "parameters": [
+        {
+          "name": "values",
+          "type": "array",
+          "description": "Array of continuous values to be mapped."
+        },
+        {
+          "name": "breaks",
+          "type": "array",
+          "description": "Array of breakpoints used to categorize the values."
+        },
+        {
+          "name": "classColors",
+          "type": "array",
+          "description": "Array of objects containing class and color mappings."
+        },
+        {
+          "name": "naColor",
+          "type": "string",
+          "description": "Color to be used for NA values."
+        },
+        {
+          "name": "wantClassOrColor",
+          "type": "string",
+          "description": "Specifies whether to return 'Class' or 'Color' for each value."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the classColors array by adding an 'NA' class with the specified naColor if NA values are present in the input values."
+      ],
+      "returns": {
+        "type": "array",
+        "description": "Array of classes or hex color values corresponding to the input values."
+      }
+    },
+    {
+      "name": "getDataColors",
+      "namespace": "None",
+      "signature": "getDataColors(axis, idx)",
+      "description": "Retrieves the data values and their corresponding color classes for a given axis and index. It utilizes a heat map's current color map to determine the color classes based on the data values.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which data values are to be retrieved."
+        },
+        {
+          "name": "idx",
+          "type": "Number",
+          "description": "The index within the axis for which data values are to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing the data values and their corresponding color classes. The object has two properties: 'values' which is an array of value classes, and 'colors' which is an array of class colors."
+      }
+    },
+    {
+      "name": "initializePanePlugin",
+      "namespace": "LNK",
+      "signature": "LNK.initializePanePlugin(nonce, config)",
+      "description": "Initializes the pane plugin by preparing and sending data to the plugin for plotting. It processes axis configurations, filters labels, and sets data for CoCo and group axes before sending the data to the plugin.",
+      "parameters": [
+        {
+          "name": "nonce",
+          "type": "string",
+          "description": "A unique identifier for the plugin instance."
+        },
+        {
+          "name": "config",
+          "type": "object",
+          "description": "Configuration object containing axis details and other settings for the plugin."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the heatMap object by setting unapplied changes.",
+        "Sends a message to the plugin with the prepared data.",
+        "Saves the data sent to the plugin to the heatMap configuration."
+      ],
+      "returns": {
+        "type": "Promise<void>",
+        "description": "A promise that resolves when the initialization process is complete."
+      }
+    },
+    {
+      "name": "filterGaps",
+      "namespace": "None",
+      "signature": "filterGaps(data, gapIndices)",
+      "description": "Filters out elements from the data array based on the indices provided in gapIndices.",
+      "parameters": [
+        {
+          "name": "data",
+          "type": "Array",
+          "description": "The array of data elements to be filtered."
+        },
+        {
+          "name": "gapIndices",
+          "type": "Array",
+          "description": "An array of indices that should be removed from the data array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "A new array with elements at the specified gapIndices removed."
+      }
+    },
+    {
+      "name": "getAxisTestData",
+      "namespace": "None",
+      "signature": "getAxisTestData(msg)",
+      "description": "Using information in msg about which tests to perform, performs statistical tests and returns results. It validates the input data, calculates summary statistics, and performs either a mean difference test or a T-test based on the specified test type.",
+      "parameters": [
+        {
+          "name": "msg",
+          "type": "Object",
+          "description": "Contains information about the axis, labels, test to run, and groups for statistical analysis."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays system messages using UHM.systemMessage.",
+        "Modifies the input parameter msg by accessing its properties."
+      ],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing labels and results of the statistical tests performed."
+      }
+    },
+    {
+      "name": "setAxisCoCoData",
+      "namespace": "None",
+      "signature": "setAxisCoCoData(cocodata, axis, coco, gapIndices)",
+      "description": "Adds the values and colors to cocodata for the 'coco' attributes of the specified axis. The 'coco' attribute can be either 'coordinate' or 'covariate'.",
+      "parameters": [
+        {
+          "name": "cocodata",
+          "type": "object",
+          "description": "The object to which the values and colors will be added."
+        },
+        {
+          "name": "axis",
+          "type": "object",
+          "description": "The axis object containing the data and configuration for the axis."
+        },
+        {
+          "name": "coco",
+          "type": "string",
+          "description": "The attribute of the axis to be processed, either 'coordinate' or 'covariate'."
+        },
+        {
+          "name": "gapIndices",
+          "type": "array",
+          "description": "Indices of gaps in the data that should be filtered out."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the cocodata object by adding values and colors for the specified 'coco' attributes."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setAxisGroupData",
+      "namespace": "None",
+      "signature": "setAxisGroupData(cocodata, axis, group)",
+      "description": "Pushes user-specified group labels and NGCHM labels for group members to the cocodata object. It processes the axis data to extract and format the group labels and their corresponding NGCHM labels, then adds them to the cocodata object.",
+      "parameters": [
+        {
+          "name": "cocodata",
+          "type": "object",
+          "description": "The cocodata object to which the group labels and NGCHM labels will be added."
+        },
+        {
+          "name": "axis",
+          "type": "object",
+          "description": "The axis object containing information about the axis, including axis name, covariates, and groups."
+        },
+        {
+          "name": "group",
+          "type": "string",
+          "description": "The name of the group to be processed and added to the cocodata object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the cocodata object by adding group labels and NGCHM labels."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "newGearDialog",
+      "namespace": "None",
+      "signature": "newGearDialog(icon, paneId)",
+      "description": "Creates and displays a gear dialog for configuring options related to a specific pane identified by the DOM element icon. This dialog allows users to select various options and parameters for the pane, including covariates, groups, and other settings.",
+      "parameters": [
+        {
+          "name": "icon",
+          "type": "HTMLElement",
+          "description": "The DOM element representing the icon that triggers the gear dialog."
+        },
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The identifier for the pane associated with the gear dialog."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes any other open gear panels.",
+        "Modifies the DOM by creating and inserting new elements for the gear dialog.",
+        "Updates the state of the pane with new configuration options."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removeOpenGearPanels",
+      "namespace": "None",
+      "signature": "removeOpenGearPanels()",
+      "description": "This function removes all open gear panels by clearing existing dialogs associated with each gear panel.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by interacting with elements having the class 'gearPanel'.",
+        "Calls PANE.clearExistingDialogs() for each gear panel, which may have additional side effects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "optionNode",
+      "namespace": "None",
+      "signature": "optionNode(type, value)",
+      "description": "Creates a new OPTION HTML element, sets its text content, and assigns a data attribute for type.",
+      "parameters": [
+        {
+          "name": "type",
+          "type": "string",
+          "description": "The type to be assigned to the data-type attribute of the OPTION element."
+        },
+        {
+          "name": "value",
+          "type": "string",
+          "description": "The text content to be displayed within the OPTION element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The newly created OPTION HTML element with the specified text content and data-type attribute."
+      }
+    },
+    {
+      "name": "selectedElementsOptionName",
+      "namespace": "None",
+      "signature": "selectedElementsOptionName(axis, uname)",
+      "description": "Creates a text string for an option to use GRAB/SHOW based on the axis and username provided.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "any",
+          "description": "The axis to determine if it is a row or column."
+        },
+        {
+          "name": "uname",
+          "type": "string",
+          "description": "The username to be included in the returned string."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "A string indicating the selected elements (either columns or rows) along with the username."
+      }
+    },
+    {
+      "name": "addCovariateOptions",
+      "namespace": "None",
+      "signature": "addCovariateOptions(defaultOpt, axisConfig, selectElement, selectedElementsOption, onlyContinuous)",
+      "description": "Adds covariate options to a dropdown select element based on the provided axis configuration. It can filter options to include only continuous covariates if specified.",
+      "parameters": [
+        {
+          "name": "defaultOpt",
+          "type": "String",
+          "description": "The default option to be selected in the dropdown."
+        },
+        {
+          "name": "axisConfig",
+          "type": "Object",
+          "description": "Configuration object for the axis, containing covariate properties."
+        },
+        {
+          "name": "selectElement",
+          "type": "Object",
+          "description": "The select HTML element to which the options will be added."
+        },
+        {
+          "name": "selectedElementsOption",
+          "type": "String",
+          "description": "The option representing selected elements to be added to the dropdown."
+        },
+        {
+          "name": "onlyContinuous",
+          "type": "Boolean",
+          "description": "If true, only continuous covariates will be added to the dropdown."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the selectElement by adding new option elements.",
+        "Sets the selectedIndex of the selectElement based on the defaultOpt."
+      ],
+      "returns": {
+        "type": "Object",
+        "description": "The option element representing the selected elements option that was added to the dropdown."
+      }
+    },
+    {
+      "name": "textN",
+      "namespace": "None",
+      "signature": "textN(base, id, len)",
+      "description": "Generates a string by concatenating the base string with the id, separated by a space if the length is greater than 1.",
+      "parameters": [
+        {
+          "name": "base",
+          "type": "string",
+          "description": "The base string to which the id will be appended."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "description": "The string to append to the base string."
+        },
+        {
+          "name": "len",
+          "type": "number",
+          "description": "Determines whether to add a space between the base and id. If len is 1, no space is added."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The concatenated string with or without a space based on the length parameter."
+      }
+    },
+    {
+      "name": "setAxis",
+      "namespace": "None",
+      "signature": "setAxis(axis)",
+      "description": "Sets the axis configuration for the heat map based on the provided axis parameter. It updates various axis-related configurations and logs the process if debugging is enabled.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis to be set for the heat map configuration."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the global variable thisAxis with the provided axis.",
+        "Updates the global variable axis1Config with the axis covariate configuration.",
+        "Updates the global variable otherAxis to 'Column' or 'Row' based on the provided axis.",
+        "Updates the global variable defaultCoord with the default coordinate configuration.",
+        "Updates the global variable defaultCovar with the default covariate configuration.",
+        "Logs the axis and parameters if debugging is enabled."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createLinearSelectors",
+      "namespace": "None",
+      "signature": "createLinearSelectors(sss, numSelectors, selectorName, params, helpText)",
+      "description": "Creates a series of linear selectors with associated labels, help text, and functionality for updating and managing selected data.",
+      "parameters": [
+        {
+          "name": "sss",
+          "type": "Array",
+          "description": "An array to store the created selector objects."
+        },
+        {
+          "name": "numSelectors",
+          "type": "Number",
+          "description": "The number of selectors to create."
+        },
+        {
+          "name": "selectorName",
+          "type": "String",
+          "description": "The name of the selector, used for labeling."
+        },
+        {
+          "name": "params",
+          "type": "Array",
+          "description": "Optional parameters for each selector, such as type and label."
+        },
+        {
+          "name": "helpText",
+          "type": "String",
+          "description": "Optional help text to display when hovering over the help icon."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the sss array by adding new selector objects.",
+        "Appends new elements to the optionsBox DOM element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "e",
+      "signature": "e.onmouseover()",
+      "description": "Attaches an event handler to the 'mouseover' event of the element 'e'. When the event is triggered, it calls the UHM.hlp function to display a help tooltip.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "e",
+      "signature": "e.onmouseout()",
+      "description": "This function is an event handler for the 'mouseout' event. When the mouse pointer leaves the element, it triggers the UHM.hlpC() function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UHM.hlpC() function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updateAxis",
+      "namespace": "None",
+      "signature": "function updateAxis()",
+      "description": "Updates the axis selection options based on the current selection parameters and configuration. It clears the existing options in the selection element and adds new options based on the type of selection and other parameters.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by removing and adding child elements to selectEl.",
+        "Updates the selOpt property of the sss array at index cid."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearData",
+      "namespace": "None",
+      "signature": "clearData()",
+      "description": "Clears all data from the data array associated with the specified context ID (cid).",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the data array by removing all its elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setSummary",
+      "namespace": "sss[cid].grabbers",
+      "signature": "sss[cid].grabbers.setSummary(label)",
+      "description": "Updates the summary information based on the provided label and the current selection state. It modifies the displayed count and label based on the data length and selection.",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "String",
+          "description": "The label to set for the summary. If not provided, the function will determine the label based on the data length and selection."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the text content of countNode with the length of the data.",
+        "Modifies the class list of infoEl to show or hide it.",
+        "Sets the label using userLabel.setLabel based on various conditions."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setSummary",
+      "namespace": "None",
+      "signature": "setSummary(label)",
+      "description": "Sets the summary for the current context identified by 'cid' using the provided label.",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "String",
+          "description": "The summary label to be set."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the summary property of the 'sss[cid]' object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick(e)",
+      "description": "Handles the click event on the second child element of infoEl. It retrieves search results from SRCHSTATE for a specified axis and updates the grabbers and data properties of the sss object for the given cid. If no results are found, it displays a system message.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object representing the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs 'GRAB' to the console if debug is true.",
+        "Displays a system message if no search results are found.",
+        "Clears the data in sss[cid].grabbers.",
+        "Updates sss[cid].data with search results from SRCHSTATE.",
+        "Logs the grabbed data to the console if debug is true.",
+        "Updates the summary in sss[cid].grabbers."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick(e)",
+      "description": "Handles the click event on the third child element of infoEl. It logs a debug message, checks if there is data to show, displays a system message if there is no data, and updates the search results if data is present.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs a debug message if debug mode is enabled.",
+        "Displays a system message if there is no data to show.",
+        "Clears search items on the other axis.",
+        "Sets axis search results vector with the current data.",
+        "Redraws the search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "selectEl",
+      "signature": "selectEl.onchange(e)",
+      "description": "This function is an event handler for the 'onchange' event of the selectEl element. When the event is triggered, it calls the setSummary method on the sss object at the index specified by cid.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the 'onchange' event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the setSummary method on the sss object at the index specified by cid."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createGroupSelectors",
+      "namespace": "None",
+      "signature": "createGroupSelectors(sss, numSelectors, selectorName, params, lastApplied)",
+      "description": "Creates the selectors for choosing groups in the gear menu. This function dynamically generates UI elements for group selection based on the provided parameters, including labels, grabbers, range selectors, and discrete selectors. It also handles the updating and clearing of data associated with these selectors.",
+      "parameters": [
+        {
+          "name": "sss",
+          "type": "Array",
+          "description": "An array to store the selectors and their associated data."
+        },
+        {
+          "name": "numSelectors",
+          "type": "int",
+          "description": "Number of selectors to create."
+        },
+        {
+          "name": "selectorName",
+          "type": "string",
+          "description": "The name of the selector."
+        },
+        {
+          "name": "params",
+          "type": "object",
+          "description": "Parameters for configuring the selectors, including labels and types."
+        },
+        {
+          "name": "lastApplied",
+          "type": "object",
+          "description": "The last applied values for the selectors, used to restore previous states."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by appending new elements for selectors.",
+        "Updates the sss array with new selector objects and their data.",
+        "Handles events for updating and clearing data within the selectors."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "e",
+      "signature": "e.onmouseover()",
+      "description": "Handles the mouseover event for element 'e' by displaying a help tooltip with specific instructions.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a help tooltip with specific instructions when the mouse hovers over the element 'e'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "e",
+      "signature": "e.onmouseout()",
+      "description": "This function is an event handler for the 'mouseout' event on the element 'e'. When the mouse pointer leaves the element, it calls the 'hlpC' method from the 'UHM' object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "isGrabberSelected",
+      "namespace": "None",
+      "signature": "isGrabberSelected()",
+      "description": "Determines if the currently selected item in a dropdown menu is the 'grabber' option.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Logs debug information to the console if the debug flag is set."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the selected item is the 'grabber' option, otherwise false."
+      }
+    },
+    {
+      "name": "updateAxis",
+      "namespace": "None",
+      "signature": "function updateAxis()",
+      "description": "Updates the axis configuration by removing previous axis choices, setting default options based on the type of selection parameters, and updating the axis for any grabbers associated with the current configuration.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Removes all child elements from selectEl.",
+        "Updates sss[cid].selOpt with new covariate options.",
+        "Appends to sss[cid].data if selParams.type is 'data' and selParams.labelIdx is present.",
+        "Calls updateAxis on each grabber in sss[cid].grabbers."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "clearData",
+      "namespace": "None",
+      "signature": "clearData(idx)",
+      "description": "Clears all elements from the data array at the specified index within the global sss[cid] object.",
+      "parameters": [
+        {
+          "name": "idx",
+          "type": "number",
+          "description": "The index of the data array to be cleared."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global sss[cid].data array by removing all elements at the specified index."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createLabelGrabber",
+      "namespace": "None",
+      "signature": "createLabelGrabber(axisName, userLabel, idx)",
+      "description": "Creates the 'GRAB' and 'SHOW' buttons and their functionality for managing label selections on a specified axis.",
+      "parameters": [
+        {
+          "name": "axisName",
+          "type": "String",
+          "description": "The name of the axis (e.g., 'Row' or 'Column')."
+        },
+        {
+          "name": "userLabel",
+          "type": "Object",
+          "description": "An object representing the user label."
+        },
+        {
+          "name": "idx",
+          "type": "int",
+          "description": "The group index (starts at 0)."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable 'sss[cid].data[idx]' by adding or clearing data.",
+        "Updates the text content of 'countNode' to reflect the number of selected items.",
+        "Modifies the visibility of 'infoEl' based on the selection state.",
+        "Updates the label of 'userLabel' based on the selection state."
+      ],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing the 'infoEl' element and functions 'clearData', 'setSummary', and 'updateAxis'."
+      }
+    },
+    {
+      "name": "doGrab",
+      "namespace": "None",
+      "signature": "doGrab(e)",
+      "description": "Handles the 'GRAB' action by checking if there are search results for a specified axis and adding them to a selection. If no results are found, it displays a system message.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object triggered by the 'GRAB' action."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs 'GRAB' to the console if debug mode is enabled.",
+        "Displays a system message if no search results are found.",
+        "Clears data at a specified index.",
+        "Adds search results to a selection and increments a count.",
+        "Updates a summary state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "doShow",
+      "namespace": "None",
+      "signature": "doShow(e)",
+      "description": "Displays search results for a specific axis in the NG-CHM (Next-Generation Clustered Heat Map) if there are any items to show. If no items are available, it shows a system message indicating that there is nothing to show.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs 'SHOW' to the console if debug mode is enabled.",
+        "Displays a system message if there are no items to show.",
+        "Clears previous search items for the specified axis.",
+        "Sets new search results for the specified axis.",
+        "Redraws the search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updateAxis",
+      "namespace": "None",
+      "signature": "updateAxis(newAxis)",
+      "description": "Updates the axis name and determines if it is a row or column.",
+      "parameters": [
+        {
+          "name": "newAxis",
+          "type": "String",
+          "description": "The new axis name to be set."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable axisName.",
+        "Modifies the global variable axisNameU."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setSummary",
+      "namespace": "None",
+      "signature": "setSummary(selected, label)",
+      "description": "Updates the summary information displayed based on the selected data and label. It modifies the text content of a count node and updates a user label based on the provided parameters. It also shows or hides an information element based on the selection state.",
+      "parameters": [
+        {
+          "name": "selected",
+          "type": "boolean",
+          "description": "Indicates whether an item is selected or not."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "description": "The label to be set for the user. If not provided, the function will determine the label based on the data length."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the text content of countNode.",
+        "Updates the label of userLabel.",
+        "Shows or hides the infoEl element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createRangeSelector",
+      "namespace": "None",
+      "signature": "createRangeSelector(nth, nmax)",
+      "description": "Function to create a DIV element for selecting groups based on continuous covariate values. This function generates a range selector with various interactive elements to help users specify ranges for group selection.",
+      "parameters": [
+        {
+          "name": "nth",
+          "type": "int",
+          "description": "The group number."
+        },
+        {
+          "name": "nmax",
+          "type": "int",
+          "description": "The maximum number of groups."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable 'sss' by adding search results to the data array for the specified group index.",
+        "Displays system messages using UHM.systemMessage."
+      ],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing the range selector DIV element and functions to manipulate it."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "e",
+      "signature": "e.onmouseover()",
+      "description": "This function is triggered when the mouse pointer is moved over the element 'e'. It displays a help text based on the selected test option in the 'gearDialogTestSelect' dropdown.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the inner HTML of the help text element.",
+        "Calls UHM.hlp to display the help text."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "e",
+      "signature": "e.onmouseout()",
+      "description": "This function is an event handler for the 'mouseout' event. When the mouse pointer leaves the element, it triggers the UHM.hlpC() function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UHM.hlpC() function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setSummary",
+      "namespace": "None",
+      "signature": "setSummary(show)",
+      "description": "Function to show or hide the range DIV based on the provided boolean value.",
+      "parameters": [
+        {
+          "name": "show",
+          "type": "boolean",
+          "description": "A boolean value indicating whether to show (true) or hide (false) the range DIV."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the class list of the global variable 'rangeSelectorEl' by adding or removing the 'hide' class."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showMinMax",
+      "namespace": "None",
+      "signature": "showMinMax(v)",
+      "description": "Function to show the min & max values as text to help user in making ranges.",
+      "parameters": [
+        {
+          "name": "v",
+          "type": "String",
+          "description": "The value to be displayed as the min & max range."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the innerHTML of the fifth child element of rangeSelectorEl with the provided value."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setRange",
+      "namespace": "None",
+      "signature": "setRange(v)",
+      "description": "Sets the value of the last child element of the range selector to the specified value.",
+      "parameters": [
+        {
+          "name": "v",
+          "type": "number",
+          "description": "The value to set for the range selector's last child element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of the last child element of the global variable 'rangeSelectorEl'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getRange",
+      "namespace": "None",
+      "signature": "function getRange()",
+      "description": "Retrieves the value of the last child element of the range selector.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The value of the last child element of the range selector."
+      }
+    },
+    {
+      "name": "getIndexes",
+      "namespace": "None",
+      "signature": "getIndexes(e)",
+      "description": "Function to parse range string and get indexes for covariates that fall within the range string. This is the onchange function for the range INPUT boxes (rangeSelectorEl.lastChild).",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object from the onchange event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates sss[cid].data with search results.",
+        "Displays system messages for invalid range text and non-mutually exclusive groups."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "createDiscreteSelector",
+      "namespace": "None",
+      "signature": "createDiscreteSelector(nth, nmax)",
+      "description": "Function to create the div for choosing groups from discrete covariates. This function creates the DIV.discreteSelector, which has the DOM elements that allow the user to check checkboxes of discrete covariates for making groups from discrete covariates.",
+      "parameters": [
+        {
+          "name": "nth",
+          "type": "int",
+          "description": "Group number"
+        },
+        {
+          "name": "nmax",
+          "type": "int",
+          "description": "Max number of groups"
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by creating and appending new elements.",
+        "Changes the visibility of the DIV.discreteSelector element.",
+        "Updates the state of checkboxes based on user interaction."
+      ],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing the discrete selector element and functions to set and get checkbox values, and to show/hide the element."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "e",
+      "signature": "e.onmouseover()",
+      "description": "Handles the mouseover event for the element 'e' by displaying a help tooltip with information based on the selected test type in a dropdown menu.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the inner HTML of the help tooltip based on the selected test type."
+      ],
+      "returns": {
+        "type": "undefined",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "e",
+      "signature": "e.onmouseout()",
+      "description": "This function is an event handler for the 'mouseout' event on the element 'e'. When the mouse pointer leaves the element, it calls the 'UHM.hlpC()' function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setCheckBoxes",
+      "namespace": "None",
+      "signature": "setCheckBoxes(checkboxValues)",
+      "description": "Sets the values and checked states of checkboxes based on the provided array of checkbox values.",
+      "parameters": [
+        {
+          "name": "checkboxValues",
+          "type": "Array",
+          "description": "An array of objects where each object contains 'value' and 'checked' properties representing the value and checked state of a checkbox."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value and checked state of checkboxes within the discreteSelectorEl element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getCheckBoxes",
+      "namespace": "None",
+      "signature": "getCheckBoxes()",
+      "description": "Function to get the current values and checked status of checkboxes within a specific DOM element.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array of objects, each containing the value and checked status of a checkbox."
+      }
+    },
+    {
+      "name": "setSummary",
+      "namespace": "None",
+      "signature": "setSummary(show)",
+      "description": "Function to show or hide the DIV.discreteSelector element and to create checkboxes for the selected covariate.",
+      "parameters": [
+        {
+          "name": "show",
+          "type": "boolean",
+          "description": "Determines whether to show or hide the discreteSelector element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the children of discreteSelectorEl by removing or adding elements.",
+        "Changes the class list of discreteSelectorEl to show or hide it.",
+        "Removes old checkbox elements associated with the groupIdx.",
+        "Appends new checkbox elements to discreteSelectorEl."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getIndexes",
+      "namespace": "None",
+      "signature": "getIndexes(e)",
+      "description": "Function to get indexes for covariates for the checked boxes for each group. This function ensures mutually exclusive groups by unchecking other checkboxes with the same value. It updates the data for all groups when any of the checkboxes are changed.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object from the onchange event of the checkbox."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Unchecks other checkboxes with the same value.",
+        "Updates sss[cid].data for all groups based on the checked checkboxes."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setSummary",
+      "namespace": "sss[cid]",
+      "signature": "setSummary(selectedValue, labels)",
+      "description": "Function to set sub-options for the group selector after the user has chosen something from the dropdown for this group selector. It handles both continuous and discrete covariates, showing or hiding the appropriate selectors and filling in the last applied values if they exist.",
+      "parameters": [
+        {
+          "name": "selectedValue",
+          "type": "String",
+          "description": "The value selected by the user from the dropdown."
+        },
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of labels to set for the user labels. If not provided, default labels will be used."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Hides or shows range and discrete selectors based on the selected covariate type.",
+        "Sets the last applied values for the selectors if they exist.",
+        "Triggers 'change' events on the selectors.",
+        "Updates user labels based on the provided labels or default labels."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "selectEl.onchange(e)",
+      "description": "Handles the 'change' event for the select element, triggering the setSummary method for a specific group.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the 'change' event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the setSummary method on the sss[cid] object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "axis1Select",
+      "signature": "axis1Select.onchange(e)",
+      "description": "Handles the change event for the axis1Select element. When the selected axis changes, it updates the axis configuration and UI elements accordingly.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object representing the change event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the axis configuration based on the selected value.",
+        "Logs the selected axis to the console if debug mode is enabled.",
+        "Updates selectors for coco and group elements in the configuration.",
+        "Calls updateAxis, clearData, setSummary, and setLabel methods on axis1Coco elements.",
+        "Triggers the onchange event for axis1Coco selectors."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updateSelector",
+      "namespace": "None",
+      "signature": "updateSelector(coco)",
+      "description": "Updates the axis and associated elements for a given base ID in the axis1Coco object. This includes updating the axis, clearing data from grabbers, setting summaries, and resetting user labels and selection changes.",
+      "parameters": [
+        {
+          "name": "coco",
+          "type": "object",
+          "description": "An object containing the base ID and maximum count for updating the axis and associated elements."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates axis1Coco[coco.baseid][cid] by calling updateAxis() on each axis.",
+        "Clears data from grabbers in axis1Coco[coco.baseid][cid].",
+        "Sets summaries for axis1Coco[coco.baseid][cid].",
+        "Resets user labels in axis1Coco[coco.baseid][cid] if they exist.",
+        "Triggers the onchange event for the select element in axis1Coco[coco.baseid][cid]."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createLabeledTextInput",
+      "namespace": "None",
+      "signature": "createLabeledTextInput(iValue, nth, nmax)",
+      "description": "Creates a labeled text input element within a DIV. The label can be customized based on the nth and nmax parameters. The function returns an object containing the created DIV element and a method to set the label's value.",
+      "parameters": [
+        {
+          "name": "iValue",
+          "type": "string",
+          "description": "The initial value of the text input, if specified."
+        },
+        {
+          "name": "nth",
+          "type": "number",
+          "description": "The nth label number to be displayed if nmax is greater than 1."
+        },
+        {
+          "name": "nmax",
+          "type": "number",
+          "description": "The maximum number of labels. If greater than 1, the label will include the nth value."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the created DIV element and a method to set the label's value."
+      }
+    },
+    {
+      "name": "setLabel",
+      "namespace": "None",
+      "signature": "setLabel(v)",
+      "description": "Sets the value of the second child element of the userLabelEl element to the provided value.",
+      "parameters": [
+        {
+          "name": "v",
+          "type": "any",
+          "description": "The value to set for the second child element of userLabelEl."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of the second child element of the global userLabelEl variable."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "genPluginOptions",
+      "namespace": "None",
+      "signature": "genPluginOptions(opts, level, params)",
+      "description": "Generates a set of plugin options as HTML elements based on the provided configuration. Supports different types of input elements including checkboxes, text inputs, dropdowns, and nested groups.",
+      "parameters": [
+        {
+          "name": "opts",
+          "type": "Array",
+          "description": "An array of option objects, each defining the type, label, default value, and other properties of the option."
+        },
+        {
+          "name": "level",
+          "type": "Number",
+          "description": "The nesting level of the options, used to adjust the margin for nested groups. Defaults to 0."
+        },
+        {
+          "name": "params",
+          "type": "Object",
+          "description": "An object containing parameter values that override the default values specified in the opts array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A DIV element containing the generated plugin options."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "e",
+      "signature": "e.onmouseover()",
+      "description": "Attaches an onmouseover event handler to the element 'e' that triggers a help tooltip using the UHM.hlp function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the onmouseover event of the element 'e'."
+      ],
+      "returns": {
+        "type": "undefined",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "e",
+      "signature": "e.onmouseout()",
+      "description": "This function is an event handler for the 'mouseout' event. When the mouse pointer leaves the element, it triggers the UHM.hlpC() function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UHM.hlpC() function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getPluginOptionValues",
+      "namespace": "None",
+      "signature": "function getPluginOptionValues(opts, element)",
+      "description": "This function retrieves the values of plugin options from a given HTML element. It processes different types of options such as checkboxes, dropdowns, text inputs, and groups of options, and returns an object containing the option labels and their corresponding values.",
+      "parameters": [
+        {
+          "name": "opts",
+          "type": "Array",
+          "description": "An array of option objects, each representing a plugin option with properties such as type and label."
+        },
+        {
+          "name": "element",
+          "type": "HTMLElement",
+          "description": "The HTML element containing the children elements that correspond to the options in the opts array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Object",
+        "description": "An object where the keys are the labels of the options and the values are the corresponding values retrieved from the HTML element."
+      }
+    },
+    {
+      "name": "selectToCoordinate",
+      "namespace": "None",
+      "signature": "function selectToCoordinate(coord)",
+      "description": "Converts a selected coordinate object into a structured format based on the type of coordinate selected.",
+      "parameters": [
+        {
+          "name": "coord",
+          "type": "object",
+          "description": "An object representing the coordinate selection, containing userLabel and select properties."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the type of coordinate, the label, and either the label index or the coverage name based on the type."
+      }
+    },
+    {
+      "name": "selectToGroups",
+      "namespace": "None",
+      "signature": "selectToGroups(coord)",
+      "description": "Transforms a given coordinate object into a structured group object containing type, selected value, labels, label index, and coverage name.",
+      "parameters": [
+        {
+          "name": "coord",
+          "type": "object",
+          "description": "An object containing user labels, select element, and data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing type, selectValue, labels, labelIdx, and covName."
+      }
+    },
+    {
+      "name": "axesElementsToOps",
+      "namespace": "None",
+      "signature": "axesElementsToOps(aEls)",
+      "description": "Converts user selections from DOM elements in the Gear Dialog into data to send to the plugins. The function processes the input object 'aEls' and returns an object 'ops' with a similar structure, which includes additional keys based on the 'cocos' and 'groups' arrays.",
+      "parameters": [
+        {
+          "name": "aEls",
+          "type": "object",
+          "description": "Object containing selection elements and additional key/value pairs based on 'cocos' and 'groups' arrays."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "The value for the 'axes' key to the plotParams object, which is part of the data sent to the plugins. It has a similar structure to the 'aEls' input object."
+      }
+    },
+    {
+      "name": "saveLastApplied",
+      "namespace": "None",
+      "signature": "function saveLastApplied(aEls)",
+      "description": "This function processes a given object containing various elements and extracts specific values to create a summary object named 'lastApplied'. It captures selected values, range strings, discrete checkboxes, and optionally coordinates and covariates if they are present in the input object.",
+      "parameters": [
+        {
+          "name": "aEls",
+          "type": "object",
+          "description": "An object containing various elements such as select elements, groups, range selectors, discrete selectors, coordinates, and covariates."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the last applied settings including axis, range strings, discrete checkboxes, covariate, coordinates, and covariates."
+      }
+    },
+    {
+      "name": "validateParams",
+      "namespace": "None",
+      "signature": "validateParams(plotParams)",
+      "description": "Function to verify minimum required entries for coordinates and groups are present before sending data to plugin. This function checks that the labelIdx entries are non-empty, alerts the user if they are missing, and returns 'false'. Otherwise, it returns 'true'. The config object is used to determine which plotParams to validate.",
+      "parameters": [
+        {
+          "name": "plotParams",
+          "type": "Object",
+          "description": "Parameters sent to plugin containing axes and their respective configurations."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a system message if required selections are missing."
+      ],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns 'true' if all required entries are present, otherwise returns 'false'."
+      }
+    },
+    {
+      "name": "applyPanel",
+      "namespace": "None",
+      "signature": "applyPanel()",
+      "description": "This function is invoked when the user clicks the 'APPLY' button on the gear menu. It constructs the plotParams object with necessary plot configurations and validates them before applying the settings.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies global variable 'plotTitle'.",
+        "Calls PIM.setPanePluginOptions to apply plot parameters."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "resetPanel",
+      "namespace": "None",
+      "signature": "resetPanel()",
+      "description": "Resets the panel by closing the current panel and opening a new gear dialog with the specified icon.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Closes the current panel.",
+        "Opens a new gear dialog with the specified icon."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "closePanel",
+      "namespace": "None",
+      "signature": "function closePanel()",
+      "description": "Closes a panel by removing the popup near a specified icon.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Removes a popup near a specified icon."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "defineVanodiMessageHandler",
+      "namespace": "None",
+      "signature": "defineVanodiMessageHandler(op, fn)",
+      "description": "Registers a handler function for a specific operation in the vanodiMessageHandlers object.",
+      "parameters": [
+        {
+          "name": "op",
+          "type": "string",
+          "description": "The operation name for which the handler function is being defined."
+        },
+        {
+          "name": "fn",
+          "type": "function",
+          "description": "The handler function to be executed for the specified operation."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the vanodiMessageHandlers object by adding or updating the handler function for the specified operation."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "processVanodiMessage",
+      "namespace": "None",
+      "signature": "processVanodiMessage(instance, msg)",
+      "description": "Processes a Vanodi message by invoking the appropriate handler function based on the message operation.",
+      "parameters": [
+        {
+          "name": "instance",
+          "type": "object",
+          "description": "The instance that will handle the message."
+        },
+        {
+          "name": "msg",
+          "type": "object",
+          "description": "The message object containing the operation and other relevant data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "May log debug information to the console.",
+        "Invokes a handler function from vanodiMessageHandlers based on the message operation."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "getPaneIdFromInstance",
+      "namespace": "None",
+      "signature": "getPaneIdFromInstance(pluginInstance)",
+      "description": "Retrieves the pane ID from a given plugin instance by traversing the DOM tree. Throws an error if no pane is found.",
+      "parameters": [
+        {
+          "name": "pluginInstance",
+          "type": "object",
+          "description": "The plugin instance object containing the iframe element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The ID of the pane containing the plugin instance."
+      }
+    },
+    {
+      "name": "initializePluginWithMapConfigData",
+      "namespace": "None",
+      "signature": "initializePluginWithMapConfigData(paneId, pluginInstance, paneInfo)",
+      "description": "Send any existing data from mapConfig.json to the plugin and close the Gear Menu. This function handles the initialization of a plugin with configuration data and manages the communication between the plugin and the main application.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The ID of the pane where the plugin is located."
+        },
+        {
+          "name": "pluginInstance",
+          "type": "Object",
+          "description": "The instance of the plugin being initialized."
+        },
+        {
+          "name": "paneInfo",
+          "type": "Object",
+          "description": "Information about the pane, including configuration and data for the plugin."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sends messages to the plugin using PIM.sendMessageToPlugin.",
+        "Removes the popup near the Gear and Icon elements of the pane."
+      ],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns false if paneInfo is not defined or not of type 'plugin'."
+      }
+    },
+    {
+      "name": "getSelectedLabels",
+      "namespace": "None",
+      "signature": "getSelectedLabels(axis)",
+      "description": "Retrieves the selected labels for a given axis ('Row' or 'Column') from the heatmap and search state.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which to retrieve selected labels. Expected values are 'Row' or 'Column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of selected labels for the specified axis."
+      }
+    },
+    {
+      "name": "switchToPlugin",
+      "namespace": "None",
+      "signature": "switchToPlugin(loc, title)",
+      "description": "This function switches the current pane to a specified plugin by updating the pane's title, intro text, and adding a gear icon. It also registers an event handler for the pane and clears any existing dialogs.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the pane information where the plugin will be switched."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "The title of the plugin to be displayed in the pane."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Registers an event handler for the pane.",
+        "Updates the pane's dataset with the title and intro text.",
+        "Adds a gear icon to the pane.",
+        "Clears existing dialogs in the pane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addGearIconToPane",
+      "namespace": "None",
+      "signature": "addGearIconToPane(loc)",
+      "description": "Adds a gear icon to the pane header if it doesn't already exist. The gear icon is used to open a settings menu for the pane.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object representing the pane location, containing the pane header and pane ID."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding a gear icon to the pane header.",
+        "Initializes a gear icon menu.",
+        "Adds the gear icon to the panel icons."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The gear icon element that was added to the pane header."
+      }
+    },
+    {
+      "name": "initializeGearIconMenu",
+      "namespace": "None",
+      "signature": "initializeGearIconMenu(icon)",
+      "description": "Initializes a DOM IMG element to function as a gear menu icon, setting up event handlers for mouseover, mouseout, and click events.",
+      "parameters": [
+        {
+          "name": "icon",
+          "type": "HTMLElement",
+          "description": "The DOM IMG element to be initialized as a gear menu icon."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the onmouseout event handler for the icon to call UHM.hlpC()",
+        "Sets the onmouseover event handler for the icon to call UHM.hlp() with specific parameters",
+        "Sets the onclick event handler for the icon to call LNK.newGearDialog() and stop event propagation"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "icon",
+      "signature": "icon.onmouseout(e)",
+      "description": "Handles the mouseout event for the icon element by calling the UHM.hlpC function.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The mouseout event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "icon",
+      "signature": "icon.onmouseover(e)",
+      "description": "Handles the mouseover event for the icon element, displaying a tooltip with the message 'Open gear menu'.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The mouseover event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "icon",
+      "signature": "icon.onclick(e)",
+      "description": "Handles the click event on the icon, stops the event propagation, extracts the pane index from the icon's ID, and opens a new gear dialog.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The click event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Stops the propagation of the click event.",
+        "Extracts the pane index from the icon's ID.",
+        "Calls LNK.newGearDialog with the icon and pane index."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "processMessage",
+      "namespace": "None",
+      "signature": "function processMessage(e)",
+      "description": "Handles incoming messages from plugins, processes special registration messages, and forwards valid messages to the appropriate plugin instance.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "object",
+          "description": "The event object containing the message data from the plugin."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Posts messages back to the plugin source.",
+        "Modifies the nonce property of the message object.",
+        "May prompt the user for permission to grant access to a plugin."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "loadLinkoutSpec",
+      "namespace": "LNK",
+      "signature": "LNK.loadLinkoutSpec(kind, spec)",
+      "description": "Loads a linkout specification based on the provided kind and spec. If the kind is 'panel-plugin', it registers the plugin and updates the relevant panes. Otherwise, it adds a linkout plugin.",
+      "parameters": [
+        {
+          "name": "kind",
+          "type": "string",
+          "description": "The type of linkout specification, e.g., 'panel-plugin'."
+        },
+        {
+          "name": "spec",
+          "type": "object",
+          "description": "The specification details for the linkout or plugin."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Registers a pane plugin if kind is 'panel-plugin'.",
+        "Updates pane locations with the new plugin.",
+        "Displays a helper message indicating the addition of a panel plugin.",
+        "Calls addLinkoutPlugin(kind, spec) if kind is not 'panel-plugin'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "addLinkoutPlugin",
+      "namespace": "None",
+      "signature": "addLinkoutPlugin(kind, spec)",
+      "description": "Adds a linkout or hamburger plugin to the document. Depending on the type of plugin, it creates an instance of the plugin, hides it, and appends it to the document body. For linkout plugins, it sets up functions to send messages to the plugin instance for each linkout and matrix linkout. For hamburger plugins, it sets up an action to send a message to the plugin instance. Finally, it regenerates the linkout menus.",
+      "parameters": [
+        {
+          "name": "kind",
+          "type": "string",
+          "description": "The type of plugin to add, either 'linkout-plugin' or 'hamburger-plugin'."
+        },
+        {
+          "name": "spec",
+          "type": "object",
+          "description": "The specifications for the plugin, including source URL, message ID, and linkout details."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends an iframe element to the document body.",
+        "Modifies the 'linkouts' global object by adding the plugin or hamburger linkout.",
+        "Calls 'CUST.definePluginLinkouts()' to regenerate the linkout menus."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    }
+  ]
+}

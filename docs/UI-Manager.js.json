@@ -1,0 +1,1498 @@
+{
+  "filename": "UI-Manager.js",
+  "namespace": "NgChm.UI-Manager",
+  "description": [
+    "This module is responsible for managing the user interface of the NG-CHM (Next Generation Clustered Heat Map) Viewer. It handles the initialization and configuration of the heat map panels, manages the interactions with various UI elements, and provides functions for saving and loading heat maps. Additionally, it supports embedding heat maps in web pages, handling key navigation, and displaying help and tutorial information."
+  ],
+  "declares_functions_in": [
+    "UIMGR"
+  ],
+  "interacts_with": [
+    "NgChm.UTIL",
+    "NgChm.CM",
+    "NgChm.FLICK",
+    "NgChm.MAPREP",
+    "NgChm.SUM",
+    "NgChm.SMM",
+    "NgChm.PDF",
+    "NgChm.DET",
+    "NgChm.DEV",
+    "NgChm.DMM",
+    "NgChm.LNK",
+    "NgChm.DVW",
+    "NgChm.MMGR",
+    "NgChm.Pane",
+    "NgChm.PIM",
+    "NgChm.SRCHSTATE",
+    "NgChm.SRCH",
+    "NgChm.DRAW",
+    "NgChm.RecPanes",
+    "NgChm.CUST",
+    "NgChm.UHM",
+    "NgChm.TOUR"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "DMM.nextMapNumber",
+      "description": "Tracks the next map number to be used."
+    },
+    {
+      "name": "DRAW.heightScale",
+      "description": "Scalar used to stretch small maps to the proper size."
+    },
+    {
+      "name": "DRAW.widthScale",
+      "description": "Scalar used to stretch small maps to the proper size."
+    },
+    {
+      "name": "DVW.scrollTime",
+      "description": "Tracks the scroll time for the detail view."
+    },
+    {
+      "name": "MMGR.localRepository",
+      "description": "Path to the local repository containing the specified map."
+    },
+    {
+      "name": "PANE.showPaneHeader",
+      "description": "Flag to show or hide the pane header."
+    },
+    {
+      "name": "SUM.colDendro",
+      "description": "Column dendrogram object."
+    },
+    {
+      "name": "SUM.colTopItemsWidth",
+      "description": "Width of the top items in the column."
+    },
+    {
+      "name": "SUM.rowDendro",
+      "description": "Row dendrogram object."
+    },
+    {
+      "name": "SUM.rowTopItemsHeight",
+      "description": "Height of the top items in the row."
+    },
+    {
+      "name": "SUM.summaryHeatMapCache",
+      "description": "Cache for summary heat map data."
+    },
+    {
+      "name": "UTIL.embedLoaded",
+      "description": "Flag indicating if the embed has been loaded."
+    },
+    {
+      "name": "UTIL.embedThumbHeight",
+      "description": "Height of the embedded thumbnail."
+    },
+    {
+      "name": "UTIL.embedThumbWidth",
+      "description": "Width of the embedded thumbnail."
+    },
+    {
+      "name": "UTIL.showDetailPane",
+      "description": "Flag to show or hide the detail pane."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "saveHeatMapToNgchm",
+      "namespace": "None",
+      "signature": "function saveHeatMapToNgchm()",
+      "defined_section": "Functions related to saving Ng-Chms",
+      "description": "Saves the current heat map to the NGCHM (Next Generation Clustered Heat Map) system. It handles both web-sourced and locally-sourced heat maps, ensuring that all necessary data is collected and saved properly.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls MMGR.getHeatMap() to retrieve the current heat map.",
+        "Calls PIM.requestDataFromPlugins() to request data from plugins.",
+        "Calls MMGR.zipMapProperties() to zip map properties for web-sourced heat maps.",
+        "Calls showViewerSaveNotification() to show a save notification.",
+        "Calls UHM.messageBoxCancel() to cancel the message box.",
+        "Calls UHM.showMsgBoxProgressBar() to show a progress bar.",
+        "Calls PIM.havePluginData() to check if plugin data is available.",
+        "Calls PIM.warnAboutMissingPluginData() to warn about missing plugin data.",
+        "Calls MMGR.zipSaveMapProperties() to zip and save map properties for locally-sourced heat maps.",
+        "Calls heatMap.setUnAppliedChanges(false) to mark changes as applied."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "autoSaveHeatMap",
+      "namespace": "None",
+      "signature": "autoSaveHeatMap(heatMap)",
+      "description": "Automatically saves the heat map configuration and data based on the source of the heat map. If the heat map is not embedded, it sets the row and column classification order and saves the map properties or data accordingly.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "HeatMap",
+          "description": "The heat map object that contains the configuration and data to be saved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the row and column classification order of the heat map.",
+        "Calls MMGR.webSaveMapProperties to save map properties if the source is not a file.",
+        "Calls zipSaveOutdated to save the heat map if the source is a file."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the save operation is successful, otherwise false."
+      }
+    },
+    {
+      "name": "addSaveStateToMapConfig",
+      "namespace": "None",
+      "signature": "function addSaveStateToMapConfig()",
+      "description": "This function adds the current state of various map configurations to the mapConfig object. It ensures that the map configuration includes panel layout, summary pane details, detail map state, data layers, and selections.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the mapConfig object by adding or updating the panel_configuration property with the current state of the map."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The updated mapConfig object containing the current state of the map configurations."
+      }
+    },
+    {
+      "name": "savePaneLayoutToMapConfig",
+      "namespace": "None",
+      "signature": "function savePaneLayoutToMapConfig()",
+      "description": "Saves the current pane layout from the DOM element with ID 'ngChmContainer' to the global mapConfig object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the 'panel_layout' property of the 'panel_configuration' object within the global mapConfig object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "saveSummaryMapInfoToMapConfig",
+      "namespace": "None",
+      "signature": "function saveSummaryMapInfoToMapConfig()",
+      "description": "Saves the summary pane details to the mapConfig object. Specifically, it identifies which pane, if any, is the summary pane and updates the mapConfig accordingly.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the mapConfig.panel_configuration object with the summary pane details."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "saveDetailMapInfoToMapConfig",
+      "namespace": "None",
+      "signature": "function saveDetailMapInfoToMapConfig()",
+      "description": "Saves the current state of detail maps, including zoom and pan information, to the map configuration object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the mapConfig.panel_configuration object with the state of each detail map."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "saveFlickInfoToMapConfig",
+      "namespace": "None",
+      "signature": "function saveFlickInfoToMapConfig()",
+      "description": "Saves information about the data layers (referred to as 'flick info') to the mapConfig object. This function retrieves the current state of the flick information using FLICK.getFlickSaveState() and assigns it to the panel_configuration property of the mapConfig object. If an error occurs during this process, it logs the error to the console.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapConfig.panel_configuration['flickInfo'] with the current flick state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "saveSelectionsToMapConfig",
+      "namespace": "None",
+      "signature": "function saveSelectionsToMapConfig()",
+      "description": "Saves the current selections from the search state and dendrograms into the map configuration. This includes selections from both row and column dendrograms if they exist.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates mapConfig.panel_configuration[\"selections\"] with the current search state and selected dendrogram bars."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "zipSaveOutdated",
+      "namespace": "None",
+      "signature": "zipSaveOutdated(heatMap)",
+      "description": "This function handles the tasks necessary to display a modal window for saving a zip file when an outdated heat map configuration is detected. It updates the configuration to be compatible with the latest version of the NG-CHM Viewer and provides options to save the updated configuration.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "object",
+          "description": "The heat map configuration object that needs to be updated and saved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a modal message box to the user.",
+        "Updates the heat map configuration to be compatible with the latest version of the NG-CHM Viewer.",
+        "Initiates the process to save the updated heat map configuration.",
+        "Shows a progress bar during the save process.",
+        "Displays a notification upon successful save."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showViewerSaveNotification",
+      "namespace": "None",
+      "signature": "showViewerSaveNotification(heatMap)",
+      "description": "This function displays a modal window with instructions on how to download and use the NG-CHM File Viewer application after a heat map has been saved as a NG-CHM file.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "object",
+          "description": "The heat map object that has been saved as a NG-CHM file."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "saveHeatMapToServer",
+      "namespace": "None",
+      "signature": "saveHeatMapToServer()",
+      "description": "Saves the current heat map to the server and updates its state based on the success of the operation.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes a message box using UHM.initMessageBox()",
+        "Calls MMGR.webSaveMapProperties(heatMap) to save the heat map properties",
+        "Sets the heat map's unapplied changes to false if the save operation is successful",
+        "Sets the heat map to read-only and saves heat map changes using UHM.saveHeatMapChanges() if the save operation fails"
+      ],
+      "returns": {
+        "type": "string",
+        "description": "Returns the success status of the save operation, which is a string."
+      }
+    },
+    {
+      "name": "getSummaryAccessWindows",
+      "namespace": "UIMGR",
+      "signature": "UIMGR.getSummaryAccessWindows()",
+      "description": "Returns the cached access windows for the summary data corresponding to the flick1 and flick2 controls. This is used to ensure the summary level for the (up to) two data layers shown in the flick control are kept available. This function is also useful for debugging purposes.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array representing the cached access windows for the summary data."
+      }
+    },
+    {
+      "name": "changeDataLayer",
+      "namespace": "UIMGR",
+      "signature": "UIMGR.changeDataLayer(change)",
+      "description": "Responds to a change in a selected data layer. This function updates the summary windows and redraws the UI if necessary based on the provided change object.",
+      "parameters": [
+        {
+          "name": "change",
+          "type": "object",
+          "description": "An object containing details about the data layer change. It includes the flick element, the new layer, and whether a redraw is required."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Associates the flick element with an AccessWindow for the summary level for the specified layer.",
+        "Redraws the UI if the currently visible layer has changed.",
+        "Updates the current data layer in the heat map.",
+        "Builds the summary texture.",
+        "Draws the left canvas box and selection marks.",
+        "Sets a timeout for redrawing the selection details."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "initializeSummaryWindows",
+      "namespace": "UIMGR",
+      "signature": "UIMGR.initializeSummaryWindows(heatMap)",
+      "description": "Initializes summary windows for the given heatMap by setting up access windows for each element in the flick state.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "object",
+          "description": "The heatMap object used to generate summary access windows."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global summaryWindows object by adding new summary access windows for each element in the flick state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "getSummaryAccessWindow",
+      "namespace": "None",
+      "signature": "getSummaryAccessWindow(heatMap, layer)",
+      "description": "Creates and returns a new access window for a given heat map layer at the summary level.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "HeatMap",
+          "description": "The heat map object for which the access window is being created."
+        },
+        {
+          "name": "layer",
+          "type": "String",
+          "description": "The specific layer of the heat map for which the access window is being created."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "AccessWindow",
+        "description": "A new access window object configured for the specified heat map layer at the summary level."
+      }
+    },
+    {
+      "name": "configurePanelInterface",
+      "namespace": "UIMGR",
+      "signature": "UIMGR.configurePanelInterface(event)",
+      "description": "This function configures the initial panel user interface based on the heat map preferences and interface configuration parameters. It must be called once immediately after the HeatMap is loaded.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "String",
+          "description": "The event that triggers the configuration. It should be MMGR.Event_INITIALIZED."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Saves the heat map configuration file if new configs were added.",
+        "Sets selection colors on the heat map.",
+        "Configures the search interface.",
+        "Adds custom JavaScript.",
+        "Empties pane locations if the heat map source is a file.",
+        "Shows a loader with the message 'Configuring interface...'.",
+        "Configures drop event handlers for the drop target element.",
+        "Initializes summary data with various search-related functions.",
+        "Initializes panes and reconstructs panels from the map configuration if available.",
+        "Switches panes to summary or detail views based on configuration."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "handleDropData",
+      "namespace": "None",
+      "signature": "handleDropData(txt)",
+      "description": "Handles the data dropped into the application, parses it as JSON, and if it matches specific criteria, loads a linkout specification.",
+      "parameters": [
+        {
+          "name": "txt",
+          "type": "string",
+          "description": "The dropped data in text format, expected to be a JSON string."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs debug information if the debug flag is set.",
+        "Calls LNK.loadLinkoutSpec with parsed kind and spec if the JSON data matches the expected structure."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "onloadend",
+      "namespace": "reader",
+      "signature": "reader.onloadend()",
+      "description": "This function is triggered when the reading operation is completed. It processes the result of the read operation by passing it to the handleDropData function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onLoadCHM",
+      "namespace": "UIMGR",
+      "signature": "UIMGR.onLoadCHM(sizeBuilderView)",
+      "description": "This function performs 'on load' processing for the NG_CHM Viewer. It initializes the viewer in either file mode, standard mode, or widgetized mode based on the environment and configuration.",
+      "parameters": [
+        {
+          "name": "sizeBuilderView",
+          "type": "boolean",
+          "description": "Indicates whether the size builder view is enabled."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Flushes the summary heat map cache.",
+        "Sets the builder view flag.",
+        "Displays or hides UI elements based on the mode.",
+        "Adds event listeners for file input and canvas scrolling.",
+        "Initializes key navigation."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "loadLocalModeCHM",
+      "namespace": "None",
+      "signature": "loadLocalModeCHM(sizeBuilderView)",
+      "description": "This function is called when running in local file mode with the heat map embedded in a 'widgetized' web page. It handles loading the heat map from a local file, a Blob, or a URL.",
+      "parameters": [
+        {
+          "name": "sizeBuilderView",
+          "type": "object",
+          "description": "An object that manages the size and view of the heat map."
+        }
+      ],
+      "called_urls": [
+        "MMGR.localRepository + '/' + MMGR.embeddedMapName"
+      ],
+      "side_effects": [
+        "Calls loadBlobModeCHM(sizeBuilderView) if MMGR.embeddedMapName is a Blob.",
+        "Calls loadCHMFromURL(sizeBuilderView) if MMGR.embeddedMapName is a valid URL.",
+        "Logs an error message and shows a loader if the XMLHttpRequest fails.",
+        "Resets the current heat map using resetCHM().",
+        "Displays the heat map file using displayFileModeCHM(chmFile, sizeBuilderView).",
+        "Calls UHM.invalidFileFormat() if the file format is invalid."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onreadystatechange",
+      "namespace": "req",
+      "signature": "req.onreadystatechange()",
+      "description": "Handles the state change of an XMLHttpRequest to process the response when the request is completed. If the request is successful, it processes the response as a Blob and performs further actions based on the file type. If the request fails, it logs an error and shows a loader with an error message.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error message to the console if the request fails.",
+        "Calls UTIL.showLoader with an error message if the request fails.",
+        "Creates a Blob and a File from the response if the request is successful.",
+        "Calls resetCHM to reset the CHM state.",
+        "Calls UHM.invalidFileFormat if the file format is invalid.",
+        "Calls displayFileModeCHM with the file and sizeBuilderView if the file format is valid."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "loadCHMFromURL",
+      "namespace": "None",
+      "signature": "loadCHMFromURL(sizeBuilderView)",
+      "description": "Fetches a CHM (Clustered Heat Map) from a specified URL and processes it as a blob. This function is designed to work similarly to local mode but operates with a blob passed in by JavaScript.",
+      "parameters": [
+        {
+          "name": "sizeBuilderView",
+          "type": "boolean",
+          "description": "A flag indicating whether the size builder view should be used."
+        }
+      ],
+      "called_urls": [
+        "MMGR.embeddedMapName"
+      ],
+      "side_effects": [
+        "Resets the current CHM.",
+        "Displays the CHM in file mode."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "None",
+      "signature": "xhr.onload(e)",
+      "description": "Handles the load event of an XMLHttpRequest. If the request is successful (status 200), it processes the response blob by resetting the CHM, and then displays the file mode CHM using the provided blob and size builder view.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the load event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls resetCHM() to reset the CHM.",
+        "Calls displayFileModeCHM(myBlob, sizeBuilderView) to display the file mode CHM with the response blob and size builder view."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "loadBlobModeCHM",
+      "namespace": "None",
+      "signature": "loadBlobModeCHM(sizeBuilderView)",
+      "description": "Loads a CHM (Clustered Heat Map) from a blob and displays it in the specified view. This function is similar to local mode but is designed to work when the ngchm is passed as a blob.",
+      "parameters": [
+        {
+          "name": "sizeBuilderView",
+          "type": "object",
+          "description": "The view where the CHM will be displayed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Resets the current CHM display.",
+        "Displays the CHM file in the specified view."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "loadFileModeCHM",
+      "namespace": "None",
+      "signature": "loadFileModeCHM()",
+      "description": "This function is called when running in stand-alone file mode and the user selects the CHM data .zip file. It validates the file type and processes the file if it is a valid .ngchm file.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a loading message using UTIL.showLoader.",
+        "Calls UHM.invalidFileFormat if the file is not a .ngchm file.",
+        "Calls displayFileModeCHM with the selected file if it is valid.",
+        "Calls openFileToggle to toggle the file open state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openFileToggle",
+      "namespace": "None",
+      "signature": "openFileToggle()",
+      "description": "Toggles the display of the file button and detail buttons. If the file button is hidden, the page reloads; otherwise, it hides the file button and shows the detail buttons.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the element with id 'fileButton'.",
+        "Modifies the display style of the element with id 'detail_buttons'.",
+        "Reloads the page if the file button is hidden."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "displayFileModeCHM",
+      "namespace": "None",
+      "signature": "function displayFileModeCHM(chmFile, sizeBuilderView)",
+      "description": "This function initializes and displays a heat map for a given file. It performs functions shared by the stand-alone and widgetized 'file' versions of the application.",
+      "parameters": [
+        {
+          "name": "chmFile",
+          "type": "File",
+          "description": "The file object to be processed and displayed as a heat map."
+        },
+        {
+          "name": "sizeBuilderView",
+          "type": "boolean",
+          "description": "A flag indicating whether the builder view sizing should be applied."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Resets the CHM display.",
+        "Initializes display variables.",
+        "Configures the panel interface.",
+        "Processes summary and detail map updates.",
+        "Modifies UTIL.showDetailPane if sizeBuilderView is true.",
+        "Modifies PANE.showPaneHeader if sizeBuilderView is true.",
+        "Adds an event listener for builder view sizing if sizeBuilderView is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "builderViewSizing",
+      "namespace": "None",
+      "signature": "builderViewSizing(event)",
+      "description": "This function handles the resizing of the summary panel for the builder in cases where only the summary panel is being drawn. It hides the header element if it is visible and triggers a window resize event.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "any",
+          "description": "The event object that triggers the function. If the event is not undefined and not equal to MMGR.Event_INITIALIZED, the function will return early."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Hides the header element with id 'mdaServiceHeader' if it is visible.",
+        "Triggers a window resize event."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resetCHM",
+      "namespace": "None",
+      "signature": "resetCHM()",
+      "description": "This function resets the CHM SelectionManager parameters when loading a file mode heatmap. It is specifically designed to handle the case where switching from one file-mode heatmap to another.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Clears all search results using SRCH.clearAllSearchResults()",
+        "Sets DVW.scrollTime to null",
+        "Sets SUM.colDendro to null",
+        "Sets SUM.rowDendro to null"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "initDisplayVars",
+      "namespace": "None",
+      "signature": "initDisplayVars()",
+      "description": "This function reinitializes summary and detail display values whenever a file-mode map is opened. This is done primarily to reset screens when a second, third, etc. map is opened.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets DRAW.widthScale to 1",
+        "Sets DRAW.heightScale to 1",
+        "Resets SUM.summaryHeatMapCache to an empty object",
+        "Sets SUM.colTopItemsWidth to 0",
+        "Sets SUM.rowTopItemsHeight to 0",
+        "Sets DMM.nextMapNumber to 1",
+        "Calls DEV.setMouseDown(false)",
+        "Calls MMGR.initAxisLabels()",
+        "Calls UTIL.removeElementsByClass(\"DynamicLabel\")",
+        "Calls SRCH.clearAllCurrentSearchItems()"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDragPanels",
+      "namespace": "None",
+      "signature": "function setDragPanels()",
+      "description": "This function configures selected DIV panels as 'drag panels', allowing them to be moved on the screen.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the draggable property of the elements with IDs 'prefs', 'pdfPrefs', 'msgBox', and 'linkBox' if the 'prefs' element is present."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "embedCHM",
+      "namespace": "None",
+      "signature": "embedCHM(map, repository, sizeBuilderView)",
+      "description": "This function is a special pre-processing function for the widgetized version of the NG-CHM Viewer. It takes the map name provided by the user (embedded in an unaffiliated web page) and passes it on to the on-load processing for the viewer. The repository parameter specifies the path to the directory containing the specified map, defaulting to the current directory if not provided.",
+      "parameters": [
+        {
+          "name": "map",
+          "type": "String",
+          "description": "The name of the map to be embedded."
+        },
+        {
+          "name": "repository",
+          "type": "String",
+          "description": "The path to the directory containing the specified map. Defaults to the current directory if not provided."
+        },
+        {
+          "name": "sizeBuilderView",
+          "type": "Object",
+          "description": "An object that contains the size and view settings for the builder."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets MMGR.embeddedMapName to the provided map name.",
+        "Sets MMGR.localRepository to the provided repository or defaults to the current directory.",
+        "Resets SUM.colDendro and SUM.rowDendro to null.",
+        "Calls UIMGR.onLoadCHM with the sizeBuilderView parameter."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showEmbed",
+      "namespace": "None",
+      "signature": "showEmbed(baseDiv, dispWidth, dispHeight, customJS)",
+      "description": "This function displays an embedded heat map when the user clicks on the embedded map image. It adjusts the dimensions and styles of various elements to properly display the heat map.",
+      "parameters": [
+        {
+          "name": "baseDiv",
+          "type": "HTMLElement",
+          "description": "The base div element where the embedded heat map will be displayed."
+        },
+        {
+          "name": "dispWidth",
+          "type": "number",
+          "description": "The desired display width of the embedded heat map."
+        },
+        {
+          "name": "dispHeight",
+          "type": "number",
+          "description": "The desired display height of the embedded heat map."
+        },
+        {
+          "name": "customJS",
+          "type": "string",
+          "description": "Custom JavaScript code to be executed after the heat map is loaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the styles of the iframe containing the heat map.",
+        "Modifies the styles of the embedded map and wrapper elements.",
+        "Sets UTIL.embedLoaded to true if it was previously false.",
+        "Calls loadLocalModeCHM(false) to load the heat map.",
+        "Executes custom JavaScript code if provided."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showEmbedded",
+      "namespace": "None",
+      "signature": "showEmbedded(baseDiv, iframeStyle, customJS)",
+      "description": "This function displays the embedded heat map when the user clicks on the embedded map image. It adjusts the styles of various elements to show the heat map and optionally loads custom JavaScript.",
+      "parameters": [
+        {
+          "name": "baseDiv",
+          "type": "HTMLElement",
+          "description": "The base div element where the embedded heat map is located."
+        },
+        {
+          "name": "iframeStyle",
+          "type": "String",
+          "description": "The style to be applied to the iframe element containing the heat map."
+        },
+        {
+          "name": "customJS",
+          "type": "String",
+          "description": "Custom JavaScript code to be executed after the heat map is displayed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the styles of various elements to display the embedded heat map.",
+        "Sets UTIL.embedLoaded to true if it was false.",
+        "Calls loadLocalModeCHM(false).",
+        "Executes custom JavaScript if provided."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showTutorialVideos",
+      "namespace": "None",
+      "signature": "function showTutorialVideos()",
+      "description": "Displays a message box containing a YouTube playlist of tutorial videos for NG-CHM.",
+      "parameters": [],
+      "called_urls": [
+        "https://www.youtube.com/embed/videoseries?list=PLIBaINv-Qmd05G3Kj7SbBbSAPZrG-H5bq"
+      ],
+      "side_effects": [
+        "Creates and displays a new message box with a YouTube playlist.",
+        "Modifies the innerHTML of the message box to include the YouTube playlist."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "widgetHelp",
+      "namespace": "UIMGR",
+      "signature": "UIMGR.widgetHelp()",
+      "description": "This function displays a help popup box for the widgetized version of the NG-CHM embedded viewer. It provides information about the NG-CHM Heat Map Viewer, including links to additional resources, version information, and citation details. It also sets up various buttons for additional functionalities like showing tutorial videos, taking a tour, downloading the viewer, displaying keyboard controls, and showing plugins.",
+      "parameters": [],
+      "called_urls": [
+        "https://bioinformatics.mdanderson.org/public-software/ngchm/",
+        "https://www.ngchm.net",
+        "https://bioinformatics.mdanderson.org/public-software/ngchm/#video-tutorials",
+        "https://doi.org/10.12688/f1000research.20590.2"
+      ],
+      "side_effects": [
+        "Modifies the display style of the 'aboutLogos' element if it exists.",
+        "Initializes and sets up the message box with various elements and buttons."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addLink",
+      "namespace": "None",
+      "signature": "addLink(links, href, text)",
+      "description": "Adds a new link to a given list element. The function creates a new list item (LI) containing an anchor (A) element with the specified href and text, and appends it to the provided links element.",
+      "parameters": [
+        {
+          "name": "links",
+          "type": "HTMLElement",
+          "description": "The parent list element to which the new link will be appended."
+        },
+        {
+          "name": "href",
+          "type": "string",
+          "description": "The URL that the new link will point to."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text content of the new link."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new list item containing a link to the provided links element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addVersion",
+      "namespace": "None",
+      "signature": "addVersion(versions, name, value)",
+      "description": "Adds a new version entry to the provided versions element. It creates a new table row (TR) with two table data (TD) cells, one for the name and one for the value, and appends this row to the versions element.",
+      "parameters": [
+        {
+          "name": "versions",
+          "type": "HTMLElement",
+          "description": "The parent element to which the new version row will be appended."
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the version to be added."
+        },
+        {
+          "name": "value",
+          "type": "String",
+          "description": "The value of the version to be added."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new row to the versions element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openHamburgerMenu",
+      "namespace": "None",
+      "signature": "function openHamburgerMenu(e)",
+      "description": "Toggles the visibility of the hamburger menu panel and adjusts its position. It also enables or disables specific menu items based on certain conditions.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the hamburger menu panel.",
+        "Adjusts the top position of the hamburger menu panel.",
+        "Enables or disables the 'Save as PDF' menu item based on PDF generation capability and dialog status.",
+        "Enables or disables the 'Save Thumbnail' menu item based on the visibility of the summary heatmap."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "saveHeatMapChanges",
+      "namespace": "None",
+      "signature": "function saveHeatMapChanges()",
+      "description": "This function handles all of the tasks necessary to display a modal window whenever the user requests to save heat map changes. It checks if there are any unapplied changes to the heat map and provides options to save these changes either to a new NG-CHM file or, if applicable, to the original heat map.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a modal window for saving heat map changes.",
+        "Modifies the DOM by adding buttons and setting text in the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addSaveToNgchmButton",
+      "namespace": "None",
+      "signature": "addSaveToNgchmButton(saveFunc)",
+      "description": "Adds a 'Save to .ngchm' button to an initialized UHM dialog. Executes saveHeatMapToNgchm when clicked by default. If saveFunc is supplied, executes that instead.",
+      "parameters": [
+        {
+          "name": "saveFunc",
+          "type": "function",
+          "description": "Optional. A custom function to execute when the button is clicked. If not provided, saveHeatMapToNgchm is executed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the UHM dialog by adding a 'Save to .ngchm' button."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "addCancelSaveButton",
+      "namespace": "None",
+      "signature": "addCancelSaveButton()",
+      "description": "Adds a 'Cancel' button to an initialized UHM dialog. Executes UHM.messageBoxCancel when clicked by default, but if a progress bar is visible, it cancels the operation and disables the button.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.cancelOperation if a progress bar is visible.",
+        "Disables the button if a progress bar is visible.",
+        "Calls UHM.messageBoxCancel if a progress bar is not visible."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "aboutButton.onclick(ev)",
+      "description": "Handles the click event for the aboutButton element. It triggers the widgetHelp function from the UIMGR namespace and stops the event from propagating further.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object associated with the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UIMGR.widgetHelp()",
+        "Stops the event from propagating further"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "hamburgerButton.onclick(ev)",
+      "description": "Handles the click event on the hamburger button, opening the hamburger menu and stopping the event from propagating further.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object associated with the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the openHamburgerMenu function with the event target.",
+        "Stops the propagation of the click event."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openLinkoutHelp",
+      "namespace": "None",
+      "signature": "function openLinkoutHelp()",
+      "defined_section": "LINKOUT HELP MENU ITEM FUNCTIONS",
+      "description": "The purpose of this function is to construct HTML tables for plugins associated with the current heat map and plugins installed for the NG-CHM instance. It then calls the logic to display the linkout help box.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.closeMenu() to close the current menu.",
+        "Calls openMapLinkoutsHelp() to get the map links table.",
+        "Calls openAllLinkoutsHelp() to get the all links table.",
+        "Calls linkoutHelp(mapLinksTbl, allLinksTbl) to display the linkout help box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openMapLinkoutsHelp",
+      "namespace": "None",
+      "signature": "function openMapLinkoutsHelp()",
+      "description": "Constructs an HTML table containing all linkout plugins applicable to a particular heat map and returns the table. The table is then passed on to a linkout popup help window.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLTableElement",
+        "description": "An HTML table element containing rows of linkout plugins and their details."
+      }
+    },
+    {
+      "name": "openAllLinkoutsHelp",
+      "namespace": "None",
+      "signature": "function openAllLinkoutsHelp()",
+      "description": "Constructs an HTML table containing all installed linkout plugins for the NG-CHM instance and returns the table element.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLTableElement",
+        "description": "An HTML table element containing the linkout plugins' information."
+      }
+    },
+    {
+      "name": "isPluginFound",
+      "namespace": "None",
+      "signature": "isPluginFound(plugin, labels)",
+      "description": "The purpose of this function is to check if a given plugin is applicable for the current map based on the label types. It evaluates row or column label types to determine the applicability.",
+      "parameters": [
+        {
+          "name": "plugin",
+          "type": "object",
+          "description": "The plugin object to be checked for applicability."
+        },
+        {
+          "name": "labels",
+          "type": "array",
+          "description": "An array of label types to be checked against the plugin."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the plugin is found to be applicable based on the label types, otherwise false."
+      }
+    },
+    {
+      "name": "isPluginMatrix",
+      "namespace": "None",
+      "signature": "isPluginMatrix(plugin)",
+      "description": "Determines whether a given plugin is also a Matrix plugin by checking if any of the plugin's linkouts match the titles in the Matrix linkouts.",
+      "parameters": [
+        {
+          "name": "plugin",
+          "type": "object",
+          "description": "The plugin object to be checked, which contains an array of linkouts."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the plugin is a Matrix plugin, otherwise returns false."
+      }
+    },
+    {
+      "name": "linkoutHelp",
+      "namespace": "None",
+      "signature": "linkoutHelp(mapLinksTbl, allLinksTbl)",
+      "description": "The purpose of this function is to load and make visible the linkout help popup window. It manipulates the DOM to display the provided tables within a styled popup and ensures the popup is correctly positioned and sized.",
+      "parameters": [
+        {
+          "name": "mapLinksTbl",
+          "type": "HTMLTableElement",
+          "description": "The table element containing the map links to be displayed in the popup."
+        },
+        {
+          "name": "allLinksTbl",
+          "type": "HTMLTableElement",
+          "description": "The table element containing all links to be displayed in the popup."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Hides the loader using UTIL.hideLoader(true).",
+        "Modifies the DOM elements to display the popup and its contents.",
+        "Attaches an event handler to the close button of the popup.",
+        "Calls linkBoxSizing() to adjust the size of the popup.",
+        "Shows a specific tab using UTIL.showTab(\"mapLinks_btn\")."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "linkBoxCancel",
+      "namespace": "None",
+      "signature": "function linkBoxCancel()",
+      "description": "The purpose of this function is to hide the linkout help popup window by adding a 'hide' class to the element with the ID 'linkBox'.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Adds the 'hide' class to the element with the ID 'linkBox'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "linkBoxSizing",
+      "namespace": "None",
+      "signature": "function linkBoxSizing()",
+      "description": "The purpose of this function is to size the height of the linkout help popup window depending on the number of plugins to be listed. It adjusts the height of various elements within the container based on the presence and number of plugins.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the height of the element with id 'linkBox'.",
+        "Modifies the height of the element with id 'linkBoxTxt'.",
+        "Modifies the height of the element with id 'linkBoxAllTxt'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Sets an onclick event handler for the element with the ID 'mapLinks_btn' to show a specific tab when the button is clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the onclick event handler for the element with ID 'mapLinks_btn'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Sets up an event listener for the 'allLinks_btn' button that triggers the UTIL.showTab function when clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the onclick event handler for the element with ID 'allLinks_btn'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Sets the onclick event handler for the element with the ID 'linkBoxFootCloseButton' to call the 'linkBoxCancel' function when clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the onclick event handler for the element with the ID 'linkBoxFootCloseButton'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick(ev)",
+      "description": "Sets the onclick event handler for the element with the ID 'aboutButton' to invoke the UIMGR.widgetHelp function.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object associated with the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the onclick event handler for the element with the ID 'aboutButton'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Sets an onclick event handler for the element with the ID 'menuSave' to trigger the saveHeatMapChanges function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the onclick event handler of the element with ID 'menuSave'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Sets the onclick event handler for the element with the ID 'menuFileOpen' to call the openFileToggle function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the onclick event handler of the element with ID 'menuFileOpen'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSelectedDendrogram",
+      "namespace": "None",
+      "signature": "clearSelectedDendrogram(mapItem)",
+      "description": "Clears the selected dendrogram region for the given map item if it is currently selected as a dendrogram. If the map item is the primary map, it also clears the selected region in the corresponding dendrogram (row or column) and shows a restore message.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object which may have a selected dendrogram region."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the selectedIsDendrogram property of mapItem.",
+        "Calls clearSelectedRegion on the corresponding dendrogram.",
+        "Displays a restore dendrogram message."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showRestoreDendrogramMessage",
+      "namespace": "None",
+      "signature": "showRestoreDendrogramMessage(mapItem)",
+      "description": "Displays a message box informing the user that the dendrogram selection was lost due to keyboard movement of the focus region. Provides an option to undo the movement and restore the dendrogram selection.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, including its mode, selected start, and selected stop positions."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a message box to the user.",
+        "Modifies the selected state of the mapItem object if the undo option is chosen.",
+        "Calls DET.callDetailDrawFunction to redraw details based on the restored selection.",
+        "Potentially modifies the ribbon mode bar of the dendrogram if the mapItem is the primary map."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "initializeKeyNavigation",
+      "namespace": "None",
+      "signature": "initializeKeyNavigation()",
+      "description": "Initializes key navigation by mapping various keyboard actions to specific functions that handle user key press events at the document level.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Registers event listeners for keydown events on the document or a specific element.",
+        "Modifies the state of the mapItem object based on key actions.",
+        "Calls various functions to update the UI and handle key actions."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "keyNavigate",
+      "namespace": "None",
+      "signature": "keyNavigate(e)",
+      "description": "Handles key press events for specific input elements and performs corresponding actions based on the key pressed and the target element.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object representing the key press event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls SRCH.detailSearch() when Enter key is pressed in the search_text input.",
+        "Dispatches a change event when Enter key is pressed in the pdfCustomResolution input.",
+        "Calls UHM.hlpC() to perform a help context action.",
+        "Calls various functions from the action object based on the key pressed.",
+        "Updates the primary detail view if the action requires it."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dvAction",
+      "namespace": "None",
+      "signature": "dvAction(name, help, fn)",
+      "description": "Helper function for creating an action that needs a detail view. It registers an action with a specified name, help text, and function, indicating that the action requires a detail view.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the action to be registered."
+        },
+        {
+          "name": "help",
+          "type": "String",
+          "description": "A help text describing the action."
+        },
+        {
+          "name": "fn",
+          "type": "Function",
+          "description": "The function to be executed for the action."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Registers a new action in the global 'actions' map with the specified name, help text, and function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "stdAction",
+      "namespace": "None",
+      "signature": "stdAction(name, help, fn)",
+      "description": "Helper function for creating an action that does not need a detail view. It registers an action with a given name, help description, and function to be executed.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the action to be registered."
+        },
+        {
+          "name": "help",
+          "type": "String",
+          "description": "A description of the action, providing help or guidance."
+        },
+        {
+          "name": "fn",
+          "type": "Function",
+          "description": "The function to be executed when the action is triggered."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Registers a new action in the global 'actions' object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "fullKey",
+      "namespace": "None",
+      "signature": "fullKey(e)",
+      "description": "Helper function for returning a key name with leading modifier key names. It constructs a string representing the key pressed along with any modifier keys (Ctrl, Alt, Shift, Meta) that were held down.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "KeyboardEvent",
+          "description": "The keyboard event object containing information about the key press and modifier keys."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "A string representing the key pressed, prefixed with any modifier keys that were held down (e.g., 'ctrl-alt-shift-a')."
+      }
+    },
+    {
+      "name": "showKeysDialog",
+      "namespace": "None",
+      "signature": "showKeysDialog()",
+      "description": "Displays a dialog box that lists key actions and their descriptions. It creates a message box with a table containing key-action mappings and their descriptions, and provides a close button to dismiss the dialog.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Creates and displays a new message box with key actions and descriptions."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

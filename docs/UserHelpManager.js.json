@@ -1,0 +1,1088 @@
+{
+  "filename": "UserHelpManager.js",
+  "namespace": "NgChm.UHM",
+  "description": [
+    "The UserHelpManager module handles the processing for user help popup windows for the detail canvas and the detail canvas buttons. It provides functionalities to display various types of messages, warnings, and tooltips to the user, as well as managing the display and interaction of these elements within the NGCHM application."
+  ],
+  "declares_functions_in": [
+    "UHM"
+  ],
+  "interacts_with": [
+    "NgChm.UTIL"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "UHM.myNonce",
+      "description": "Shared secret for vetting message sender."
+    },
+    {
+      "name": "UHM.postID",
+      "description": "Unique ID to be returned with data point messages."
+    },
+    {
+      "name": "UHM.postMapDetails",
+      "description": "Flag indicating whether to post map details to an enclosing document."
+    },
+    {
+      "name": "UHM.postMapToWhom",
+      "description": "Identity of the window to post map details to."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "uiElement.onclick()",
+      "description": "This function sets an onclick event handler for the uiElement that triggers the display of startup warnings using the UHM.displayStartupWarnings method.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "click",
+      "namespace": "None",
+      "signature": "click(ev)",
+      "description": "Handles click events by clearing tooltips, closing menus, and removing elements with the 'remove-on-click' class.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object associated with the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears any pending tooltips.",
+        "Closes any open menus.",
+        "Removes elements with the 'remove-on-click' class from the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "mouseout",
+      "namespace": "None",
+      "signature": "mouseout(ev)",
+      "description": "Handles the mouseout event by finding the major node of the event target and removing the 'hovering' dataset attribute from it.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object associated with the mouseout event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the 'hovering' dataset attribute from the major node of the event target."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "mouseover",
+      "namespace": "None",
+      "signature": "mouseover(ev)",
+      "description": "Handles the mouseover event by displaying a tooltip with additional information if available.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object associated with the mouseover event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the dataset of the target element by adding a 'hovering' attribute.",
+        "Calls the UHM.hlp function to display a tooltip."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "findMajorNode",
+      "namespace": "None",
+      "signature": "findMajorNode(el)",
+      "description": "This function traverses up the DOM tree starting from the given element and returns the first ancestor element that is either a button or has a 'tooltip' or 'title' data attribute. If no such element is found, it returns the original element.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The starting element from which the DOM traversal begins."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The first ancestor element that is a button or has a 'tooltip' or 'title' data attribute, or the original element if no such ancestor is found."
+      }
+    },
+    {
+      "name": "processMessage",
+      "namespace": "UHM",
+      "signature": "UHM.processMessage(e)",
+      "description": "This function processes messages received by the NgChm, typically when it is included in an iFrame. It ensures that messages are from a trusted source by verifying a nonce and customizes behavior based on the message content.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The message event containing data and origin information."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets UHM.myNonce if it is empty by retrieving the 'nonce' URL parameter.",
+        "Sets UHM.postMapDetails to true if the message includes override: 'ShowMapDetail'.",
+        "Sets UHM.postMapToWhom to the origin of the message if the message includes override: 'ShowMapDetail'.",
+        "Sets UHM.postID to the ngchm_id from the message data if provided."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "formatMapDetails",
+      "namespace": "UHM",
+      "signature": "UHM.formatMapDetails(helpContents, pixelInfo)",
+      "description": "Formats the pixel information for display in the helpContents table. It adds rows to the table with details about the pixel value, row label, column label, and any associated row and column covariates.",
+      "parameters": [
+        {
+          "name": "helpContents",
+          "type": "HTMLTableElement",
+          "description": "The table element where the pixel information will be displayed."
+        },
+        {
+          "name": "pixelInfo",
+          "type": "PixelInfo",
+          "description": "An object containing details about the pixel, including value, row label, column label, and any row and column covariates."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the helpContents table by adding rows with pixel information."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "pasteHelpContents",
+      "namespace": "None",
+      "signature": "pasteHelpContents()",
+      "description": "This function opens a new browser window and pastes the contents of the user help panel into the window, converting line breaks to HTML <br> tags.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Opens a new browser window",
+        "Writes the contents of the 'helpTable' element into the new window"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "hlp",
+      "namespace": "UHM",
+      "signature": "UHM.hlp(element, text, width, reverse, delay = 500)",
+      "description": "Generates a pop-up help panel (tooltip) for the specified user interface element. The tooltip displays a title and text, which can be sourced from the element's dataset properties or provided parameters. The tooltip appears after a specified delay and can be positioned differently based on the reverse parameter.",
+      "parameters": [
+        {
+          "name": "element",
+          "type": "HTMLElement",
+          "description": "The DOM element for which the tooltip is generated."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text to display in the tooltip if the element's dataset intro property is not available."
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "The width in pixels to position the tooltip to the left if reverse is specified."
+        },
+        {
+          "name": "reverse",
+          "type": "boolean",
+          "description": "If true, positions the tooltip width pixels to the left of the default position."
+        },
+        {
+          "name": "delay",
+          "type": "number",
+          "description": "The delay in milliseconds before the tooltip appears. Defaults to 500 milliseconds."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable popupTimeoutElement.",
+        "Modifies the global variable popupTimeoutId.",
+        "Appends a tooltip element to the body of the document."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "getElemPosition",
+      "namespace": "UHM",
+      "signature": "UHM.getElemPosition(el)",
+      "description": "This function calculates the position of a given HTML element on the entire screen, taking into account its offset and scroll positions. The position returned is relative to the entire document body, allowing for accurate placement of elements such as help text bubbles.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The HTML element whose position is to be calculated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the top and left positions of the element relative to the entire document body."
+      }
+    },
+    {
+      "name": "hlpC",
+      "namespace": "UHM",
+      "signature": "UHM.hlpC()",
+      "description": "This function clears any bubble help box displayed on the screen by removing the relevant HTML element and clearing any associated timeout.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Clears the popupTimeoutId timeout if it is set.",
+        "Sets popupTimeoutId and popupTimeoutElement to null.",
+        "Removes the HTML element with id 'bubbleHelp' or 'helptext' if it exists."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getDivElement",
+      "namespace": "UHM",
+      "signature": "UHM.getDivElement(elemName)",
+      "description": "Creates and returns a DIV HTML element configured for a help pop-up panel.",
+      "parameters": [
+        {
+          "name": "elemName",
+          "type": "String",
+          "description": "The ID to be assigned to the created DIV element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A DIV element with the specified ID, a background color of #CBDBF6, and display set to none."
+      }
+    },
+    {
+      "name": "setTableRow",
+      "namespace": "UHM",
+      "signature": "UHM.setTableRow(tableObj, tdArray, colSpan, align)",
+      "description": "The purpose of this function is to set a row into a help or configuration HTML TABLE item for a given help pop-up panel. It receives text for the header column, detail column, and the number of columns to span as inputs.",
+      "parameters": [
+        {
+          "name": "tableObj",
+          "type": "HTMLTableElement",
+          "description": "The HTML table element where the row will be inserted."
+        },
+        {
+          "name": "tdArray",
+          "type": "Array",
+          "description": "An array containing the content for each cell in the row. The content can be a string, number, or an HTML element."
+        },
+        {
+          "name": "colSpan",
+          "type": "number",
+          "description": "The number of columns the cell should span. This parameter is optional."
+        },
+        {
+          "name": "align",
+          "type": "string",
+          "description": "The alignment of the cell content. This parameter is optional."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Inserts a new row into the specified HTML table.",
+        "Modifies the class name of the inserted row.",
+        "Sets the colSpan and alignment of the cells if specified.",
+        "Sets the font weight of the first cell to bold."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setTableRowX",
+      "namespace": "UHM",
+      "signature": "UHM.setTableRowX(tableObj, tdArray, rowClasses, tdProps)",
+      "description": "eXperimental/eXtended version of setTableRow. Configures an HTML table row with specified cell data, row classes, and cell properties for a given help pop-up panel.",
+      "parameters": [
+        {
+          "name": "tableObj",
+          "type": "HTMLTableElement",
+          "description": "The table element to which the row will be added."
+        },
+        {
+          "name": "tdArray",
+          "type": "Array",
+          "description": "An array containing the data for each cell in the row. Can be strings, numbers, arrays, or DOM elements."
+        },
+        {
+          "name": "rowClasses",
+          "type": "Array",
+          "description": "An array of class names to be added to the row."
+        },
+        {
+          "name": "tdProps",
+          "type": "Array",
+          "description": "An array of objects specifying properties for each cell. Each object can contain properties like 'style', 'classList', 'dataset', etc."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding a new row to the specified table.",
+        "Adds specified classes to the row and cells.",
+        "Sets properties and content for each cell based on provided data and properties."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "formatBlankRow",
+      "namespace": "UHM",
+      "signature": "UHM.formatBlankRow()",
+      "description": "The purpose of this function is to return the HTML text for a blank row.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "HTML string representing a blank table row with a specific style."
+      }
+    },
+    {
+      "name": "addBlankRow",
+      "namespace": "UHM",
+      "signature": "UHM.addBlankRow(addDiv, rowCnt)",
+      "description": "This function adds one or more blank rows to a given table element. It uses the UHM.formatBlankRow function to generate the HTML for each blank row.",
+      "parameters": [
+        {
+          "name": "addDiv",
+          "type": "HTMLTableElement",
+          "description": "The table element to which the blank rows will be added."
+        },
+        {
+          "name": "rowCnt",
+          "type": "number",
+          "description": "The number of blank rows to add. If undefined, only one blank row will be added."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of the rows in the provided table element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "hamburgerLinkMissing",
+      "namespace": "UHM",
+      "signature": "UHM.hamburgerLinkMissing()",
+      "description": "This function handles all of the tasks necessary to display a modal window whenever a user clicks on a hamburger menu link that has not had its callback destination defined.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "systemMessage",
+      "namespace": "UHM",
+      "signature": "UHM.systemMessage(header, message)",
+      "description": "This function handles all of the tasks necessary to display a modal window whenever a given notification condition occurs. It initializes the message box, sets the header and message text, configures the cancel button, and displays the message box.",
+      "parameters": [
+        {
+          "name": "header",
+          "type": "String",
+          "description": "The header text to be displayed in the message box."
+        },
+        {
+          "name": "message",
+          "type": "String",
+          "description": "The message text to be displayed in the message box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes the message box.",
+        "Sets the header and message text in the message box.",
+        "Configures the cancel button in the message box.",
+        "Displays the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "noWebGlContext",
+      "namespace": "UHM",
+      "signature": "UHM.noWebGlContext(isDisabled)",
+      "description": "This function displays an error message when no WebGL context is available or enabled on the user's machine. It initializes a message box, sets the header and text based on whether WebGL is disabled or not, and provides a cancel button for the user to dismiss the message.",
+      "parameters": [
+        {
+          "name": "isDisabled",
+          "type": "boolean",
+          "description": "Indicates whether WebGL is available but disabled (true) or not available at all (false)."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes and displays a message box with an error message.",
+        "Sets the header and text of the message box.",
+        "Adds a cancel button to the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "mapNotFound",
+      "namespace": "UHM",
+      "signature": "UHM.mapNotFound(heatMapName)",
+      "description": "This function displays an error message when a requested Heat Map cannot be found or if there is an issue with connectivity to the Heat Map repository.",
+      "parameters": [
+        {
+          "name": "heatMapName",
+          "type": "string",
+          "description": "The name of the Heat Map that could not be found."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Hides the loader.",
+        "Initializes the message box.",
+        "Sets the message box header to 'Requested Heat Map Not Found'.",
+        "Sets the message box text to inform the user that the Heat Map cannot be found or there is a connectivity issue.",
+        "Sets a cancel button in the message box.",
+        "Displays the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "mapLoadError",
+      "namespace": "UHM",
+      "signature": "UHM.mapLoadError(heatMapName, details)",
+      "description": "This function displays an error message when a heat map file cannot be loaded. It hides the loader, initializes the message box, sets the message box header and text with the provided heat map name and details, sets a cancel button, and displays the message box.",
+      "parameters": [
+        {
+          "name": "heatMapName",
+          "type": "string",
+          "description": "The name of the heat map that failed to load."
+        },
+        {
+          "name": "details",
+          "type": "string",
+          "description": "Details about why the heat map could not be loaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Hides the loader.",
+        "Initializes the message box.",
+        "Sets the message box header and text.",
+        "Sets a cancel button in the message box.",
+        "Displays the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "linkoutError",
+      "namespace": "UHM",
+      "signature": "UHM.linkoutError(msgText)",
+      "description": "This function displays a linkout error message in a message box with a specified text.",
+      "parameters": [
+        {
+          "name": "msgText",
+          "type": "string",
+          "description": "The error message text to be displayed in the message box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes the message box.",
+        "Sets the header of the message box to 'Heat Map Linkout'.",
+        "Sets the text of the message box to the provided error message.",
+        "Adds a 'Cancel' button to the message box.",
+        "Displays the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "invalidFileFormat",
+      "namespace": "UHM",
+      "signature": "UHM.invalidFileFormat()",
+      "description": "This function displays an error message when the user selects a file that is not an NG-CHM file. It initializes a message box, sets the header and text for the error message, configures a cancel button, and then displays the message box.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes and displays a message box with an error message.",
+        "Sets the header and text of the message box.",
+        "Configures a cancel button for the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "initMessageBox",
+      "namespace": "UHM",
+      "signature": "UHM.initMessageBox()",
+      "defined_section": "FUNCTIONS - MESSAGE BOX FUNCTIONS",
+      "description": "Initializes and hides the message box panel. This function resets the message box by removing all its classes, hiding it, and clearing any buttons within it.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Hides the message box by setting its display style to 'none'.",
+        "Removes all classes from the message box.",
+        "Clears all buttons within the message box.",
+        "Hides the 'messageOpen_btn' button."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The initialized and hidden message box element."
+      }
+    },
+    {
+      "name": "messageBoxIsVisible",
+      "namespace": "UHM",
+      "signature": "UHM.messageBoxIsVisible()",
+      "description": "Checks if the message box element with the ID 'msgBox' is currently visible on the webpage.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the message box is visible (i.e., its display style is not 'none'), otherwise returns false."
+      }
+    },
+    {
+      "name": "setMessageBoxHeader",
+      "namespace": "UHM",
+      "signature": "UHM.setMessageBoxHeader(headerText)",
+      "description": "Sets the header text of the message box and adds a close button.",
+      "parameters": [
+        {
+          "name": "headerText",
+          "type": "String",
+          "description": "The text to be set as the header of the message box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of the element with id 'msgBoxHdr'.",
+        "Removes any existing element with class 'closeX' within the 'msgBoxHdr' element.",
+        "Appends a new close button created by UHM.createCloseX to the 'msgBoxHdr' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getMessageTextBox",
+      "namespace": "UHM",
+      "signature": "UHM.getMessageTextBox()",
+      "description": "Retrieves the HTML element with the ID 'msgBoxTxt' from the document.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The HTML element with the ID 'msgBoxTxt'."
+      }
+    },
+    {
+      "name": "setMessageBoxText",
+      "namespace": "UHM",
+      "signature": "UHM.setMessageBoxText(text)",
+      "description": "Sets the inner HTML of the message box element with the provided text.",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "String",
+          "description": "The text to be displayed inside the message box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the inner HTML of the element with id 'msgBoxTxt'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "displayMessageBox",
+      "namespace": "UHM",
+      "signature": "UHM.displayMessageBox()",
+      "description": "Displays a message box by setting its display style to visible and positioning it at the center of the screen horizontally and just below the header panel vertically.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the element with id 'msgBox'.",
+        "Positions the 'msgBox' element horizontally centered and vertically below the 'mdaServiceHeader' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setMessageBoxButton",
+      "namespace": "UHM",
+      "signature": "UHM.setMessageBoxButton(buttonId, buttonSpec, altText, onClick)",
+      "description": "Adds a button to the message box with specified properties and behavior.",
+      "parameters": [
+        {
+          "name": "buttonId",
+          "type": "string",
+          "description": "An ID specific to this button within the message box."
+        },
+        {
+          "name": "buttonSpec",
+          "type": "object",
+          "description": "Describes the button to insert. Can be a string (deprecated) or an object with fields: type, src, alt, text, tooltip, disableOnClick, disabled, disabledReason, default."
+        },
+        {
+          "name": "altText",
+          "type": "string",
+          "description": "Deprecated. Added to 'alt' attribute of img buttons. Superseded by alt field in buttonSpec."
+        },
+        {
+          "name": "onClick",
+          "type": "function",
+          "description": "Function called when the user clicks on the button. Defaults to UHM.messageBoxCancel."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding a button to the message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "addMsgBoxButton",
+      "namespace": "None",
+      "signature": "addMsgBoxButton(msgBox, buttonId, buttonSpec, altText, onClick)",
+      "description": "Adds a button to a message box with specified properties and behavior. The button can be an image or text, and can have various attributes such as default, disabled, and tooltip. The function also handles the button's click event, either with a provided callback or default behavior.",
+      "parameters": [
+        {
+          "name": "msgBox",
+          "type": "HTMLElement",
+          "description": "The message box element to which the button will be added."
+        },
+        {
+          "name": "buttonId",
+          "type": "String",
+          "description": "The unique identifier for the button."
+        },
+        {
+          "name": "buttonSpec",
+          "type": "Object",
+          "description": "Specifications for the button, including type (image or text), source, text, default status, disabled status, disabled reason, and tooltip."
+        },
+        {
+          "name": "altText",
+          "type": "String",
+          "description": "Alternative text for the button image. If a function is passed, it will be used as the onClick handler and altText will be set to a default value."
+        },
+        {
+          "name": "onClick",
+          "type": "Function",
+          "description": "Callback function to be executed when the button is clicked. If not provided, a default behavior will be applied."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding a new button to the message box.",
+        "May disable the button if specified in buttonSpec.",
+        "Sets tooltips and other data attributes on the button."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "newButton.onclick()",
+      "description": "Handles the click event for the newButton element. Depending on the state of the msgBox element, it either closes the original message box or removes a new message box from the document body.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.messageBoxCancel() to close the original message box.",
+        "Removes the msgBox element from the document body if it is not the original message box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "newButton.onclick(ev)",
+      "description": "Handles the click event for the newButton element. If the buttonSpec.disableOnClick is true, it disables the button upon clicking. Then, it calls the onClick function with newButton as an argument.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object associated with the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Disables the newButton element if buttonSpec.disableOnClick is true.",
+        "Calls the onClick function with newButton as an argument."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showMsgBoxProgressBar",
+      "namespace": "None",
+      "signature": "showMsgBoxProgressBar()",
+      "description": "Displays the progress bar in the message box and initializes its value to 0. Typically called by a long-running button event handler.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the element with id 'msgBoxProgressDiv'.",
+        "Sets the value of the element with id 'msgBoxProgressBar' to 0."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "hideMsgBoxProgressBar",
+      "namespace": "None",
+      "signature": "hideMsgBoxProgressBar()",
+      "description": "Hides the message box progress bar by setting its display style to 'none'. This function is usually called automatically when the message box is cancelled, so explicit calls to this function are generally unnecessary.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the HTML element with the ID 'msgBoxProgressDiv'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "isProgressBarVisible",
+      "namespace": "UHM",
+      "signature": "UHM.isProgressBarVisible()",
+      "description": "Checks if the progress bar is currently visible on the webpage.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the progress bar is visible, otherwise false."
+      }
+    },
+    {
+      "name": "msgBoxProgressMeter",
+      "namespace": "None",
+      "signature": "msgBoxProgressMeter(value)",
+      "description": "Updates the value of a message box progress bar and checks if the progress has been cancelled.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "number",
+          "description": "A number between 0 (not started) and 1 (finished) representing the progress."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the value of the HTML element with id 'msgBoxProgressBar'."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the progress has not been cancelled, otherwise returns false."
+      }
+    },
+    {
+      "name": "cancelOperation",
+      "namespace": "UHM",
+      "signature": "UHM.cancelOperation()",
+      "description": "Cancels an ongoing operation by updating the progress bar and progress div elements in the DOM.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the 'cancelled' data attribute of the element with ID 'msgBoxProgressBar' to 'true'.",
+        "Changes the opacity of the element with ID 'msgBoxProgressDiv' to 0.5."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "messageBoxCancel",
+      "namespace": "UHM",
+      "signature": "UHM.messageBoxCancel()",
+      "description": "This function initializes the message box by calling the initMessageBox function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "newMessageBox",
+      "namespace": "UHM",
+      "signature": "UHM.newMessageBox(name)",
+      "description": "Creates a new message box dynamically that can co-exist alongside other message boxes with different 'names'. If a message box with the given name already exists, it returns the existing message box.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "str",
+          "description": "The unique name identifier for the message box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new message box element to the document body.",
+        "Applies drag functionality to the new message box using UTIL.dragElement."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The newly created message box element or the existing one if it already exists."
+      }
+    },
+    {
+      "name": "setNewMessageBoxHeader",
+      "namespace": "UHM",
+      "signature": "UHM.setNewMessageBoxHeader(msgBox, headerText)",
+      "description": "Sets the header text of a new message box and adds a close button to it.",
+      "parameters": [
+        {
+          "name": "msgBox",
+          "type": "HTMLElement",
+          "description": "The message box element whose header is to be set."
+        },
+        {
+          "name": "headerText",
+          "type": "String",
+          "description": "The text to set as the header of the message box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of the header element within the message box.",
+        "Removes any existing close button within the header element.",
+        "Appends a new close button to the header element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getNewMessageTextBox",
+      "namespace": "UHM",
+      "signature": "UHM.getNewMessageTextBox(msgBox)",
+      "description": "Retrieves the text box element from a given message box element.",
+      "parameters": [
+        {
+          "name": "msgBox",
+          "type": "HTMLElement",
+          "description": "The message box element from which to retrieve the text box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The text box element within the provided message box."
+      }
+    },
+    {
+      "name": "setNewMessageBoxButton",
+      "namespace": "UHM",
+      "signature": "UHM.setNewMessageBoxButton(msgBox, buttonId, buttonSpec, onClick)",
+      "description": "Adds a button to a new message box. If no onClick handler is provided, a default handler that closes the message box is used.",
+      "parameters": [
+        {
+          "name": "msgBox",
+          "type": "MessageBox",
+          "description": "The message box to which the button will be added."
+        },
+        {
+          "name": "buttonId",
+          "type": "String",
+          "description": "The unique identifier for the button."
+        },
+        {
+          "name": "buttonSpec",
+          "type": "Object",
+          "description": "Specifications for the button, such as label and style."
+        },
+        {
+          "name": "onClick",
+          "type": "Function",
+          "description": "The function to be executed when the button is clicked. If not provided, a default function that closes the message box is used."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "displayNewMessageBox",
+      "namespace": "UHM",
+      "signature": "UHM.displayNewMessageBox(msgBox)",
+      "description": "Displays a new message box by removing the 'hide' class from the provided message box element.",
+      "parameters": [
+        {
+          "name": "msgBox",
+          "type": "HTMLElement",
+          "description": "The message box element to be displayed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the class list of the msgBox element by removing the 'hide' class."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "closeNewMessageBox",
+      "namespace": "UHM",
+      "signature": "UHM.closeNewMessageBox(msgBox)",
+      "description": "Closes and removes a new message box from the document body.",
+      "parameters": [
+        {
+          "name": "msgBox",
+          "type": "HTMLElement",
+          "description": "The message box element to be removed from the document body."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the msgBox element from the document body."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "closeMenu",
+      "namespace": "UHM",
+      "signature": "UHM.closeMenu()",
+      "description": "Closes the burger menu panel if the bar menu button is not being hovered over.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the element with id 'burgerMenuPanel'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "displayStartupWarnings",
+      "namespace": "UHM",
+      "signature": "UHM.displayStartupWarnings()",
+      "description": "Displays startup warnings in a popup box when the user opens a heat map. It checks for browser compatibility and font size settings, and displays appropriate warnings if necessary.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a message box with warnings.",
+        "Modifies the message box header and text.",
+        "Sets the message box button."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createCloseX",
+      "namespace": "UHM",
+      "signature": "UHM.createCloseX(closeFunction)",
+      "description": "Creates a span element containing an 'X' button that can be used to close a dialog. The button's click event is tied to the provided closeFunction.",
+      "parameters": [
+        {
+          "name": "closeFunction",
+          "type": "function",
+          "description": "The function to be executed when the 'X' button is clicked."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A span element containing the 'X' button."
+      }
+    }
+  ]
+}

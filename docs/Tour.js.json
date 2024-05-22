@@ -1,0 +1,158 @@
+{
+  "filename": "Tour.js",
+  "namespace": "NgChm.TOUR",
+  "description": [
+    "This module provides functionality for creating and displaying interactive tours of the NG-CHM viewer interface. It highlights and describes the major features of the viewer, including both fixed and dynamic elements based on the current display."
+  ],
+  "declares_functions_in": [
+    "showTour",
+    "isVisible",
+    "addTourOfSummaryNGCHM",
+    "addTourOfDetailNGCHM",
+    "addTourOfPanelControls",
+    "btn.onclick"
+  ],
+  "interacts_with": [
+    "NgChm.DVW"
+  ],
+  "classes": [],
+  "member_variables": [],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "showTour",
+      "namespace": "None",
+      "signature": "showTour(loc)",
+      "description": "This function initializes and starts an interactive tour using the introJs library. It highlights and describes the major features of the NG-CHM viewer or a specific panel if a location object is provided.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An optional object representing a specific panel location. If provided, the tour will focus on this panel."
+        }
+      ],
+      "called_urls": [
+        "https://www.youtube.com/channel/UCADGir2q8IaI9cGQuzjSL9w/playlists",
+        "https://www.youtube.com/playlist?list=PLIBaINv-Qmd05G3Kj7SbBbSAPZrG-H5bq"
+      ],
+      "side_effects": [
+        "Modifies the DOM to highlight and describe elements.",
+        "Starts the introJs tour."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "isVisible",
+      "namespace": "None",
+      "signature": "isVisible(el)",
+      "description": "Determines if a given HTML element is visible on the page. The function checks various properties of the element such as its height, visibility, and opacity to make this determination.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The HTML element to check for visibility."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the element is visible, otherwise false."
+      }
+    },
+    {
+      "name": "addTourOfSummaryNGCHM",
+      "namespace": "None",
+      "signature": "addTourOfSummaryNGCHM(doc, steps)",
+      "description": "Adds a step to the tour that highlights the summary view of the NGCHM (Next-Generation Clustered Heat Map) if the summary view element is present and visible.",
+      "parameters": [
+        {
+          "name": "doc",
+          "type": "Document",
+          "description": "The document object where the summary view element is located."
+        },
+        {
+          "name": "steps",
+          "type": "Array",
+          "description": "The array of steps for the tour. A new step will be added to this array if the summary view element is found and visible."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the steps array by adding a new step if the summary view element is found and visible."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addTourOfDetailNGCHM",
+      "namespace": "None",
+      "signature": "addTourOfDetailNGCHM(doc, steps)",
+      "description": "Adds steps to the tour for the detailed (zoomed) view of the primary map in the DVW object. It includes the main detail view and any additional elements with data-intro attributes.",
+      "parameters": [
+        {
+          "name": "doc",
+          "type": "Document",
+          "description": "The document object representing the DOM."
+        },
+        {
+          "name": "steps",
+          "type": "Array",
+          "description": "An array of steps to be added to the tour."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the steps array by adding new tour steps."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "addTourOfPanelControls",
+      "namespace": "None",
+      "signature": "addTourOfPanelControls(e, steps)",
+      "description": "This function adds steps to a guided tour for various panel controls in a user interface. It identifies specific elements within a panel and appends corresponding tour steps to the provided steps array.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "HTMLElement",
+          "description": "The root element of the panel containing the controls to be included in the tour."
+        },
+        {
+          "name": "steps",
+          "type": "Array",
+          "description": "An array to which the tour steps will be appended."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the steps array by appending new tour steps."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "btn.onclick()",
+      "description": "This function is an event handler for the 'click' event on the 'btn' element. When the button is clicked, it triggers the 'showTour' function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

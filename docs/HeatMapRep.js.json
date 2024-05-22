@@ -1,0 +1,42 @@
+{
+  "filename": "HeatMapRep.js",
+  "namespace": "NgChm.MAPREP",
+  "description": [
+    "This module defines the namespace and constants for the NG-CHM (Next Generation Clustered Heat Map) representation. It includes special values and supported map data summary levels used in the NG-CHM API."
+  ],
+  "declares_functions_in": [],
+  "interacts_with": [],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "MAPREP.DETAIL_LEVEL",
+      "description": "Represents the detail level in the NG-CHM representation."
+    },
+    {
+      "name": "MAPREP.RIBBON_HOR_LEVEL",
+      "description": "Represents the horizontal ribbon level in the NG-CHM representation."
+    },
+    {
+      "name": "MAPREP.RIBBON_VERT_LEVEL",
+      "description": "Represents the vertical ribbon level in the NG-CHM representation."
+    },
+    {
+      "name": "MAPREP.SUMMARY_LEVEL",
+      "description": "Represents the summary level in the NG-CHM representation."
+    },
+    {
+      "name": "MAPREP.THUMBNAIL_LEVEL",
+      "description": "Represents the thumbnail level in the NG-CHM representation."
+    },
+    {
+      "name": "MAPREP.maxValues",
+      "description": "Represents the maximum special value in the NG-CHM representation."
+    },
+    {
+      "name": "MAPREP.minValues",
+      "description": "Represents the minimum special value in the NG-CHM representation."
+    }
+  ],
+  "global_variables": [],
+  "functions": []
+}

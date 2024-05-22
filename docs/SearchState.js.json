@@ -1,0 +1,447 @@
+{
+  "filename": "SearchState.js",
+  "namespace": "NgChm.SRCHSTATE",
+  "description": [
+    "This module manages the search state within the NGCHM API. It handles the storage and retrieval of search results, current search items, discrete covariate states, and gap items for different axes. It provides functions to manipulate and query these states, ensuring that search operations and selections are maintained and can be accessed or modified as needed."
+  ],
+  "declares_functions_in": [
+    "SRCHSTATE"
+  ],
+  "interacts_with": [
+    "NgChm.MMGR"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "searchResults",
+      "description": "Maintains the database of all search results and/or manual selections on each axis."
+    },
+    {
+      "name": "currentSearchItems",
+      "description": "Contains the axis and index of the current search item for each mapItem."
+    },
+    {
+      "name": "discCovStates",
+      "description": "Stores the selected options in the select drop down for a discrete covariate for each axis."
+    },
+    {
+      "name": "gapItems",
+      "description": "Cache of which label indices are gap items, used to prevent gapItems from being selected."
+    }
+  ],
+  "global_variables": [
+    {
+      "name": "SRCHSTATE",
+      "description": "Namespace for NgChm SearchState."
+    },
+    {
+      "name": "MMGR",
+      "description": "Namespace for NgChm MMGR."
+    }
+  ],
+  "functions": [
+    {
+      "name": "getSearchSaveState",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.getSearchSaveState()",
+      "description": "Retrieves the current search state for both row and column axes, encapsulating the search results in an object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the search results for both row and column axes. The keys are 'row' and 'col', each mapping to an object with selected item indices."
+      }
+    },
+    {
+      "name": "getGapItems",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.getGapItems(axis)",
+      "description": "Retrieves gap items for a specified axis from the gapItems object. If the axis is not found, it returns null.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which to retrieve gap items."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array of gap items for the specified axis, or null if the axis is not found."
+      }
+    },
+    {
+      "name": "getDiscCovState",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.getDiscCovState(axis)",
+      "description": "Retrieves the discovery coverage state for a given axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which the discovery coverage state is to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "any",
+        "description": "The discovery coverage state associated with the specified axis."
+      }
+    },
+    {
+      "name": "getCurrentSearchItem",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.getCurrentSearchItem(mapItem)",
+      "description": "This function returns the current search item associated with the provided map item. If no search item is found, it returns an empty object.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "any",
+          "description": "The key used to retrieve the current search item from the currentSearchItems map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "The current search item associated with the provided map item, or an empty object if no such item exists."
+      }
+    },
+    {
+      "name": "getAxisSearchResults",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.getAxisSearchResults(axis)",
+      "description": "Retrieves the indices of all search results on the specified axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis on which to get search results. Can be 'Row' or 'Column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of indices representing the search results on the specified axis."
+      }
+    },
+    {
+      "name": "getSearchResults",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.getSearchResults(axis)",
+      "description": "Retrieves search results for a specified axis from the searchResults object.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which to retrieve search results."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "The search results corresponding to the specified axis."
+      }
+    },
+    {
+      "name": "labelIndexInSearch",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.labelIndexInSearch(axis, index)",
+      "description": "Returns true if the specified index is included in the search results for the given axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis in the search results to check."
+        },
+        {
+          "name": "index",
+          "type": "Number",
+          "description": "The index to check within the specified axis."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Boolean",
+        "description": "True if the index is included in the search results for the given axis, otherwise false."
+      }
+    },
+    {
+      "name": "getSearchLabelsByAxis",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.getSearchLabelsByAxis(axis, labelType)",
+      "description": "This function retrieves an array of search labels based on the specified axis and label type.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis to retrieve labels from. Possible values are 'Row', 'Column', 'ColumnCovar', 'RowCovar', or other."
+        },
+        {
+          "name": "labelType",
+          "type": "String",
+          "description": "The type of labels to retrieve. Possible values are 'VISIBLE_LABELS' or 'HIDDEN_LABELS'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of search labels based on the specified axis and label type."
+      }
+    },
+    {
+      "name": "clearAllSearchResults",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.clearAllSearchResults()",
+      "description": "Clears all search results and resets the search state. This function resets various search-related objects and variables to their initial states.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Resets searchResults['Row'], searchResults['Column'], searchResults['RowCovar'], and searchResults['ColumnCovar'] to empty objects.",
+        "Initializes currentSearchItems to a new WeakMap.",
+        "Resets discCovStates['Row'] and discCovStates['Column'] to empty strings.",
+        "Deletes all properties of the gapItems object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setGapItems",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.setGapItems(axis, items)",
+      "description": "Sets the gap items for a specified axis in the global gapItems object.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which the gap items are being set."
+        },
+        {
+          "name": "items",
+          "type": "array",
+          "description": "The items to be set for the specified axis."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global gapItems object by setting the items for the specified axis."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDiscCovState",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.setDiscCovState(axis, items)",
+      "description": "Sets the discovery coverage state for a given axis with the provided items.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the discovery coverage state is being set."
+        },
+        {
+          "name": "items",
+          "type": "Array",
+          "description": "The items to set as the discovery coverage state for the specified axis."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable discCovStates by setting the state for the specified axis."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearAllCurrentSearchItems",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.clearAllCurrentSearchItems()",
+      "description": "This function clears all current search items by reinitializing the currentSearchItems variable to a new WeakMap.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Reinitializes the global variable currentSearchItems to a new WeakMap."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setSearchItem",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.setSearchItem(mapItem, axis, curr)",
+      "description": "Sets the current search item with the supplied axis and curr values. It is called by both the 'next' and 'previous' searches.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "any",
+          "description": "The key used to retrieve or set the search item in the currentSearchItems map."
+        },
+        {
+          "name": "axis",
+          "type": "any",
+          "description": "The axis value to be set for the search item."
+        },
+        {
+          "name": "curr",
+          "type": "any",
+          "description": "The current index value to be set for the search item."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the currentSearchItems map by setting or updating the search item for the given mapItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setAxisSearchResults",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.setAxisSearchResults(axis, left, right)",
+      "description": "Sets all search items from the left index to the right index (inclusive) on the specified axis. It updates the search results for the given axis, marking the positions as found unless there are gaps.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis on which to set the search results."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The starting index from which to begin setting search results."
+        },
+        {
+          "name": "right",
+          "type": "number",
+          "description": "The ending index up to which to set search results."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global searchResults object by setting search results on the specified axis."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setAxisSearchResultsVec",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.setAxisSearchResultsVec(axis, vec)",
+      "description": "Sets all label indices in the provided vector as search results on the specified axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis on which to set the search results."
+        },
+        {
+          "name": "vec",
+          "type": "Array",
+          "description": "An array of label indices to be set as search results."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the searchResults object by setting specified indices on the given axis.",
+        "Reads gaps from the getGaps function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSearchRange",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.clearSearchRange(axis, left, right)",
+      "description": "Clears search items from the specified range (inclusive) on the given axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis on which the search items are to be cleared."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The starting index of the range to clear."
+        },
+        {
+          "name": "right",
+          "type": "number",
+          "description": "The ending index of the range to clear."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global searchResults object by deleting items in the specified range on the given axis."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearAllAxisSearchItems",
+      "namespace": "SRCHSTATE",
+      "signature": "SRCHSTATE.clearAllAxisSearchItems(axis)",
+      "description": "Clears all search items for a specified axis by resetting the corresponding entry in the searchResults object to an empty object.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which to clear all search items."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the searchResults object by setting the specified axis to an empty object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getGaps",
+      "namespace": "None",
+      "signature": "getGaps(axis)",
+      "description": "Private function that returns a dictionary object for the specified axis containing a true entry for the indices of any gap elements. It caches the gap items for future access.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "str",
+          "description": "The axis for which to get the gap items."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Caches gap items for the specified axis using SRCHSTATE.setGapItems."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A dictionary object with indices of gap elements set to true."
+      }
+    }
+  ]
+}

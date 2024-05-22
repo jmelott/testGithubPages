@@ -1,0 +1,437 @@
+{
+  "filename": "Drawing.js",
+  "namespace": "NgChm.DRAW",
+  "description": [
+    "This module is responsible for handling the drawing operations within the NGCHM API. It utilizes WebGL to render heat maps and covariate bar contents onto a canvas. The module manages the creation and manipulation of render buffers, WebGL textures, and the rendering process. It also handles WebGL context loss and restoration, ensuring that the rendering state is properly reinitialized when necessary."
+  ],
+  "declares_functions_in": [
+    "DRAW"
+  ],
+  "interacts_with": [
+    "NgChm.UHM"
+  ],
+  "classes": [
+    {
+      "name": "GlManager",
+      "description": "Manages WebGL context for a canvas, including context loss and restoration, and provides methods for rendering textures."
+    }
+  ],
+  "member_variables": [
+    {
+      "name": "DRAW.BYTE_PER_RGBA",
+      "description": "Number of bytes per RGBA pixel."
+    },
+    {
+      "name": "DRAW.GL",
+      "description": "Namespace for WebGL related functions and constants."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "createRenderBuffer",
+      "namespace": "DRAW",
+      "signature": "DRAW.createRenderBuffer(width, height, pixelScaleFactor)",
+      "description": "Creates a render buffer object with specified width, height, and pixel scale factor. The render buffer includes a resize method to adjust its dimensions and reallocate pixel data accordingly.",
+      "parameters": [
+        {
+          "name": "width",
+          "type": "number",
+          "description": "The width of the render buffer."
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "description": "The height of the render buffer."
+        },
+        {
+          "name": "pixelScaleFactor",
+          "type": "number",
+          "description": "The scale factor for the pixels in the render buffer."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object representing the render buffer with properties for width, height, pixels, and pixelScaleFactor, and a method to resize the buffer."
+      }
+    },
+    {
+      "name": "resize",
+      "namespace": "None",
+      "signature": "resize(width, height)",
+      "description": "Resizes the current object to the specified width and height. If the new dimensions are different from the current ones, it updates the width and height properties and reinitializes the pixel data.",
+      "parameters": [
+        {
+          "name": "width",
+          "type": "number",
+          "description": "The new width to set for the object."
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "description": "The new height to set for the object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the object's width and height properties.",
+        "Reinitializes the object's pixel data with a new Uint8Array."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "constructor",
+      "namespace": "GlManager",
+      "signature": "GlManager:constructor(canvas, getVertexShader, getFragmentShader, onRestore, widthScale, heightScale)",
+      "description": "Initializes a new instance of the GlManager class, which manages WebGL context loss and restoration, and sets up shaders and scaling factors for rendering.",
+      "parameters": [
+        {
+          "name": "canvas",
+          "type": "HTMLCanvasElement",
+          "description": "The canvas element to which the WebGL context is attached."
+        },
+        {
+          "name": "getVertexShader",
+          "type": "function",
+          "description": "Function that creates the vertex shader for the WebGL context."
+        },
+        {
+          "name": "getFragmentShader",
+          "type": "function",
+          "description": "Function that creates the fragment shader for the WebGL context."
+        },
+        {
+          "name": "onRestore",
+          "type": "function",
+          "description": "Callback function to be called when the WebGL context is restored."
+        },
+        {
+          "name": "widthScale",
+          "type": "number",
+          "description": "Scaling factor for the width of the canvas. Defaults to 1 if not provided."
+        },
+        {
+          "name": "heightScale",
+          "type": "number",
+          "description": "Scaling factor for the height of the canvas. Defaults to 1 if not provided."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes WebGL context and tracks its state.",
+        "Sets up vertex and fragment shaders.",
+        "Sets scaling factors for the canvas."
+      ],
+      "returns": {
+        "type": "GlManager",
+        "description": "A new instance of the GlManager class."
+      }
+    },
+    {
+      "name": "check",
+      "namespace": "GlManager",
+      "signature": "GlManager:check(userinit)",
+      "description": "Determine if the manager's GL context can be used. If necessary, the GL context is (re-)initialized using the getVertexShader and getFragmentShader functions. If supplied, userinit is a function to perform user initialization of the context. It is passed the context and program and should return truthy on success, falsey on error.",
+      "parameters": [
+        {
+          "name": "userinit",
+          "type": "function",
+          "description": "A function to perform user initialization of the context. It is passed the context and program and should return truthy on success, falsey on error."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies this._state.lost and this._state.restored flags.",
+        "Sets this._OK to indicate if the GL context is usable.",
+        "Initializes the GL program and shaders if needed.",
+        "Logs errors to the console if initialization fails."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the GL context is usable, false otherwise."
+      }
+    },
+    {
+      "name": "setTextureProps",
+      "namespace": "GlManager",
+      "signature": "GlManager:setTextureProps()",
+      "description": "Sets up texture properties for WebGL rendering context. It creates a texture, binds it, and sets various texture parameters such as wrapping and filtering modes. If the texture creation fails, it logs an error and sets an internal state flag to false.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Creates and binds a WebGL texture.",
+        "Sets texture parameters for wrapping and filtering.",
+        "Logs an error if texture creation fails.",
+        "Sets internal state flag _OK to false if texture creation fails."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "OK",
+      "namespace": "GlManager",
+      "signature": "GlManager:OK()",
+      "description": "Determines if the manager's GL context can be used. This is only valid if accessed during the same top-level event handler as the last call to the check method.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the GL context can be used, otherwise false."
+      }
+    },
+    {
+      "name": "context",
+      "namespace": "GlManager",
+      "signature": "GlManager:context()",
+      "description": "Retrieves the GL context managed by the GlManager instance.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "The GL context managed by the GlManager instance."
+      }
+    },
+    {
+      "name": "program",
+      "namespace": "GlManager",
+      "signature": "GlManager:program()",
+      "description": "Gets the program attached to the manager's GL context.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "The program attached to the manager's GL context."
+      }
+    },
+    {
+      "name": "dontUse",
+      "namespace": "GlManager",
+      "signature": "GlManager:dontUse()",
+      "description": "Indicates that the manager's GL context is unusable. This function should be called if an error is detected while using a GL function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the internal _OK property to false, indicating the GL context is unusable."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setClipRegion",
+      "namespace": "GlManager",
+      "signature": "GlManager:setClipRegion(vertices)",
+      "description": "Sets the clip region for the WebGL context by creating a buffer, binding it, and uploading the vertex data. It also configures the vertex attribute pointers for rendering.",
+      "parameters": [
+        {
+          "name": "vertices",
+          "type": "Array",
+          "description": "An array of vertex coordinates defining the clip region."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the WebGL context state by creating and binding a buffer.",
+        "Uploads vertex data to the buffer.",
+        "Configures vertex attribute pointers.",
+        "Updates the _itemsToDraw property of the GlManager instance."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setTextureRegion",
+      "namespace": "GlManager",
+      "signature": "GlManager:setTextureRegion(vertices)",
+      "description": "Sets the texture region to use by binding the provided vertices to the WebGL context and configuring the vertex attribute pointer for texture coordinates. This is only valid if the vertex shader has a 'texCoord' attribute.",
+      "parameters": [
+        {
+          "name": "vertices",
+          "type": "Array",
+          "description": "An array of vertex coordinates to define the texture region."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Binds a new buffer to the WebGL context.",
+        "Modifies the WebGL context state by enabling the vertex attribute array for texture coordinates."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setTextureFromRenderBuffer",
+      "namespace": "GlManager",
+      "signature": "GlManager:setTextureFromRenderBuffer(renderBuffer)",
+      "description": "Sets the WebGL context's texture from the provided render buffer.",
+      "parameters": [
+        {
+          "name": "renderBuffer",
+          "type": "RenderBuffer",
+          "description": "An object containing the width, height, and pixel data of the render buffer."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the WebGL context's active texture to use the provided render buffer."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawTexture",
+      "namespace": "GlManager",
+      "signature": "GlManager:drawTexture()",
+      "description": "Draws the texture using WebGL context by executing the drawArrays method with TRIANGLE_STRIP mode.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createGlManager",
+      "namespace": "DRAW.GL",
+      "signature": "createGlManager(canvas, getVertexShader, getFragmentShader, onRestore, widthScale, heightScale)",
+      "description": "Creates and returns a new instance of GlManager with the provided parameters. This function initializes the WebGL manager for rendering graphics on the specified canvas.",
+      "parameters": [
+        {
+          "name": "canvas",
+          "type": "HTMLCanvasElement",
+          "description": "The canvas element where the WebGL context will be created."
+        },
+        {
+          "name": "getVertexShader",
+          "type": "function",
+          "description": "A function that returns the vertex shader source code."
+        },
+        {
+          "name": "getFragmentShader",
+          "type": "function",
+          "description": "A function that returns the fragment shader source code."
+        },
+        {
+          "name": "onRestore",
+          "type": "function",
+          "description": "A callback function to be called when the WebGL context is restored."
+        },
+        {
+          "name": "widthScale",
+          "type": "number",
+          "description": "The scale factor for the width of the canvas."
+        },
+        {
+          "name": "heightScale",
+          "type": "number",
+          "description": "The scale factor for the height of the canvas."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "GlManager",
+        "description": "A new instance of the GlManager class initialized with the provided parameters."
+      }
+    },
+    {
+      "name": "getTrackedGlContext",
+      "namespace": "None",
+      "signature": "getTrackedGlContext(canvas, onRestore)",
+      "description": "Returns a tracked WebGL context for the specified canvas. It monitors the WebGL context for loss and restoration events, providing a mechanism to handle these events and ensure the canvas is properly redrawn.",
+      "parameters": [
+        {
+          "name": "canvas",
+          "type": "HTMLCanvasElement",
+          "description": "The canvas element for which the WebGL context is to be tracked."
+        },
+        {
+          "name": "onRestore",
+          "type": "function",
+          "description": "A callback function to be called when the WebGL context is restored."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Adds event listeners to the canvas for 'webglcontextlost' and 'webglcontextrestored' events.",
+        "Modifies the 'lost' and 'restored' properties of the returned object based on WebGL context events.",
+        "May log debug information to the console if the debug flag is set to true."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "An object with three fields: 'context' (the WebGL context for the canvas), 'lost' (boolean, true on initialization or if the context was ever lost since the last check), and 'restored' (boolean, true if the context has been restored after the most recent loss). Returns null if WebGL is not supported or disabled."
+      }
+    },
+    {
+      "name": "rectToTriangles",
+      "namespace": "None",
+      "signature": "rectToTriangles(bottom, left, top, right)",
+      "description": "Converts the sides of a rectangle into an array of triangle vertices. This function takes the coordinates of the rectangle's sides and returns an array representing two triangles that cover the rectangle.",
+      "parameters": [
+        {
+          "name": "bottom",
+          "type": "number",
+          "description": "The y-coordinate of the bottom side of the rectangle."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The x-coordinate of the left side of the rectangle."
+        },
+        {
+          "name": "top",
+          "type": "number",
+          "description": "The y-coordinate of the top side of the rectangle."
+        },
+        {
+          "name": "right",
+          "type": "number",
+          "description": "The x-coordinate of the right side of the rectangle."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array of numbers representing the vertices of two triangles that cover the rectangle."
+      }
+    },
+    {
+      "name": "getContextSimulator",
+      "namespace": "DRAW.GL",
+      "signature": "getContextSimulator(id)",
+      "description": "Helper function for debugging WebGL context issues. It retrieves the WEBGL_lose_context extension for a given canvas element, allowing developers to simulate losing and restoring the WebGL context.",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "String",
+          "description": "The ID of the canvas element for which to retrieve the WEBGL_lose_context extension."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Object",
+        "description": "The WEBGL_lose_context extension object for the specified canvas element, or undefined if the ID is not provided."
+      }
+    }
+  ]
+}

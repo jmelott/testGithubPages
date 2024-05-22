@@ -1,0 +1,1276 @@
+{
+  "filename": "SearchManager.js",
+  "namespace": "NgChm.SRCH",
+  "description": [
+    "The SearchManager module is responsible for managing search functionalities within the NGCHM API. It handles the initialization and configuration of search-related user interface elements, processes search requests, and manages search results. This module supports both label-based and covariate-based searches, including continuous and discrete covariate searches. It also provides functions to clear search results, update linkout selections, and manage the display of search results."
+  ],
+  "declares_functions_in": [
+    "SRCH"
+  ],
+  "interacts_with": [
+    "NgChm.SRCHSTATE",
+    "NgChm.MMGR",
+    "NgChm.UTIL",
+    "NgChm.SUM",
+    "NgChm.DVW",
+    "NgChm.DET",
+    "NgChm.UHM",
+    "NgChm.PIM",
+    "NgChm.Pane"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "DET.labelLastClicked",
+      "description": "Stores the last clicked label in the detail view."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "clearAllCurrentSearchItems",
+      "namespace": "SRCH",
+      "signature": "SRCH.clearAllCurrentSearchItems()",
+      "description": "Clears all current search items by invoking the clearAllCurrentSearchItems method from the SRCHSTATE namespace.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "setAxisSearchResults",
+      "namespace": "SRCH",
+      "signature": "SRCH.setAxisSearchResults(axis, left, right)",
+      "description": "Sets the search results for a specified axis by delegating the task to the SRCHSTATE.setAxisSearchResults function.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the search results are being set."
+        },
+        {
+          "name": "left",
+          "type": "Array",
+          "description": "The search results for the left side of the axis."
+        },
+        {
+          "name": "right",
+          "type": "Array",
+          "description": "The search results for the right side of the axis."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setAxisSearchResultsVec",
+      "namespace": "SRCH",
+      "signature": "SRCH.setAxisSearchResultsVec(axis, vec)",
+      "description": "Sets the search results vector for a specified axis by delegating the task to the SRCHSTATE module.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the search results vector is being set."
+        },
+        {
+          "name": "vec",
+          "type": "Array",
+          "description": "The search results vector to be set for the specified axis."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSearchRange",
+      "namespace": "SRCH",
+      "signature": "SRCH.clearSearchRange(axis, left, right)",
+      "description": "Clears the search range on a specified axis by delegating the task to the SRCHSTATE.clearSearchRange function.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis on which the search range needs to be cleared."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The left boundary of the search range to be cleared."
+        },
+        {
+          "name": "right",
+          "type": "number",
+          "description": "The right boundary of the search range to be cleared."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "configSearchInterface",
+      "namespace": "None",
+      "signature": "configSearchInterface(heatMap)",
+      "description": "This function initializes or resets all search-related user interface elements. It is called from the UI-Manager after the heatMap has initialized.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "HeatMap",
+          "description": "An instance of the HeatMap class that provides methods to get column and row classification orders."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the options of the 'search_on' select element.",
+        "Sets onclick handlers for 'cancel_btn' and 'go_btn' elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "searchOn",
+      "signature": "searchOn.onchange()",
+      "description": "This function is an event handler for the 'onchange' event of the 'searchOn' element. It triggers the 'searchOnSel' function whenever the 'searchOn' element's value changes.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "e",
+      "signature": "e.onclick()",
+      "description": "Assigns an onclick event handler to the element 'e' that clears the search input when clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the onclick event handler of the element 'e'."
+      ],
+      "returns": {
+        "type": "undefined",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "e",
+      "signature": "e.onclick()",
+      "description": "Sets the onclick event handler for the element 'e' to trigger the SRCH.detailSearch function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the onclick event handler for the element 'e'."
+      ],
+      "returns": {
+        "type": "undefined",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addCovariateOptions",
+      "namespace": "None",
+      "signature": "addCovariateOptions(axis, barOrder)",
+      "description": "Adds covariate options to a select box based on the provided axis and bar order. Each option is created with a truncated version of the key if it exceeds 20 characters.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis to be used as part of the option value."
+        },
+        {
+          "name": "barOrder",
+          "type": "Array",
+          "description": "An array of keys to be used for creating options."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends new option elements to the select box identified by the global variable 'searchOn'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearAllSearchResults",
+      "namespace": "SRCH",
+      "signature": "SRCH.clearAllSearchResults()",
+      "description": "This function initializes/resets all search-related state variables by delegating the task to SRCHSTATE.clearAllSearchResults().",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Resets all search-related state variables via SRCHSTATE.clearAllSearchResults()"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "doInitialSearch",
+      "namespace": "SRCH",
+      "signature": "SRCH.doInitialSearch()",
+      "description": "Performs an initial search if a search parameter is specified in the URL. This function should be called after the initialization of the panels.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of the search input element with id 'search_text'.",
+        "Calls the SRCH.detailSearch() function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detailSearch",
+      "namespace": "SRCH",
+      "signature": "SRCH.detailSearch()",
+      "description": "The purpose of this function is to serve as a driver for the entire search process. It forks search processing depending upon the search_on target (label or covar) and performs any functions that are common to both. It is called when a search string is entered.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Closes the checkbox dropdown for search coverage selection.",
+        "Clears the current search request.",
+        "Redraws selection marks.",
+        "Draws top items.",
+        "Updates linkout selections.",
+        "Focuses on the detail canvas element if it exists."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updateLinkoutSelections",
+      "namespace": "SRCH",
+      "signature": "SRCH.updateLinkoutSelections()",
+      "description": "The purpose of this function is to post all selections (both row and column) to linkouts.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchOnSel",
+      "namespace": "None",
+      "signature": "searchOnSel()",
+      "description": "Manages the display of various search boxes (standard label search text box, continuous covariate search text box, and discrete dropdown checkbox) depending on the user's selection in the search dropdown control.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display properties of HTML elements with IDs 'search_text', 'search_cov_disc', and 'search_cov_cont'.",
+        "Disables or enables the HTML element with ID 'search_target'.",
+        "Calls UTIL.closeCheckBoxDropdown to close a dropdown.",
+        "Calls MMGR.getHeatMap to get the heat map configuration."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "loadCovarSearch",
+      "namespace": "None",
+      "signature": "function loadCovarSearch()",
+      "description": "Populates a discrete covariate check box dropdown with items for a specific covariate bar selected from the search_on dropdown select box.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM elements with IDs 'srchCovSelectBox' and 'srchCovCheckBoxes'.",
+        "Calls UTIL.createCheckBoxDropDown to create a dropdown with checkboxes.",
+        "Calls loadSavedCovarState to load the saved state of the covariate."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "saveCovarState",
+      "namespace": "None",
+      "signature": "saveCovarState(covVal)",
+      "description": "Saves the state of discrete covariate checkboxes when a search is run. It collects the state of checkboxes with the class 'srchCovCheckBox' and stores the indices of the checked ones along with a given covariate value.",
+      "parameters": [
+        {
+          "name": "covVal",
+          "type": "string",
+          "description": "The covariate value to be saved along with the checkbox states."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the state of the discrete covariate in SRCHSTATE using the setDiscCovState method."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "loadSavedCovarState",
+      "namespace": "None",
+      "signature": "loadSavedCovarState(covType, covVal)",
+      "description": "Loads the saved state of a discrete covariate bar's checkboxes and checks those boxes that have been used in a current search.",
+      "parameters": [
+        {
+          "name": "covType",
+          "type": "String",
+          "description": "The type of the covariate to be loaded."
+        },
+        {
+          "name": "covVal",
+          "type": "String",
+          "description": "The value of the covariate to be loaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the state of checkboxes in the DOM based on the saved state.",
+        "Reads the value of the element with id 'search_target'.",
+        "Uses the SRCHSTATE.getDiscCovState function to get the saved state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "cleanseSearchString",
+      "namespace": "None",
+      "signature": "cleanseSearchString(searchStr)",
+      "description": "The purpose of this function is to strip duplicate delimiter characters from a Label search string. It replaces all delimiters with a comma and ensures that the resulting string is clean and ready for further processing.",
+      "parameters": [
+        {
+          "name": "searchStr",
+          "type": "string",
+          "description": "The input search string containing potential delimiters that need to be cleansed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "A cleansed search string with duplicate delimiters removed and all delimiters replaced by commas."
+      }
+    },
+    {
+      "name": "covarSearch",
+      "namespace": "None",
+      "signature": "covarSearch()",
+      "description": "Performs a covariate-bar based search, calling necessary sub-functions to execute the search and managing the appearance of the covariate search text box.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the background color of the search element based on search results.",
+        "Calls DET.updateSelections() to clear previous matches when search is empty.",
+        "Calls SRCHSTATE.setAxisSearchResultsVec(axis, results) to set search results.",
+        "Calls searchNext(true, DVW.primaryMap) if DVW.primaryMap is defined."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Indicates whether the search was valid."
+      }
+    },
+    {
+      "name": "continuousCovarSearch",
+      "namespace": "SRCH",
+      "signature": "SRCH.continuousCovarSearch(axis, covar, searchString)",
+      "description": "Returns the indices of elements that match the searchString on the specified axis for a continuous covariate.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis to search on, either 'Row' or 'Column'."
+        },
+        {
+          "name": "covar",
+          "type": "String",
+          "description": "The covariate to search within."
+        },
+        {
+          "name": "searchString",
+          "type": "String",
+          "description": "The search string used to find matching elements."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array where the first element is a boolean indicating if the search is valid, and the second element is an array of indices of matching elements."
+      }
+    },
+    {
+      "name": "getSelectedDiscreteSelections",
+      "namespace": "None",
+      "signature": "getSelectedDiscreteSelections(axis, cats, classDataValues)",
+      "description": "The purpose of this function is to find rows or columns that match the discrete category selections checked by the user. It iterates through the classDataValues data configuration for a given covariate bar, checking for either a direct match on category or, if 'missing' is selected, missing values on the covariate bar. If a value match is found, an item is added to the results array for the appropriate axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "str",
+          "description": "The axis (row or column) to search for matches."
+        },
+        {
+          "name": "cats",
+          "type": "array",
+          "description": "An array of category selections checked by the user."
+        },
+        {
+          "name": "classDataValues",
+          "type": "array",
+          "description": "An array of data values for the covariate bar."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array of indices (1-based) where matches are found."
+      }
+    },
+    {
+      "name": "parseContinuousSearchString",
+      "namespace": "None",
+      "signature": "function parseContinuousSearchString(searchString)",
+      "description": "Parses a continuous search string by splitting it into individual search expressions and then processing each expression.",
+      "parameters": [
+        {
+          "name": "searchString",
+          "type": "string",
+          "description": "The continuous search string containing multiple search expressions separated by semicolons or commas."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array of parsed search expressions."
+      }
+    },
+    {
+      "name": "validateContinuousSearch",
+      "namespace": "None",
+      "signature": "validateContinuousSearch(exprs)",
+      "description": "Validates a series of search expressions to ensure they all meet specific criteria.",
+      "parameters": [
+        {
+          "name": "exprs",
+          "type": "Array",
+          "description": "An array of search expression objects, each containing properties 'firstOper', 'firstValue', 'secondOper', and 'secondValue'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns true if all search expressions are valid, otherwise returns false."
+      }
+    },
+    {
+      "name": "getSelectedContinuousSelections",
+      "namespace": "None",
+      "signature": "getSelectedContinuousSelections(axis, searchExprs, classDataValues)",
+      "description": "Internal function getSelectedContinuousSelections finds the rows/cols that match the user-entered search expressions for continuous covariate bars. It iterates the classDataValues data configuration for a given covariate bar and evaluates each value against an array of user-entered expressions. If a value is found to exist within the parameters of an expression, that value is selected. This function also searches for missing values if the user enters an expression that contains the word 'miss'. If a value match is found, an item is added to the searchResults array for the appropriate axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "str",
+          "description": "The axis (rows/cols) to be searched."
+        },
+        {
+          "name": "searchExprs",
+          "type": "array",
+          "description": "An array of user-entered search expressions containing firstOper, firstValue, secondOper, and secondValue."
+        },
+        {
+          "name": "classDataValues",
+          "type": "array",
+          "description": "An array of data values for the covariate bar to be searched."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array of indices representing the positions of values that match the search expressions."
+      }
+    },
+    {
+      "name": "evaluateExpression",
+      "namespace": "None",
+      "signature": "evaluateExpression(oper, srchValue, dataValue)",
+      "description": "The purpose of this function is to evaluate a user-entered expression against a value from the classDataValues for a given covariate. It checks for values that meet the greater than, less than, and equal to operators. If a value satisfies any of these conditions, a true value is returned.",
+      "parameters": [
+        {
+          "name": "oper",
+          "type": "string",
+          "description": "The operator to evaluate (e.g., '>', '<', '>=', '<=', '===')."
+        },
+        {
+          "name": "srchValue",
+          "type": "number",
+          "description": "The search value to compare against the data value."
+        },
+        {
+          "name": "dataValue",
+          "type": "number",
+          "description": "The data value to be evaluated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the data value satisfies the condition specified by the operator and search value; otherwise, returns false."
+      }
+    },
+    {
+      "name": "parseSearchExpression",
+      "namespace": "None",
+      "signature": "parseSearchExpression(expr)",
+      "description": "The purpose of this function is to take a search expression (e.g., '>44', '>45<=90', '88', etc.), parse that expression, and return an object with four variables: the first expression operator, the first expression value, the second operator, and the second value. If an expression is just a single number, the first operator will be '===' and the first value will be the expression. A null is returned if no valid expression is found.",
+      "parameters": [
+        {
+          "name": "expr",
+          "type": "string",
+          "description": "The search expression to be parsed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the parsed components of the search expression: firstOper, firstValue, secondOper, and secondValue. Returns null if no valid expression is found."
+      }
+    },
+    {
+      "name": "examineExpression",
+      "namespace": "None",
+      "signature": "examineExpression(expr)",
+      "description": "Evaluates an incoming string to extract the components of an expression. It identifies the first operator (>, <, >=, <=) found, its position, and the remainder of the string. If no operators are found, it checks if the expression is numeric and returns an object with the operator '===' and the remainder as the expression.",
+      "parameters": [
+        {
+          "name": "expr",
+          "type": "string",
+          "description": "The expression string to be evaluated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the first operator found, its position, and the remainder of the expression. If no operators are found, it returns an object with the operator '===' and the remainder as the expression."
+      }
+    },
+    {
+      "name": "isSearchValid",
+      "namespace": "None",
+      "signature": "isSearchValid(firstOper, firstValue, secondOper, secondValue)",
+      "description": "Evaluates the operators and values entered by the user to ensure they are valid operators and float values before using them in an EVAL statement. This is done to prevent code injection.",
+      "parameters": [
+        {
+          "name": "firstOper",
+          "type": "String",
+          "description": "The first operator to be evaluated. Valid operators are '>', '<', '>=', '<=', and '==='."
+        },
+        {
+          "name": "firstValue",
+          "type": "String",
+          "description": "The first value to be evaluated. It should be a valid float value or a string containing 'miss' if the operator is '==='."
+        },
+        {
+          "name": "secondOper",
+          "type": "String",
+          "description": "The second operator to be evaluated. Valid operators are '>', '<', '>=', and '<='. It can be null."
+        },
+        {
+          "name": "secondValue",
+          "type": "String",
+          "description": "The second value to be evaluated. It should be a valid float value if secondOper is provided."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns true if the operators and values are valid, otherwise returns false."
+      }
+    },
+    {
+      "name": "labelSearch",
+      "namespace": "None",
+      "signature": "labelSearch()",
+      "description": "Performs a label-based search, calling necessary sub-functions to execute the search and managing the appearance of the label search text box.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of the search text input element.",
+        "Changes the background color of the search text input element.",
+        "Calls searchLabels function to update global search item list.",
+        "Calls searchNext function to jump to the first match.",
+        "Calls DET.updateSelections to clear previous matches when search is empty."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns false if the search string is empty or null."
+      }
+    },
+    {
+      "name": "searchLabels",
+      "namespace": "None",
+      "signature": "searchLabels(axis, tmpSearchItems, itemsFound)",
+      "description": "The purpose of this function is to search through labels collections for matches. It processes the labels from a heat map, converts them to uppercase, and searches for matches based on the provided search items. If matches are found, it updates the search results and the list of found items.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "str",
+          "description": "The axis of the heat map to search labels in."
+        },
+        {
+          "name": "tmpSearchItems",
+          "type": "array",
+          "description": "An array of search items to look for in the labels."
+        },
+        {
+          "name": "itemsFound",
+          "type": "array",
+          "description": "An array to store the search items that were found in the labels."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the search results vector for the specified axis using SRCHSTATE.setAxisSearchResultsVec.",
+        "Modifies the itemsFound array by adding search items that were found."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchNext",
+      "namespace": "None",
+      "signature": "searchNext(firstTime, mapItem)",
+      "description": "The purpose of this function is to find the next selected item, set it as the current selected item, and move the view of the heat map detail panel to that item.",
+      "parameters": [
+        {
+          "name": "firstTime",
+          "type": "boolean",
+          "description": "Indicates if this is the first time the search is being performed."
+        },
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the current map item with properties such as allowedOrientations."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Closes the checkbox dropdown with id 'srchCovSelectBox' and class 'srchCovCheckBoxes'.",
+        "Modifies the current search item state using SRCHSTATE.getCurrentSearchItem and findNextSearchItem.",
+        "Updates the view to the current search item using goToCurrentSearchItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "findNextAxisSearchItem",
+      "namespace": "None",
+      "signature": "function findNextAxisSearchItem(mapItem, axis, index)",
+      "description": "Returns the index of the next search item after the given index on the specified axis. If no search item is found, returns -1.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing the heat map and axis labels."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis on which to search for the next item."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The current index from which to start the search."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The index of the next search item on the specified axis, or -1 if no search item is found."
+      }
+    },
+    {
+      "name": "findPrevAxisSearchItem",
+      "namespace": "None",
+      "signature": "findPrevAxisSearchItem(mapItem, axis, index)",
+      "description": "Returns the index of the previous search item before the given index on the specified axis. If the index is -1, the search starts from the last index. If no search item is found, it returns -1.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing the heat map and axis labels."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis on which to search for the previous item."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The starting index for the search. If -1, the search starts from the last index."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The index of the previous search item on the specified axis, or -1 if no search item is found."
+      }
+    },
+    {
+      "name": "findNextSearchItem",
+      "namespace": "None",
+      "signature": "findNextSearchItem(mapItem, index, axis)",
+      "description": "The purpose of this function is to find the next search item based on the search target (row/column/both) and set that item as the current search item.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing search parameters and allowed orientations."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The current index position to start the search from."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis to search on, either 'Row' or 'Column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the search state by setting the current search item using SRCHSTATE.setSearchItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchPrev",
+      "namespace": "None",
+      "signature": "searchPrev(mapItem)",
+      "description": "The purpose of this function is to find the previous search item, set it as the current search item, and move the focus of the heat map detail panel to that item.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item to be searched."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Closes the checkbox dropdown for search coverage selection.",
+        "Modifies the current search item state.",
+        "Moves the focus of the heat map detail panel to the current search item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "findPrevSearchItem",
+      "namespace": "None",
+      "signature": "findPrevSearchItem(mapItem, index, axis)",
+      "description": "The purpose of this function is to find the previous search item based on the search target (row/column/both) and set that item as the current search item.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing search parameters and allowed orientations."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The current index position from which to start the search."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis ('Row' or 'Column') to search along."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the search state by setting the current search item in SRCHSTATE."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showOrientDialog",
+      "namespace": "None",
+      "signature": "showOrientDialog(mapItem, button)",
+      "description": "Displays an orientation dialog near the specified button, allowing the user to select an orientation for the map item. The dialog contains menu items with icons that represent different orientations.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "Object",
+          "description": "The map item for which the orientation is to be set."
+        },
+        {
+          "name": "button",
+          "type": "HTMLElement",
+          "description": "The button element near which the orientation dialog will be displayed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a dialog element to the document body.",
+        "Removes the dialog element from the document body upon selection or click outside the dialog."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "dialog",
+      "signature": "dialog.onclick(ev)",
+      "description": "Handles click events on the dialog, determining the target element and performing actions based on its class and data attributes.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The click event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by potentially removing a menu panel element.",
+        "Logs an error to the console if an illegal orientation is detected."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "showNextOrientation",
+      "namespace": "None",
+      "signature": "showNextOrientation(mapItem, button)",
+      "description": "Cycles through the allowed orientations for a given map item and updates it to the next orientation in the list.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item whose orientation is to be updated."
+        },
+        {
+          "name": "button",
+          "type": "HTMLElement",
+          "description": "The button element that triggers the orientation change."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error to the console if the map item has an unknown orientation.",
+        "Updates the allowed orientation of the map item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setAllowedMapOrientations",
+      "namespace": "None",
+      "signature": "setAllowedMapOrientations(mapItem, button, idx)",
+      "description": "Sets the allowed map orientations for a given map item based on the selected index. Updates the button's inner HTML and style to reflect the new orientation. Also enables or disables search buttons based on the new orientation.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object whose orientations are being set."
+        },
+        {
+          "name": "button",
+          "type": "HTMLElement",
+          "description": "The button element that triggers the orientation change."
+        },
+        {
+          "name": "idx",
+          "type": "number",
+          "description": "The index of the selected orientation in the orientation menu."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates mapItem.allowedOrientations with the new orientation.",
+        "Updates mapItem.searchOrientation if the new orientation is not 'any'.",
+        "Modifies the inner HTML and style of the button element.",
+        "Calls setSearchButtonsAxis(mapItem, neworient) if the new orientation is not 'any'.",
+        "Calls enableDisableSearchButtons(mapItem) to enable or disable search buttons."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "enableDisableAllSearchButtons",
+      "namespace": "None",
+      "signature": "enableDisableAllSearchButtons(mapItem)",
+      "description": "This function iterates over all items in the DVW.detailMaps array and applies the enableDisableSearchButtons function to each item. It is used to enable or disable search buttons based on the provided mapItem.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item to be used for enabling or disabling search buttons."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the state of search buttons in DVW.detailMaps."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "enableDisableSearchButtons",
+      "namespace": "None",
+      "signature": "enableDisableSearchButtons(mapItem)",
+      "description": "Enables or disables the search buttons based on the search results for the given map item. It checks the allowed orientations (row or column) and determines if there are any search results outside the current view to enable or disable the previous and next search buttons accordingly.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object containing information about the current map item, including its allowed orientations, current row/column, and data per row/column."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the 'disabled' property of the search buttons (srchPrev and srchNext) in the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "anyOutsideSearchResults",
+      "namespace": "None",
+      "signature": "anyOutsideSearchResults(searchResults, first, count)",
+      "description": "Checks if any element in the searchResults array falls outside the range defined by the first index and the count.",
+      "parameters": [
+        {
+          "name": "searchResults",
+          "type": "Array",
+          "description": "An array of search result indices to be checked."
+        },
+        {
+          "name": "first",
+          "type": "Number",
+          "description": "The starting index of the range."
+        },
+        {
+          "name": "count",
+          "type": "Number",
+          "description": "The number of indices in the range."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns true if any element in searchResults is outside the range [first, first + count - 1], otherwise returns false."
+      }
+    },
+    {
+      "name": "setSearchButtonsAxis",
+      "namespace": "None",
+      "signature": "setSearchButtonsAxis(mapItem, axis)",
+      "description": "Sets the orientation of the searchPrev and searchNext buttons of a map item to match the specified axis.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing the search buttons."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis to set the orientation to. If 'any', no changes are made."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the rotation style of the searchPrev and searchNext buttons within the map item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "goToCurrentSearchItem",
+      "namespace": "None",
+      "signature": "goToCurrentSearchItem(mapItem)",
+      "description": "The purpose of this function is to move the focus of the detail heat map panel to the current search item.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object representing the heat map panel. If not provided, defaults to DVW.primaryMap."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.currentRow or mapItem.currentCol based on the current search item's axis.",
+        "Calls setSearchButtonsAxis to set the search buttons axis.",
+        "Calls showSearchError to display errors based on the current search item and mapItem mode.",
+        "Calls DVW.checkRow or DVW.checkCol to validate the current row or column.",
+        "Calls enableDisableSearchButtons to enable or disable search buttons.",
+        "Calls DET.updateSelections to update selections."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSearch",
+      "namespace": "SRCH",
+      "signature": "SRCH.clearSearch()",
+      "description": "Processes the user selection to clear the current search when the red search 'X' is clicked. Clears all searches if the target is BOTH, otherwise clears only the search for the specified axis and moves the next search item to the other axis.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Closes the checkbox dropdown for search coverage selection.",
+        "Clears selection marks for the search target.",
+        "Clears the search request for the search target.",
+        "Updates the current search item and navigates to it for each map item in detail maps.",
+        "Clears selected bars in row and column dendrograms.",
+        "Clears all current search items if the target is neither Row nor Column.",
+        "Resets the search box color.",
+        "Updates selections and linkout selections."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "resetSearchBoxColor",
+      "namespace": "None",
+      "signature": "resetSearchBoxColor()",
+      "description": "The purpose of this function is to reset the background color of the search text and continuous covariate search boxes to a semi-transparent white color.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the background color of the HTML elements with IDs 'search_text' and 'search_cov_cont'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "clearSearchRequest",
+      "namespace": "None",
+      "signature": "clearSearchRequest()",
+      "description": "Clears the search items on one or both axes based on the value of the 'search_target' element. It also clears selection marks for the specified search target.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the search items on the specified axes.",
+        "Clears selection marks for the specified search target."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSearchItems",
+      "namespace": "SRCH",
+      "signature": "SRCH.clearSearchItems(clickAxis)",
+      "description": "The purpose of this function is to clear all search items on a particular axis. It clears search items for either the 'Row' or 'Column' axis, clears selected bars in dendrograms, and removes mark labels.",
+      "parameters": [
+        {
+          "name": "clickAxis",
+          "type": "String",
+          "description": "Specifies the axis ('Row' or 'Column') for which the search items should be cleared."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears all axis search items using SRCHSTATE.clearAllAxisSearchItems.",
+        "Clears selected bars in row dendrogram if clickAxis is 'Row'.",
+        "Clears selected bars in column dendrogram if clickAxis is 'Column'.",
+        "Removes mark labels from the document."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSearchElement",
+      "namespace": "None",
+      "signature": "clearSearchElement()",
+      "description": "The purpose of this function is to clear the appropriate search data entry element based on the current search criteria and state.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of the search text input element.",
+        "Modifies the value of the search_cov_cont input element.",
+        "Calls UTIL.resetCheckBoxDropdown to reset the checkbox dropdown.",
+        "Calls SRCHSTATE.setDiscCovState to update the search state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showSearchResults",
+      "namespace": "SRCH",
+      "signature": "SRCH.showSearchResults(validSearch)",
+      "description": "The purpose of this function is to display the search results text area below the search controls with the row/column count results from the just-executed search if there are search results to show. If the search is invalid, it displays an error message. Otherwise, it hides the search results.",
+      "parameters": [
+        {
+          "name": "validSearch",
+          "type": "boolean",
+          "description": "Indicates whether the search expression entered is valid."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the innerHTML of the element with id 'search_display_text'.",
+        "Calls enableDisableAllSearchButtons() to enable or disable search buttons.",
+        "Calls hideSearchResults() to hide the search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "hideSearchResults",
+      "namespace": "None",
+      "signature": "function hideSearchResults()",
+      "description": "The purpose of this function is to hide the search results text area below the search controls by clearing its inner HTML content.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of the element with id 'search_display_text'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "getSearchResultsCounts",
+      "namespace": "None",
+      "signature": "function getSearchResultsCounts()",
+      "description": "Retrieves counts for search results and returns an array containing the total row search results, total column results, and total combined results.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array containing three integers: [total row search results, total column results, total combined results]."
+      }
+    },
+    {
+      "name": "showSearchError",
+      "namespace": "None",
+      "signature": "showSearchError(type, searchItem)",
+      "description": "Displays a search error message based on the type of error and the search item provided. The error message is shown near the search bar and is removed after a short delay.",
+      "parameters": [
+        {
+          "name": "type",
+          "type": "number",
+          "description": "The type of search error. 0 for no matching labels, 1 for exiting dendrogram selection, and 2 for all items visible."
+        },
+        {
+          "name": "searchItem",
+          "type": "object",
+          "description": "An object containing details about the search item. It may have properties like 'label' and 'axis' depending on the error type."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the 'searchError' div element.",
+        "Appends the 'searchError' div element to the document body.",
+        "Removes the 'searchError' div element after 2000 milliseconds."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "redrawSearchResults",
+      "namespace": "SRCH",
+      "signature": "SRCH.redrawSearchResults()",
+      "description": "Function to update and display the search results when the 'SHOW' button in the Gear Dialog is clicked. It updates displayed labels, redraws selection marks, updates selections, and shows the search results.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates displayed labels via DET.updateDisplayedLabels()",
+        "Redraws selection marks via SUM.redrawSelectionMarks()",
+        "Updates selections via DET.updateSelections()",
+        "Displays search results via SRCH.showSearchResults()"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

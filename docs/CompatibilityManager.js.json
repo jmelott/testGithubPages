@@ -1,0 +1,163 @@
+{
+  "filename": "CompatibilityManager.js",
+  "namespace": "NgChm.CM",
+  "description": [
+    "The CompatibilityManager module ensures that the configuration of a heatmap being opened is compatible with the current standard configuration. It compares the heatmap's configuration with a default configuration and updates the heatmap's configuration to include any missing standard items."
+  ],
+  "declares_functions_in": [
+    "CM"
+  ],
+  "interacts_with": [
+    "NgChm.UTIL"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "CM.classOrderStr",
+      "description": "String used to identify classification order entries in the configuration."
+    },
+    {
+      "name": "CM.jsonConfigStr",
+      "description": "String containing the entire default configuration in JSON format."
+    },
+    {
+      "name": "CM.version",
+      "description": "Current version number of the CompatibilityManager."
+    },
+    {
+      "name": "CM.versionCheckUrl",
+      "description": "URL used to check for the latest version of the CompatibilityManager."
+    },
+    {
+      "name": "CM.viewerAppUrl",
+      "description": "URL for downloading the NGCHM viewer application."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "CompatibilityManager",
+      "namespace": "CM",
+      "signature": "CM.CompatibilityManager(mapConfig)",
+      "description": "The purpose of the CompatibilityManager is to find any standard configuration items that might be missing from the configuration of the heatmap that is currently being opened. It compares the default configuration (stored as a JSON string) with the provided heatmap configuration and updates the heatmap configuration if any standard items are missing.",
+      "parameters": [
+        {
+          "name": "mapConfig",
+          "type": "object",
+          "description": "The configuration object of the heatmap that is currently being opened."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the mapConfig object with missing configuration items from the default configuration."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if any updates were made to the mapConfig object; otherwise, returns false."
+      }
+    },
+    {
+      "name": "trimClassLabel",
+      "namespace": "CM",
+      "signature": "CM.trimClassLabel(parts)",
+      "description": "The purpose of this function is to determine if the classification label contains the period (.) character and combine the pieces, that have been previously split on that character, back into a single string.",
+      "parameters": [
+        {
+          "name": "parts",
+          "type": "Array",
+          "description": "An array of strings representing parts of a classification label that may have been split on the period (.) character."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the input array 'parts' by removing elements from index 3 onwards."
+      ],
+      "returns": {
+        "type": "String",
+        "description": "A single string representing the combined classification label."
+      }
+    },
+    {
+      "name": "hasClasses",
+      "namespace": "CM",
+      "signature": "CM.hasClasses(config, item)",
+      "description": "Determines if column or row classifications exist in the current configuration. This is used to decide if the heatmap's configuration needs to be updated when classification_order is not found.",
+      "parameters": [
+        {
+          "name": "config",
+          "type": "object",
+          "description": "The configuration object containing row and column classifications."
+        },
+        {
+          "name": "item",
+          "type": "string",
+          "description": "A string indicating whether to check for row or column classifications."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if classifications exist in the specified configuration; otherwise, returns false."
+      }
+    },
+    {
+      "name": "buildConfigComparisonObject",
+      "namespace": "CM",
+      "signature": "CM.buildConfigComparisonObject(obj, stack, configObj, mapConfig)",
+      "description": "Constructs a comparison object from either the default heatmap properties or the properties of the currently opened heatmap. For the current map, it adds the full path to each configuration item along with its associated value to the comparison object. For the default configuration, it also incorporates the current map's layers and classifications to build a comprehensive comparison tree.",
+      "parameters": [
+        {
+          "name": "obj",
+          "type": "object",
+          "description": "The source object containing heatmap properties to be compared."
+        },
+        {
+          "name": "stack",
+          "type": "string",
+          "description": "The current path in the object hierarchy being processed."
+        },
+        {
+          "name": "configObj",
+          "type": "object",
+          "description": "The target object where the comparison results are stored."
+        },
+        {
+          "name": "mapConfig",
+          "type": "object",
+          "description": "The configuration object of the current heatmap, used to retrieve and insert keys for each data layer or classification bar."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the configObj parameter by adding comparison data."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "mapDataCompatibility",
+      "namespace": "CM",
+      "signature": "CM.mapDataCompatibility(mapData)",
+      "description": "Ensures that the label_type properties in the col_data and row_data of the mapData object are arrays. If they are not, it converts them to arrays using the UTIL.convertToArray function. Returns true if any updates were made to the mapData object.",
+      "parameters": [
+        {
+          "name": "mapData",
+          "type": "object",
+          "description": "The map data object containing col_data and row_data properties that need to be checked and potentially updated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapData.col_data.label.label_type if it is not an array.",
+        "Modifies mapData.row_data.label.label_type if it is not an array."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the mapData object was updated, otherwise false."
+      }
+    }
+  ]
+}

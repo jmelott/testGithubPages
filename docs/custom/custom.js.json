@@ -1,0 +1,1536 @@
+{
+  "filename": "custom.js",
+  "namespace": [],
+  "description": [
+    "This module provides a variety of linkout functions for the NGCHM API, enabling users to access external databases and resources related to genes, proteins, pathways, and other biological entities. It includes plugins for visualizing data in different formats, such as scatter plots and ideograms, and supports interaction with numerous bioinformatics tools and databases."
+  ],
+  "declares_functions_in": [
+    "expandLinkOuts()",
+    "iQuery(names)",
+    "iQuery2(labels)",
+    "openAmigo(names)",
+    "openCBIOGenes(genes)",
+    "openCBIOSamp(ids)",
+    "openCBIOSampTCGA(ids)",
+    "openChebi(names)",
+    "openCivicDB(ids)",
+    "openClinVar(names)",
+    "openCosmicGene(names)",
+    "openDecipher(names)",
+    "openDepMap(ids)",
+    "openFireBrowseGene(names)",
+    "openGEOAccession(aids)",
+    "openGTExPortal(ids)",
+    "openGdcCase(labels)",
+    "openGdcGene(labels)",
+    "openGenevisibleHugo(names)",
+    "openGenevisiblePeptide(names)",
+    "openHGNCGene(names)",
+    "openHMDB(names)",
+    "openKEGG(names)",
+    "openLinkedOmicsGene(names)",
+    "openLinkedOmicsIsoform(names)",
+    "openMDACCPathwayID(names)",
+    "openMSigDB(names)",
+    "openMW(names)",
+    "openMavedbGene(names)",
+    "openMetacyc(names)",
+    "openNCBIEntrezIDPage(eids)",
+    "openNCBIGenePage(names)",
+    "openOLSVis(names)",
+    "openPathwaysBrowserGO(names)",
+    "openPeptideAtlas(names)",
+    "openPubchem(names)",
+    "openQuickGO(names)",
+    "openRefmet(names)",
+    "openRegno(names)",
+    "openSlideArchive(ids)",
+    "openTumorPortalGene(names)",
+    "openUCSC(posns)",
+    "openUniprot(names)",
+    "searchAntibodyRegistry(labels)",
+    "searchBioGPS(names)",
+    "searchClinicalTrials(labels)",
+    "searchClinicalTrialsForOne(labels)",
+    "searchEnsemblForGene(names)",
+    "searchEnsemblForTranscript(names)",
+    "searchGeneCards(labels)",
+    "searchGoogle(selection)",
+    "searchGoogleScholar(labels)",
+    "searchNCBIDatabases(names)",
+    "searchPubMedForAll(labels)",
+    "searchPubMedForAny(labels)",
+    "searchPubMedForOne(labels)",
+    "searchSCICrunch(labels)",
+    "searchVega(names)",
+    "viewIdeogramGene(genes)",
+    "viewIdeogramGene2(labels)",
+    "viewIdeogramMIRNA(mir)",
+    "viewIdeogramMIRNA2(labels)",
+    "viewMiRBasePage(eids)",
+    "viewMupitG(genes)"
+  ],
+  "interacts_with": [
+    "Amigo",
+    "BioGPS",
+    "Cancer Digital Slide Archive",
+    "cBioPortal",
+    "CIViC",
+    "COSMIC",
+    "Decipher",
+    "DepMap",
+    "Ensembl",
+    "FireBrowse",
+    "GDC",
+    "GeneCards",
+    "GeneVisible",
+    "Google Scholar",
+    "GTEx Portal",
+    "HGNC",
+    "Ideogram Viewer",
+    "LinkedOmics Database",
+    "MaveDB",
+    "miRBase",
+    "MSigDB",
+    "MuPIT",
+    "Metabolomics Workbench",
+    "NCBI",
+    "NDEx IQuery",
+    "OLSVis",
+    "Pathways Browser",
+    "PeptideAtlas",
+    "PubMed",
+    "QuickGO",
+    "RRID",
+    "TCGA",
+    "TumorPortal",
+    "UCSC Genome Browser",
+    "UniProt",
+    "Vega"
+  ],
+  "classes": [],
+  "member_variables": [],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "openAmigo",
+      "namespace": "None",
+      "signature": "openAmigo(names)",
+      "description": "Opens a URL in the GeneOntology Amigo website using the first element of the provided names array.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of strings where the first element is used to construct the URL for the GeneOntology Amigo website."
+        }
+      ],
+      "called_urls": [
+        "http://amigo.geneontology.org/amigo/term/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchBioGPS",
+      "namespace": "None",
+      "signature": "searchBioGPS(names)",
+      "description": "This function searches for a given gene name on the BioGPS website and opens the search results in a new window.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used for the search query."
+        }
+      ],
+      "called_urls": [
+        "https://biogps.org/search/?q="
+      ],
+      "side_effects": [
+        "Opens a new browser window or tab with the search results from BioGPS."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openSlideArchive",
+      "namespace": "None",
+      "signature": "openSlideArchive(ids)",
+      "description": "Opens the Cancer Digital Slide Archive for a given patient ID by constructing a URL and forcing the browser to reload the page.",
+      "parameters": [
+        {
+          "name": "ids",
+          "type": "Array",
+          "description": "An array of patient IDs, where the first ID is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://cancer.digitalslidearchive.org/?__reload="
+      ],
+      "side_effects": [
+        "Forces the browser to reload the page.",
+        "Changes the current URL to the Cancer Digital Slide Archive for the specified patient ID."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openCBIOGenes",
+      "namespace": "None",
+      "signature": "openCBIOGenes(genes)",
+      "defined_section": "cBioPortal plugin",
+      "description": "Opens a URL in the cBioPortal with a specified list of genes for a given study.",
+      "parameters": [
+        {
+          "name": "genes",
+          "type": "Array",
+          "description": "An array of gene names to be queried in the cBioPortal."
+        }
+      ],
+      "called_urls": [
+        "https://www.cbioportal.org/results"
+      ],
+      "side_effects": [
+        "Opens a new URL in the cBioPortal with the specified genes and study ID."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openCBIOSamp",
+      "namespace": "None",
+      "signature": "openCBIOSamp(ids)",
+      "description": "Opens a cBioPortal case URL for a given study and case ID.",
+      "parameters": [
+        {
+          "name": "ids",
+          "type": "Array",
+          "description": "An array containing case IDs. The first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.cbioportal.org/case.do?cancer_study_id={studyid}&case_id={case_id}"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openCBIOSampTCGA",
+      "namespace": "None",
+      "signature": "openCBIOSampTCGA(ids)",
+      "description": "This function extracts the first 12 characters of the first element in the provided array of IDs and calls the openCBIOSamp function with this substring wrapped in an array.",
+      "parameters": [
+        {
+          "name": "ids",
+          "type": "Array",
+          "description": "An array of strings representing IDs."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openCivicDB",
+      "namespace": "None",
+      "signature": "openCivicDB(ids)",
+      "defined_section": "CivicDB plugin",
+      "description": "Opens the CivicDB website with the provided Entrez ID.",
+      "parameters": [
+        {
+          "name": "ids",
+          "type": "Array",
+          "description": "An array containing Entrez IDs. The first ID in the array is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://civicdb.org/links/entrez_id/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openCosmicGene",
+      "namespace": "None",
+      "signature": "openCosmicGene(names)",
+      "defined_section": "COSMIC plugin",
+      "description": "Opens the COSMIC gene analysis page for the first gene name provided in the input array.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://cancer.sanger.ac.uk/cosmic/gene/analysis?ln="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openDecipher",
+      "namespace": "None",
+      "signature": "openDecipher(names)",
+      "description": "Opens a URL in the Decipher database for the given gene name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://decipher.sanger.ac.uk/search?q="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openDepMap",
+      "namespace": "None",
+      "signature": "openDepMap(ids)",
+      "defined_section": "DepMap plugin",
+      "description": "Opens a DepMap gene overview page for the given gene ID.",
+      "parameters": [
+        {
+          "name": "ids",
+          "type": "Array",
+          "description": "An array containing gene IDs. The first element of the array is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://depmap.org/portal/gene/{gene_id}?tab=overview"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchEnsemblForGene",
+      "namespace": "None",
+      "signature": "function searchEnsemblForGene(names)",
+      "description": "Searches for a gene in the Ensembl database using the provided gene names and species information.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names to search for. The first element is used for the search query."
+        }
+      ],
+      "called_urls": [
+        "https://ensembl.org/Multi/psychic?site=ensembl&species={species}&q={gname}"
+      ],
+      "side_effects": [
+        "Opens a new URL in the browser using the linkouts.openUrl method."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchEnsemblForTranscript",
+      "namespace": "None",
+      "signature": "searchEnsemblForTranscript(names)",
+      "description": "Searches for a transcript in the Ensembl database using the provided transcript name and species.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array containing the transcript names to search for. The first element is used for the search."
+        }
+      ],
+      "called_urls": [
+        "https://ensembl.org/Multi/psychic?site=ensembl&species={species}&q={tname}"
+      ],
+      "side_effects": [
+        "Opens a new URL in the browser using the linkouts.openUrl method."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openFireBrowseGene",
+      "namespace": "None",
+      "signature": "openFireBrowseGene(names)",
+      "description": "Opens a FireBrowse webpage for a given gene name. This function constructs a URL to the FireBrowse website using the first gene name provided in the input array and opens it in a new window or tab.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the FireBrowse URL."
+        }
+      ],
+      "called_urls": [
+        "http://firebrowse.org/viewGene.html?gene="
+      ],
+      "side_effects": [
+        "Opens a new browser window or tab with the constructed FireBrowse URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openGdcGene",
+      "namespace": "None",
+      "signature": "openGdcGene(labels)",
+      "description": "Opens the GDC (Genomic Data Commons) portal for a specified gene using the provided label.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array containing gene labels, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://portal.gdc.cancer.gov/genes/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openGdcCase",
+      "namespace": "None",
+      "signature": "openGdcCase(labels)",
+      "description": "Opens a GDC (Genomic Data Commons) case in a new browser tab using the provided case label.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array containing case labels, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://portal.gdc.cancer.gov/cases/"
+      ],
+      "side_effects": [
+        "Opens a new browser tab with the constructed GDC case URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchGeneCards",
+      "namespace": "None",
+      "signature": "searchGeneCards(labels)",
+      "defined_section": "GeneCards plugin",
+      "description": "This function searches for a gene in the GeneCards database using the first label provided in the labels array.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings where the first element is the gene name to search for in GeneCards."
+        }
+      ],
+      "called_urls": [
+        "http://www.genecards.org/Search/Keyword?queryString="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openGenevisiblePeptide",
+      "namespace": "None",
+      "signature": "openGenevisiblePeptide(names)",
+      "defined_section": "GeneVisible plugin",
+      "description": "Opens a GeneVisible page for a given gene name in a new browser tab.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://genevisible.com/tissues/HS/UniProt/"
+      ],
+      "side_effects": [
+        "Opens a new browser tab with the GeneVisible page for the specified gene."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openGenevisibleHugo",
+      "namespace": "None",
+      "signature": "openGenevisibleHugo(names)",
+      "description": "Opens a GeneVisible webpage for a given gene name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://genevisible.com/tissues/HS/Gene%20Symbol/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchGoogle",
+      "namespace": "None",
+      "signature": "searchGoogle(selection)",
+      "defined_section": "Google plugin",
+      "description": "This function performs a Google search using the provided selection array. It constructs a search URL by joining the elements of the selection array with a '+' character and opens this URL in a new frame using the linkouts.openUrl method.",
+      "parameters": [
+        {
+          "name": "selection",
+          "type": "array",
+          "description": "An array of strings that will be joined to form the search query."
+        }
+      ],
+      "called_urls": [
+        "https://google.com/search?q="
+      ],
+      "side_effects": [
+        "Opens a new URL in a frame using linkouts.openUrl."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchGoogleScholar",
+      "namespace": "None",
+      "signature": "searchGoogleScholar(labels)",
+      "description": "This function constructs a Google Scholar search URL using the provided labels and opens it in a new window or tab.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings representing the search terms to be used in the Google Scholar query."
+        }
+      ],
+      "called_urls": [
+        "https://scholar.google.com/scholar?q="
+      ],
+      "side_effects": [
+        "Opens a new window or tab with the constructed Google Scholar search URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openGTExPortal",
+      "namespace": "None",
+      "signature": "openGTExPortal(ids)",
+      "defined_section": "GTEx plugin",
+      "description": "Opens the GTEx Portal for a given gene ID in a new window or tab without using a frame.",
+      "parameters": [
+        {
+          "name": "ids",
+          "type": "Array",
+          "description": "An array containing gene IDs, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://gtexportal.org/home/gene/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openHGNCGene",
+      "namespace": "None",
+      "signature": "openHGNCGene(names)",
+      "defined_section": "HGNC plugin",
+      "description": "Opens the HGNC gene symbol report page for the first gene name provided in the input array.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to generate the URL."
+        }
+      ],
+      "called_urls": [
+        "http://www.genenames.org/cgi-bin/gene_symbol_report?q=data/hgnc_data.php&match="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "viewIdeogramGene",
+      "namespace": "None",
+      "signature": "viewIdeogramGene(genes)",
+      "defined_section": "Ideogram viewer plugin",
+      "description": "Opens the Ideogram viewer with a list of genes provided as input.",
+      "parameters": [
+        {
+          "name": "genes",
+          "type": "Array",
+          "description": "An array of gene names to be visualized in the Ideogram viewer."
+        }
+      ],
+      "called_urls": [
+        "https://bioinformatics.mdanderson.org/ideogramviewer/Ideogram.html?genelist1="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "viewIdeogramGene2",
+      "namespace": "None",
+      "signature": "viewIdeogramGene2(labels)",
+      "description": "This function opens a URL to the Ideogram Viewer with specified gene lists for rows and columns.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "object",
+          "description": "An object containing two arrays: 'Row' and 'Column', which represent lists of genes."
+        }
+      ],
+      "called_urls": [
+        "https://bioinformatics.mdanderson.org/ideogramviewer/Ideogram.html"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "viewIdeogramMIRNA",
+      "namespace": "None",
+      "signature": "viewIdeogramMIRNA(mir)",
+      "description": "This function processes a list of miRNA identifiers by removing the '.MIMAT' suffix from each identifier and then opens a URL to the Ideogram Viewer with the processed list of miRNA identifiers.",
+      "parameters": [
+        {
+          "name": "mir",
+          "type": "Array",
+          "description": "An array of miRNA identifiers."
+        }
+      ],
+      "called_urls": [
+        "https://bioinformatics.mdanderson.org/ideogramviewer/Ideogram.html?mirlist1="
+      ],
+      "side_effects": [
+        "Opens a new URL in the 'ideogram' window."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "viewIdeogramMIRNA2",
+      "namespace": "None",
+      "signature": "function viewIdeogramMIRNA2(labels)",
+      "description": "Generates a URL to view miRNA ideograms based on provided labels and opens it in a new window.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "object",
+          "description": "An object containing 'Row' and 'Column' arrays of miRNA labels."
+        }
+      ],
+      "called_urls": [
+        "https://bioinformatics.mdanderson.org/ideogramviewer/Ideogram.html"
+      ],
+      "side_effects": [
+        "Opens a new window with the generated URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "openLinkedOmicsGene",
+      "namespace": "None",
+      "signature": "openLinkedOmicsGene(names)",
+      "defined_section": "LinkedOmics Database plugin",
+      "description": "Opens a LinkedOmics gene page for the first gene name provided in the input array.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://kb.linkedomics.org/gene/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openLinkedOmicsIsoform",
+      "namespace": "None",
+      "signature": "openLinkedOmicsIsoform(names)",
+      "description": "Opens a LinkedOmics isoform page for a given protein name in a new browser tab or window.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of strings where the first element is the protein name to be used in the URL."
+        }
+      ],
+      "called_urls": [
+        "https://kb.linkedomics.org/isoform/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openMavedbGene",
+      "namespace": "None",
+      "signature": "openMavedbGene(names)",
+      "defined_section": "MaveDB Variant Effects Database plugin",
+      "description": "Opens a MaveDB search URL for a given gene name and species. Defaults to Homo sapiens if species is not specified.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array containing gene names, where the first element is used for the search."
+        }
+      ],
+      "called_urls": [
+        "https://mavedb.org/search/?organism={species}&search={gname}"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "viewMiRBasePage",
+      "namespace": "None",
+      "signature": "function viewMiRBasePage(eids)",
+      "defined_section": "miRBase plugin",
+      "description": "This function takes an array of entity IDs (eids), extracts the miRNA ID from the first element, and opens a URL to the miRBase website for that specific miRNA.",
+      "parameters": [
+        {
+          "name": "eids",
+          "type": "Array",
+          "description": "An array of entity IDs, where the first element contains the miRNA ID."
+        }
+      ],
+      "called_urls": [
+        "https://www.mirbase.org/textsearch.shtml?q="
+      ],
+      "side_effects": [
+        "Opens a new URL in the browser using the linkouts.openUrl function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openMSigDB",
+      "namespace": "None",
+      "signature": "openMSigDB(names)",
+      "defined_section": "MSigDB plugin",
+      "description": "Opens a URL to the MSigDB (Molecular Signatures Database) page for a given pathway name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of pathway names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://software.broadinstitute.org/gsea/msigdb/cards/{pwname}.html"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "viewMupitG",
+      "namespace": "None",
+      "signature": "viewMupitG(genes)",
+      "defined_section": "MuPIT plugin",
+      "description": "This function sorts and filters a list of gene names to remove duplicates, then opens a URL to the MuPIT Interactive tool for the first gene in the list.",
+      "parameters": [
+        {
+          "name": "genes",
+          "type": "Array",
+          "description": "An array of gene names to be processed."
+        }
+      ],
+      "called_urls": [
+        "http://mupit.icm.jhu.edu/MuPIT_Interactive?gene="
+      ],
+      "side_effects": [
+        "Modifies the input array 'genes' by sorting and filtering it."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "openMW",
+      "namespace": "None",
+      "signature": "openMW(names)",
+      "defined_section": "Metabolomic plugins",
+      "description": "Opens the Metabolomics Workbench website with a search query based on the first name in the provided list.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of names to be used for the search query. The first element is used in the URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.metabolomicsworkbench.org/search/sitesearch.php?Name="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openRegno",
+      "namespace": "None",
+      "signature": "openRegno(names)",
+      "description": "Opens a URL in a new window or tab based on the provided registration number (RegNo) from the first element of the names array. If the RegNo is empty, it alerts the user that no RegNo is available.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array where the first element is expected to be the registration number (RegNo) of a metabolite."
+        }
+      ],
+      "called_urls": [
+        "https://www.metabolomicsworkbench.org/data/StructureData.php?RegNo="
+      ],
+      "side_effects": [
+        "Displays an alert if the RegNo is empty.",
+        "Opens a new window or tab with the constructed URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "openPubchem",
+      "namespace": "None",
+      "signature": "openPubchem(names)",
+      "description": "Opens a PubChem URL for the given metabolite ID. If the ID is not available, it alerts the user.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "array",
+          "description": "An array where the first element is expected to be the PubChem ID of the metabolite."
+        }
+      ],
+      "called_urls": [
+        "https://pubchem.ncbi.nlm.nih.gov/compound/"
+      ],
+      "side_effects": [
+        "Displays an alert if the PubChem ID is not available."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openRefmet",
+      "namespace": "None",
+      "signature": "openRefmet(names)",
+      "description": "Opens a URL in the Metabolomics Workbench site to search for the given name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of names where the first element is used for the search query."
+        }
+      ],
+      "called_urls": [
+        "https://www.metabolomicsworkbench.org/search/sitesearch.php?Name="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openHMDB",
+      "namespace": "None",
+      "signature": "openHMDB(names)",
+      "description": "Opens the HMDB (Human Metabolome Database) webpage for a given metabolite name. If no name is provided, it alerts the user that no HMDB ID is available.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array containing the HMDB names. The first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://hmdb.ca/metabolites/"
+      ],
+      "side_effects": [
+        "Displays an alert if the first element of the names array is an empty string."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "openKEGG",
+      "namespace": "None",
+      "signature": "openKEGG(names)",
+      "description": "Opens a KEGG database URL for the given metabolite name. If the name is empty, it alerts the user that no KEGG ID is available.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "array",
+          "description": "An array of metabolite names, where the first element is used to construct the KEGG URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.genome.jp/dbget-bin/www_bget?compound+<keggName>"
+      ],
+      "side_effects": [
+        "Displays an alert if the first element in the names array is an empty string."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "openChebi",
+      "namespace": "None",
+      "signature": "openChebi(names)",
+      "description": "Opens a ChEBI webpage for the given metabolite name. If the name is empty, it alerts the user that no ChEBI name is available.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of metabolite names, where the first element is used to construct the ChEBI URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:"
+      ],
+      "side_effects": [
+        "Displays an alert if the first element of the names array is an empty string."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openMetacyc",
+      "namespace": "None",
+      "signature": "openMetacyc(names)",
+      "description": "Opens a MetaCyc URL for the given metabolite name. If the name is empty, it alerts the user that no MetaCyc name is available.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array containing metabolite names, where the first element is the MetaCyc name."
+        }
+      ],
+      "called_urls": [
+        "https://metacyc.org/compound?orgid=META&id="
+      ],
+      "side_effects": [
+        "Displays an alert if the MetaCyc name is empty."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openClinVar",
+      "namespace": "None",
+      "signature": "openClinVar(names)",
+      "description": "Opens the ClinVar webpage for the specified gene name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the ClinVar URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/clinvar/?term={gene_name}%5Bgene%5D"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openNCBIGenePage",
+      "namespace": "None",
+      "signature": "openNCBIGenePage(names)",
+      "description": "Opens the NCBI Gene page for a given gene name and species. The function constructs a URL based on the provided gene name and species, and then opens this URL in a new window or tab.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/gene?term=(species%5BOrganism%5D)%20AND%20gname%5BGene%20Name%5D"
+      ],
+      "side_effects": [
+        "Opens a new window or tab with the constructed NCBI Gene URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openNCBIEntrezIDPage",
+      "namespace": "None",
+      "signature": "openNCBIEntrezIDPage(eids)",
+      "description": "Opens the NCBI Gene page for the first Entrez ID in the provided list.",
+      "parameters": [
+        {
+          "name": "eids",
+          "type": "Array",
+          "description": "An array of Entrez IDs, where the first ID in the array will be used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/gene/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchNCBIDatabases",
+      "namespace": "None",
+      "signature": "searchNCBIDatabases(names)",
+      "description": "Searches the NCBI databases for a given gene name and species, and opens the search results in a new window.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used for the search."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/gquery/?term=((<gene_name>%5BGene+Symbol%5D)+AND+<species>%5BOrganism%5D)"
+      ],
+      "side_effects": [
+        "Opens a new window with the NCBI search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openGEOAccession",
+      "namespace": "None",
+      "signature": "openGEOAccession(aids)",
+      "description": "Opens a URL to the NCBI GEO database for the given accession ID.",
+      "parameters": [
+        {
+          "name": "aids",
+          "type": "Array",
+          "description": "An array of accession IDs, where the first ID in the array will be used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchClinicalTrialsForOne",
+      "namespace": "None",
+      "signature": "searchClinicalTrialsForOne(labels)",
+      "description": "This function searches for clinical trials related to the first label in the provided list by opening a URL to the ClinicalTrials.gov website.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of labels where the first label is used as the search term."
+        }
+      ],
+      "called_urls": [
+        "https://clinicaltrials.gov/ct2/results?term="
+      ],
+      "side_effects": [
+        "Opens a new URL in the browser."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchClinicalTrials",
+      "namespace": "None",
+      "signature": "searchClinicalTrials(labels)",
+      "description": "This function constructs a search URL for clinical trials based on the provided labels and opens the URL in a new window or tab.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings representing the search terms to be used in the clinical trials search."
+        }
+      ],
+      "called_urls": [
+        "https://clinicaltrials.gov/ct2/results?term="
+      ],
+      "side_effects": [
+        "Opens a new window or tab with the constructed URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "iQuery",
+      "namespace": "None",
+      "signature": "iQuery(names)",
+      "description": "This function constructs a URL using a base URL and a list of GEO Accession identifiers, then opens this URL in a new window or tab labeled 'NDEx IQuery'.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of GEO Accession identifiers to be included in the URL."
+        }
+      ],
+      "called_urls": [
+        "iQueryBaseURL + names.join(\",\")"
+      ],
+      "side_effects": [
+        "Opens a new browser window or tab with the constructed URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "iQuery2",
+      "namespace": "None",
+      "signature": "iQuery2(labels)",
+      "description": "This function concatenates the Row and Column arrays from the labels object, removes duplicate values, and then calls the iQuery function with the resulting array.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "object",
+          "description": "An object containing Row and Column arrays to be concatenated and filtered for unique values."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openOLSVis",
+      "namespace": "None",
+      "signature": "openOLSVis(names)",
+      "description": "Opens a URL in the OLSVis plugin using the first element of the provided names array.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of names where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "http://ols.wordvis.com/q="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openMDACCPathwayID",
+      "namespace": "None",
+      "signature": "openMDACCPathwayID(names)",
+      "defined_section": "MD Anderson Pathway Database plugin",
+      "description": "Opens the MD Anderson Pathway Browser for the given gene name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://bioinformatics.mdanderson.org/PathwaysBrowser/pathway/latest/mdaPathwayId/{gname}"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openPathwaysBrowserGO",
+      "namespace": "None",
+      "signature": "openPathwaysBrowserGO(names)",
+      "description": "Opens the Pathways Browser for a given Gene Ontology (GO) term using the first element in the provided names array.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of GO term names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "https://bioinformatics.mdanderson.org/PathwaysBrowser/goTerm/latest/goId/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openPeptideAtlas",
+      "namespace": "None",
+      "signature": "openPeptideAtlas(names)",
+      "description": "Opens the PeptideAtlas search page for the given gene name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used for the search."
+        }
+      ],
+      "called_urls": [
+        "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/Search?action=GO&search_key="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchPubMedForOne",
+      "namespace": "None",
+      "signature": "searchPubMedForOne(labels)",
+      "defined_section": "PubMed plugin",
+      "description": "This function searches PubMed for the first label in the provided array and opens the result in a new window without a frame.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings where the first element is used as the search term for PubMed."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/pubmed/?term="
+      ],
+      "side_effects": [
+        "Opens a new window/tab with the PubMed search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchPubMedForAll",
+      "namespace": "None",
+      "signature": "searchPubMedForAll(labels)",
+      "description": "This function constructs a PubMed search URL using the provided labels and opens the URL in a new frame.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings representing search terms to be combined with 'AND' for the PubMed search query."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/pubmed/?term="
+      ],
+      "side_effects": [
+        "Opens a new URL in a frame using the linkouts.openUrl method."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchPubMedForAny",
+      "namespace": "None",
+      "signature": "searchPubMedForAny(labels)",
+      "description": "Searches PubMed for any of the provided labels and opens the results in a new window.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array<String>",
+          "description": "An array of search terms to query in PubMed."
+        }
+      ],
+      "called_urls": [
+        "https://www.ncbi.nlm.nih.gov/pubmed/?term="
+      ],
+      "side_effects": [
+        "Opens a new window with the PubMed search results."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openQuickGO",
+      "namespace": "None",
+      "signature": "openQuickGO(names)",
+      "description": "Opens the QuickGO webpage for a given Gene Ontology (GO) term ID.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "array",
+          "description": "An array where the first element is the GO term ID to be used in the QuickGO URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.ebi.ac.uk/QuickGO/GTerm?id="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchAntibodyRegistry",
+      "namespace": "None",
+      "signature": "searchAntibodyRegistry(labels)",
+      "description": "This function searches the Antibody Registry for a given label by opening a URL with the search query.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of labels to search for in the Antibody Registry. Only the first label in the array is used."
+        }
+      ],
+      "called_urls": [
+        "https://antibodyregistry.org/search.php?q="
+      ],
+      "side_effects": [
+        "Opens a URL in the browser to perform the search."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchSCICrunch",
+      "namespace": "None",
+      "signature": "searchSCICrunch(labels)",
+      "description": "This function constructs a URL to search for antibodies on the SCICrunch website using the first label provided in the labels array and opens this URL.",
+      "parameters": [
+        {
+          "name": "labels",
+          "type": "Array",
+          "description": "An array of strings where the first element is used as the search query for SCICrunch."
+        }
+      ],
+      "called_urls": [
+        "https://scicrunch.org/resources/Antibodies/search"
+      ],
+      "side_effects": [
+        "Opens a URL in the browser using the first label in the labels array as the search query."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "expandLinkOuts",
+      "namespace": "None",
+      "signature": "expandLinkOuts()",
+      "defined_section": "TCGA plugin",
+      "description": "Expands the TCGA fields to allow any TCGA type longer than typeName by adding subtypes to the linkouts object. This function ensures that a subtype can be passed to any function expecting a supertype.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the linkouts object by adding subtypes."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openTumorPortalGene",
+      "namespace": "None",
+      "signature": "openTumorPortalGene(names)",
+      "defined_section": "TumorPortal plugin",
+      "description": "Opens a TumorPortal page for the specified gene name in a new window or tab.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the URL."
+        }
+      ],
+      "called_urls": [
+        "http://www.tumorportal.org/view?geneSymbol="
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openUCSC",
+      "namespace": "None",
+      "signature": "openUCSC(posns)",
+      "description": "Opens the UCSC Genome Browser at a specified genomic position.",
+      "parameters": [
+        {
+          "name": "posns",
+          "type": "Array",
+          "description": "An array of genomic positions to be viewed in the UCSC Genome Browser. The first position in the array is used."
+        }
+      ],
+      "called_urls": [
+        "https://genome.ucsc.edu/cgi-bin/hgTracks"
+      ],
+      "side_effects": [
+        "Opens a new URL in the UCSC Genome Browser with the specified genomic position."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openUniprot",
+      "namespace": "None",
+      "signature": "openUniprot(names)",
+      "description": "Opens the Uniprot webpage for the given gene name.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used to construct the Uniprot URL."
+        }
+      ],
+      "called_urls": [
+        "https://www.uniprot.org/uniprot/"
+      ],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "searchVega",
+      "namespace": "None",
+      "signature": "function searchVega(names)",
+      "description": "This function searches for a given gene name on the Vega genome browser website. It constructs a URL using the provided gene name and the species attribute, then opens this URL in a new window or tab.",
+      "parameters": [
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array of gene names, where the first element is used for the search."
+        }
+      ],
+      "called_urls": [
+        "http://vega.sanger.ac.uk/"
+      ],
+      "side_effects": [
+        "Opens a new window or tab with the constructed URL."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

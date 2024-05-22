@@ -1,0 +1,1832 @@
+{
+  "filename": "UserPreferenceManager.js",
+  "namespace": "NgChm.UPM",
+  "description": [
+    "The UserPreferenceManager module is responsible for handling user preferences within the NGCHM API. It provides functionalities to edit, apply, and reset user preferences related to heat map configurations, including data layers, covariate classification bars, and row/column settings. The module ensures that user changes are validated and applied correctly, and it manages the user interface elements for preference editing."
+  ],
+  "declares_functions_in": [
+    "UPM",
+    "UHM"
+  ],
+  "interacts_with": [
+    "NgChm.UHM",
+    "NgChm.MAPREP",
+    "NgChm.MMGR",
+    "NgChm.UTIL",
+    "NgChm.DVW",
+    "NgChm.SUM",
+    "NgChm.DET",
+    "NgChm.DEV",
+    "NgChm.DMM",
+    "NgChm.CMM",
+    "NgChm.CM"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "UHM.previewDiv",
+      "description": "A global variable to store the preview div element for color previews."
+    },
+    {
+      "name": "UPM.applyDone",
+      "description": "A flag indicating whether the apply operation is completed."
+    },
+    {
+      "name": "UPM.bkpColorMaps",
+      "description": "A backup of the original color maps before any user changes."
+    },
+    {
+      "name": "UPM.filterVal",
+      "description": "The current filter value used for filtering covariate bars."
+    },
+    {
+      "name": "UPM.hasClasses",
+      "description": "A flag indicating whether the heat map has classification bars."
+    },
+    {
+      "name": "UPM.resetVal",
+      "description": "A backup of the initial values of user preferences for reset purposes."
+    },
+    {
+      "name": "UPM.searchPerformed",
+      "description": "A flag indicating whether a search operation has been performed."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "uiElement.onclick(ev)",
+      "description": "Handles the click event on a UI element and triggers the editPreferences function from the UPM (UserPreferenceManager) namespace.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object representing the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.editPreferences with the target of the event and null as arguments."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "uiElement.onclick()",
+      "description": "This function assigns an event handler to the 'onclick' event of the 'uiElement'. When the element is clicked, it triggers the 'UPM.prefsMoveButton' function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UPM.prefsMoveButton function when the uiElement is clicked."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "uiElement.onclick()",
+      "description": "This function assigns an event handler to the 'onclick' event of the 'uiElement'. When the element is clicked, it triggers the 'UPM.prefsCancelButton' function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UPM.prefsCancelButton function when the uiElement is clicked."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "uiElement",
+      "signature": "uiElement.onclick()",
+      "description": "This function is an event handler for the 'click' event on the uiElement. When the element is clicked, it triggers the UPM.showInfoPrefs() function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "uiElement",
+      "signature": "uiElement.onclick()",
+      "description": "This function is an event handler for the 'click' event on the uiElement. When the element is clicked, it triggers the showLayerPrefs method from the UPM object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UPM.showLayerPrefs() method."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "uiElement.onclick()",
+      "description": "This function is an event handler for the 'onclick' event of a UI element. When the element is clicked, it triggers the 'showRowsColsPrefs' method from the 'UPM' object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "uiElement",
+      "signature": "uiElement.onclick()",
+      "description": "This function is an event handler for the 'click' event on the uiElement. When the element is clicked, it triggers the UPM.showClassPrefs() function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UPM.showClassPrefs() function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "uiElement.onclick(ev)",
+      "description": "Handles the click event on a UI element and triggers the editPreferences function from the UPM module.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The event object representing the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.editPreferences with the target of the event and null as arguments."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "editPreferences",
+      "namespace": "UPM",
+      "signature": "UPM.editPreferences(e, errorMsg)",
+      "defined_section": "COMMON PREFERENCE PROCESSING FUNCTIONS",
+      "description": "This is the main driver function for editing preferences. It is called when the Edit preferences 'gear' button is pressed on the main application screen or when user preferences have been applied but errors have occurred. It manages the display and setup of various preference panels and handles error messages.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the action triggering the function."
+        },
+        {
+          "name": "errorMsg",
+          "type": "Array",
+          "description": "An array containing error messages and related information if errors have occurred during preference application."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Closes the main menu.",
+        "Checks and sets the state of classification bars.",
+        "Initializes backup color maps if not already done.",
+        "Sets various preference panels and messages based on the error state.",
+        "Modifies the display state of the preferences panel.",
+        "Resets errorMsg to null."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "locatePrefsPanel",
+      "namespace": "UPM",
+      "signature": "UPM.locatePrefsPanel()",
+      "description": "The purpose of this function is to position the preferences panel on the screen based on the dimensions and positions of various elements.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the style properties of the preferences panel element.",
+        "Changes the dataset state of the 'prefsMove_btn' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setMessage",
+      "namespace": "UPM",
+      "signature": "UPM.setMessage(errorMsgTxt)",
+      "description": "Sets the error message at the bottom of the preferences panel when it is drawn or re-drawn. It removes any existing error message and adds a new one if provided. It also sets up the onclick handlers for the apply, reset, and close buttons in the preferences panel.",
+      "parameters": [
+        {
+          "name": "errorMsgTxt",
+          "type": "String",
+          "description": "The error message text to be displayed. If null or empty, no error message will be shown."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes any existing error message from the preferences panel.",
+        "Adds a new error message to the preferences panel if errorMsgTxt is provided.",
+        "Sets onclick handlers for the apply, reset, and close buttons in the preferences panel."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Assigns an event handler to the 'prefApply_btn' button that triggers the UPM.prefsApplyButton function when clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Assigns an event handler to the 'prefApply_btn' button."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Assigns an event handler to the 'prefReset_btn' button that triggers the UPM.prefsResetButton function when clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Assigns an event handler to the 'prefReset_btn' button."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick()",
+      "description": "Assigns an event handler to the 'prefClose_btn' element that triggers the UPM.prefsCancelButton function when clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Assigns an event handler to the 'prefClose_btn' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showRowsColsPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.showRowsColsPrefs()",
+      "description": "This function handles the processing for the preferences tab when the user selects the 'Rows & Cols' tab.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showInfoPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.showInfoPrefs()",
+      "description": "This function displays the preferences tab for map information by invoking the UTIL.showTab function with the appropriate tab identifier.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "showLayerPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.showLayerPrefs()",
+      "description": "The purpose of this function is to perform the processing for the preferences tab when the user selects the 'Data Layers' tab.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UTIL.showTab with 'prefLayer_btn' to display the preferences tab.",
+        "Calls UPM.showLayerBreak() which may have additional side effects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showClassPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.showClassPrefs()",
+      "description": "The purpose of this function is to perform the processing for the preferences tab when the user selects the 'Covariates' tab.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "prefsCancelButton",
+      "namespace": "UPM",
+      "signature": "UPM.prefsCancelButton()",
+      "description": "This function performs all necessary processing to exit the user preferences dialog without applying or saving any changes made by the user when the Cancel button is pressed on the ColorMap preferences dialog. It re-applies the backup colormap to the colorMapManager and hides the preferences panel.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Re-applies the backup colormap to the colorMapManager.",
+        "Hides the preferences panel by setting its display style to 'none'.",
+        "Sets UPM.searchPerformed to false."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "prefsMoveButton",
+      "namespace": "UPM",
+      "signature": "UPM.prefsMoveButton()",
+      "description": "Toggles the preferences editing panel between the left and right sides of the screen.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the 'state' data attribute of the 'prefsMove_btn' element.",
+        "Changes the 'left' style property of the 'prefs' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removeSettingsPanels",
+      "namespace": "UPM",
+      "signature": "UPM.removeSettingsPanels()",
+      "description": "The purpose of this function is to remove all panels that are content specific before closing the preferences dialog.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Clears the message set by UPM.setMessage.",
+        "Removes all child elements from each tab in the preferences dialog."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "prefsApplyButton",
+      "namespace": "UPM",
+      "signature": "UPM.prefsApplyButton(isReset)",
+      "description": "The purpose of this function is to perform all processing necessary to reconfigure the \"current\" presentation of the heat map in the viewer when the Apply button is pressed on the ColorMap Preferences Dialog. First, validations are performed. If errors are found, preference changes are NOT applied and the user is re-presented with the preferences dialog and the error found. If no errors are found, all changes are applied to the heatmap and the summary panel, detail panel, and covariate bars are redrawn. However, these changes are not yet permanently saved to the JSON files that are used to configure heat map presentation.",
+      "parameters": [
+        {
+          "name": "isReset",
+          "type": "boolean",
+          "description": "Indicates whether the preferences should be reset to default values."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Disables the Apply button.",
+        "Calls UPM.doApply with the isReset parameter."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "doApply",
+      "namespace": "UPM",
+      "signature": "UPM.doApply(isReset)",
+      "description": "Handles the application of user preferences, including validation and resetting preferences. If the isReset parameter is provided, it skips validation and directly applies the preferences.",
+      "parameters": [
+        {
+          "name": "isReset",
+          "type": "boolean",
+          "description": "Indicates whether the function should reset preferences without validation. If undefined, the function performs validation before applying preferences."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.prefsValidate() to validate user preferences.",
+        "Calls UPM.prefsError() to handle validation errors.",
+        "Calls UPM.prefsApply() to apply user preferences.",
+        "Calls UPM.prefsSuccess() to indicate successful application of preferences.",
+        "Calls enableApplyButton() to re-enable the apply button.",
+        "Modifies the state of the heatMap object by calling heatMap.setUnAppliedChanges(true)."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "disableApplyButton",
+      "namespace": "None",
+      "signature": "disableApplyButton()",
+      "description": "This function disables the Apply button by setting its 'disabled' property to true and updates the UPM.applyDone flag to false.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Disables the HTML element with id 'prefApply_btn'.",
+        "Sets UPM.applyDone to false."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "enableApplyButton",
+      "namespace": "None",
+      "signature": "function enableApplyButton()",
+      "description": "This function toggles the Apply button back to the standard/blue one after the apply/reset has finished. It checks if the apply process is done and enables the Apply button if it is. If not, it retries after a short delay.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the 'disabled' property of the Apply button element with id 'prefApply_btn'.",
+        "Uses setTimeout to retry enabling the Apply button if the apply process is not done."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "prefsSuccess",
+      "namespace": "UPM",
+      "signature": "UPM.prefsSuccess()",
+      "description": "This function performs the necessary actions when user preferences are validated. It is shared by the Apply and Save buttons.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Resets UPM.filterVal to null",
+        "Removes the backup color map by setting UPM.bkpColorMaps to null",
+        "Redraws the summary panel using SUM.redrawSummaryPanel()",
+        "Resizes detail map canvases using DMM.resizeDetailMapCanvases()",
+        "Updates selections using DET.updateSelections(false)",
+        "Sets UPM.applyDone to true",
+        "Clears any messages by calling UPM.setMessage(\"\")"
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "prefsError",
+      "namespace": "UPM",
+      "signature": "UPM.prefsError(errorMsg)",
+      "description": "The purpose of this function is to handle the scenario when user preferences are determined to be invalid. It resets the filter value and re-displays the user preferences dialog with the provided error message.",
+      "parameters": [
+        {
+          "name": "errorMsg",
+          "type": "string",
+          "description": "The error message to be displayed in the user preferences dialog."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Resets UPM.filterVal to null.",
+        "Calls UPM.editPreferences with the error message."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "prefsApply",
+      "namespace": "UPM",
+      "signature": "UPM.prefsApply()",
+      "description": "Applies all user preferences for the heat map, including row and column dendrogram configurations, top items, covariate bar preferences, label sizing, and data layer preferences.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the heat map's row and column dendrogram configurations.",
+        "Updates the top items for rows and columns in the heat map.",
+        "Sets classification preferences for row and column covariate bars.",
+        "Adjusts label display length and method for rows and columns.",
+        "Configures data layer preferences including grid, selection, and gap colors."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "prefsValidate",
+      "namespace": "UPM",
+      "signature": "UPM.prefsValidate()",
+      "description": "Validates all user changes to the heatmap properties. Returns an error message if any validation fails.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array containing error information if validation fails, otherwise null."
+      }
+    },
+    {
+      "name": "validateDataLayers",
+      "namespace": "None",
+      "signature": "validateDataLayers()",
+      "description": "Validates the data layers in the heat map by checking each layer's breakpoints using the prefsValidateBreakPoints function. Returns an error message if any validation fails, otherwise returns null.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "An error message if validation fails for any data layer, otherwise null."
+      }
+    },
+    {
+      "name": "validateAxis",
+      "namespace": "None",
+      "signature": "validateAxis(axis)",
+      "description": "Validates the configuration of the axis covariates in a heatmap. It checks if the color map type is continuous and validates the breakpoints using the prefsValidateBreakPoints function.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis of the heatmap to be validated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "Returns an error message if validation fails, otherwise returns null."
+      }
+    },
+    {
+      "name": "prefsValidateForNumeric",
+      "namespace": "UPM",
+      "signature": "UPM.prefsValidateForNumeric()",
+      "description": "Validates user input for numeric preferences in heat map configurations, ensuring values are positive numbers and checking for specific conditions related to bar heights and color preferences.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable errorMsg if validation fails."
+      ],
+      "returns": {
+        "type": "array",
+        "description": "An array containing error details if validation fails, otherwise null."
+      }
+    },
+    {
+      "name": "prefsValidateBreakPoints",
+      "namespace": "None",
+      "signature": "prefsValidateBreakPoints(colorMapAxis, colorMapName, prefPanel)",
+      "description": "Validates all user breakpoint and color changes to heatmap data layer properties. When the first error is found, an error message (string array containing error information) is created and returned to the prefsApply function.",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "String",
+          "description": "The axis of the color map to validate (e.g., 'data')."
+        },
+        {
+          "name": "colorMapName",
+          "type": "String",
+          "description": "The name of the color map to validate."
+        },
+        {
+          "name": "prefPanel",
+          "type": "String",
+          "description": "The preference panel associated with the color map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs errors to the console if break elements are not found.",
+        "Modifies the prevBreakValue variable during validation."
+      ],
+      "returns": {
+        "type": "Array",
+        "description": "An array containing error information if validation fails, otherwise null."
+      }
+    },
+    {
+      "name": "prefsValidateBreakColors",
+      "namespace": "UPM",
+      "signature": "UPM.prefsValidateBreakColors(colorMapName, type, prefPanel)",
+      "description": "Validates user color changes to heatmap classification and data layer properties. Returns an error message if duplicate colors are found.",
+      "parameters": [
+        {
+          "name": "colorMapName",
+          "type": "str",
+          "description": "The name of the color map to validate."
+        },
+        {
+          "name": "type",
+          "type": "str",
+          "description": "The type of the color map, e.g., 'data' or other types."
+        },
+        {
+          "name": "prefPanel",
+          "type": "str",
+          "description": "The preference panel where the color settings are applied."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array containing the key, prefPanel, and an error message if a duplicate color is found; otherwise, null."
+      }
+    },
+    {
+      "name": "prefsApplyBreaks",
+      "namespace": "UPM",
+      "signature": "UPM.prefsApplyBreaks(colorMapName, colorMapAxis)",
+      "description": "The purpose of this function is to apply all user-entered changes to colors and breakpoints in a heat map's color map.",
+      "parameters": [
+        {
+          "name": "colorMapName",
+          "type": "string",
+          "description": "The name of the color map to be modified."
+        },
+        {
+          "name": "colorMapAxis",
+          "type": "string",
+          "description": "The axis of the color map to be modified."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the colors and thresholds of the specified color map.",
+        "Updates the missing color value from the DOM element.",
+        "Sets the updated color map in the color map manager."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getNewBreakColors",
+      "namespace": "None",
+      "signature": "getNewBreakColors(colorMapAxis, colorMapName, pos, action)",
+      "description": "The purpose of this function is to grab all user color entries for a given colormap and place them in a string array. It iterates through the screen elements, pulling the current color entry for each element, placing it in a new array, and returning that array. This function is called by the prefsApplyBreaks function and is also called from the data layer addLayerBreak and deleteLayerBreak functions with parameters passed in for the position to add/delete and the action to be performed (add/delete).",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "string",
+          "description": "The axis of the colormap, either 'row', 'col', or 'data'."
+        },
+        {
+          "name": "colorMapName",
+          "type": "string",
+          "description": "The name of the colormap."
+        },
+        {
+          "name": "pos",
+          "type": "number",
+          "description": "The position to add/delete a color entry."
+        },
+        {
+          "name": "action",
+          "type": "string",
+          "description": "The action to be performed, either 'add' or 'delete'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the color entries in the colormap based on user preferences.",
+        "Potentially modifies the upper colormap color to the foreground color set by the user for bar/scatter plots."
+      ],
+      "returns": {
+        "type": "array",
+        "description": "An array of color entries for the given colormap."
+      }
+    },
+    {
+      "name": "getNewBreakThresholds",
+      "namespace": "None",
+      "signature": "getNewBreakThresholds(colorMapAxis, colorMapName, pos, action)",
+      "description": "The purpose of this function is to gather all user data layer breakpoint entries for a given colormap and place them into an array. It iterates through the screen elements, pulling the current breakpoint entry for each element, placing it in a new array, and returning that array. This function is called by the prefsApplyBreaks function (only for data layers). It is also called from the data layer addLayerBreak and deleteLayerBreak functions with parameters passed in for the position to add/delete and the action to be performed (add/delete).",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "String",
+          "description": "The axis of the colormap to be used."
+        },
+        {
+          "name": "colorMapName",
+          "type": "String",
+          "description": "The name of the colormap."
+        },
+        {
+          "name": "pos",
+          "type": "Number",
+          "description": "The position at which to add or delete a breakpoint."
+        },
+        {
+          "name": "action",
+          "type": "String",
+          "description": "The action to be performed, either 'add' or 'delete'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the newThresholds array based on user input from the document elements."
+      ],
+      "returns": {
+        "type": "Array",
+        "description": "An array of new breakpoint values for the colormap."
+      }
+    },
+    {
+      "name": "setupLayerPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.setupLayerPrefs(e, prefprefs)",
+      "defined_section": "DATA LAYER PREFERENCE PROCESSING FUNCTIONS",
+      "description": "Constructs a DIV panel containing all data layer preferences. A dropdown list containing all data layers is presented, and individual DIVs for each data layer, containing breakpoints/colors, are added.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        },
+        {
+          "name": "prefprefs",
+          "type": "Object",
+          "description": "Preferences object containing configuration options for the data layers."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by appending elements to the 'layerPrefs' element.",
+        "Sets up event handlers for the dropdown list."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The updated 'layerPrefs' element containing the data layer preferences."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "el.onchange()",
+      "description": "This function is an event handler for the 'change' event on the element 'el'. When the 'change' event is triggered, it calls the UPM.showLayerBreak() function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.showLayerBreak() which may have its own side effects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "genPreset",
+      "namespace": "None",
+      "signature": "genPreset(key, colors, missingColor, axis, mapType)",
+      "description": "Generate a color scheme preset element. It consists of a gradient bar for the colors in the color scheme followed by a box containing the color for missing values. When clicked, the layer (based on key, axis, and mapType) breaks are set to those of the preset. A unique id is assigned to each new preset to assist automated tests.",
+      "parameters": [
+        {
+          "name": "key",
+          "type": "str",
+          "description": "The key identifying the layer."
+        },
+        {
+          "name": "colors",
+          "type": "array",
+          "description": "An array of colors used in the gradient."
+        },
+        {
+          "name": "missingColor",
+          "type": "str",
+          "description": "The color used for missing values."
+        },
+        {
+          "name": "axis",
+          "type": "str",
+          "description": "The axis information for the layer."
+        },
+        {
+          "name": "mapType",
+          "type": "str",
+          "description": "The type of map being used."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Increments the global variable presetId.",
+        "Sets up an onclick event handler that modifies layer breaks."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A DIV element containing the color scheme preset."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick(event)",
+      "description": "Handles the click event by setting up layer breaks to a preset configuration using the UPM.setupLayerBreaksToPreset function.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "Event",
+          "description": "The event object representing the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setupLayerBreaks",
+      "namespace": "None",
+      "signature": "setupLayerBreaks(colorMapAxis, mapName)",
+      "description": "Constructs a DIV containing a list of breakpoints and colors for a given matrix data layer.",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "String",
+          "description": "The axis of the color map to be used."
+        },
+        {
+          "name": "mapName",
+          "type": "String",
+          "description": "The name of the map for which the layer breaks are being set up."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by creating and appending a new DIV element with breakpoints and color settings.",
+        "Changes the state of the heat map by updating color and threshold settings."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A DIV element containing the breakpoints and color settings for the specified map layer."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "el.onclick()",
+      "description": "This function sets an event handler for the 'onclick' event of the element 'el'. When the element is clicked, it triggers the 'loadColorPreviewDiv' function from the 'UHM' namespace, passing 'mapName' as an argument.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "fillBreaksTable",
+      "namespace": "None",
+      "signature": "fillBreaksTable(breakpts, colorMapAxis, layerName, thresholds, colors)",
+      "description": "Populates a table with breakpoints and corresponding color inputs for a given layer and color map axis. It dynamically creates input fields and buttons for adding or deleting breakpoints based on the provided thresholds and colors.",
+      "parameters": [
+        {
+          "name": "breakpts",
+          "type": "HTMLElement",
+          "description": "The HTML element where the breakpoints table will be populated."
+        },
+        {
+          "name": "colorMapAxis",
+          "type": "string",
+          "description": "The axis of the color map, either 'data' or another specified axis."
+        },
+        {
+          "name": "layerName",
+          "type": "string",
+          "description": "The name of the layer for which the breakpoints are being set."
+        },
+        {
+          "name": "thresholds",
+          "type": "Array<number>",
+          "description": "An array of threshold values for the breakpoints."
+        },
+        {
+          "name": "colors",
+          "type": "Array<string>",
+          "description": "An array of color values corresponding to each threshold."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes all existing child elements of the breakpts element.",
+        "Adds new child elements to the breakpts element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getTempCM",
+      "namespace": "UHM",
+      "signature": "UHM.getTempCM(mapName, firstLoad)",
+      "description": "This function creates a temporary color map object to be used by loadColorPreviewDiv. If the gear menu has just been opened (firstLoad), it uses saved values from the color map manager. Otherwise, it reads values stored in the input boxes, which may differ from the saved values.",
+      "parameters": [
+        {
+          "name": "mapName",
+          "type": "string",
+          "description": "The name of the color map to retrieve or update."
+        },
+        {
+          "name": "firstLoad",
+          "type": "boolean",
+          "description": "Indicates whether the gear menu has just been opened."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Reads values from input elements in the DOM."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A temporary color map object containing colors, thresholds, missing color, and type."
+      }
+    },
+    {
+      "name": "loadColorPreviewDiv",
+      "namespace": "UHM",
+      "signature": "UHM.loadColorPreviewDiv(mapName, firstLoad)",
+      "description": "This function updates the color distribution preview div to reflect the current color palette in the gear panel. It generates a gradient based on color thresholds and displays a histogram of the data distribution.",
+      "parameters": [
+        {
+          "name": "mapName",
+          "type": "string",
+          "description": "The name of the map for which the color preview is being loaded."
+        },
+        {
+          "name": "firstLoad",
+          "type": "boolean",
+          "description": "Indicates whether this is the first time the color preview is being loaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of the element with id 'previewWrapper' concatenated with mapName.",
+        "Generates and inserts an SVG element representing the histogram of the data distribution."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setupLayerBreaksToPreset",
+      "namespace": "UPM",
+      "signature": "UPM.setupLayerBreaksToPreset(e, mapName, preset, missingColor, axis, type)",
+      "description": "This function is executed when the user selects a predefined color scheme. It fills the first and last breakpoints with the predefined colors and interpolates the breakpoints in between. It supports both continuous and discrete color mappings for data layers and covariate bars.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the user action."
+        },
+        {
+          "name": "mapName",
+          "type": "String",
+          "description": "The name of the map element to which the color scheme is applied."
+        },
+        {
+          "name": "preset",
+          "type": "Array",
+          "description": "An array of colors in HEX format representing the predefined color scheme."
+        },
+        {
+          "name": "missingColor",
+          "type": "String",
+          "description": "The color to be used for missing data points."
+        },
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis associated with the map element, if applicable."
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "description": "The type of color mapping, either 'Discrete' or 'Continuous'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the color preferences of breakpoints in the DOM elements associated with the map.",
+        "Updates the color preferences for missing data points in the DOM elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showLayerBreak",
+      "namespace": "UPM",
+      "signature": "UPM.showLayerBreak(selLayer)",
+      "description": "The purpose of this function is to show the appropriate data layer panel based upon the user selection of the data layer dropdown on the data layer tab of the preferences screen. This function is also called when an error is trapped, opening the data layer DIV that contains the erroneous data entry.",
+      "parameters": [
+        {
+          "name": "selLayer",
+          "type": "String",
+          "description": "The selected layer value from the dropdown. If undefined, the function will not change the dropdown value."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display property of DIV elements corresponding to the dropdown options.",
+        "Sets the value of the dropdown element with id 'dlPref_list' to the provided selLayer if defined."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addLayerBreak",
+      "namespace": "None",
+      "signature": "addLayerBreak(colorMapAxis, pos, colorMapName)",
+      "description": "The purpose of this function is to add a breakpoint row to a data layer colormap. A new row is created using the preceding row as a template (i.e., breakpoint value and color same as row clicked on).",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "String",
+          "description": "The axis of the colormap to which the breakpoint is being added."
+        },
+        {
+          "name": "pos",
+          "type": "Number",
+          "description": "The position in the colormap where the new breakpoint should be added."
+        },
+        {
+          "name": "colorMapName",
+          "type": "String",
+          "description": "The name of the colormap to which the breakpoint is being added."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the thresholds and colors of the specified colormap.",
+        "Reloads the colormap with the new breakpoints and colors."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "deleteLayerBreak",
+      "namespace": "None",
+      "signature": "deleteLayerBreak(colorMapAxis, pos, colorMapName)",
+      "description": "The purpose of this function is to remove a breakpoint row from a data layer colormap.",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "String",
+          "description": "The axis of the colormap from which the breakpoint is to be removed."
+        },
+        {
+          "name": "pos",
+          "type": "Number",
+          "description": "The position of the breakpoint to be removed."
+        },
+        {
+          "name": "colorMapName",
+          "type": "String",
+          "description": "The name of the colormap from which the breakpoint is to be removed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the thresholds and colors of the colormap.",
+        "Reloads the colormap with updated thresholds and colors."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "reloadLayerBreaksColorMap",
+      "namespace": "None",
+      "signature": "reloadLayerBreaksColorMap(colorMapAxis, colorMapName, colorMap)",
+      "description": "The purpose of this function is to reload the colormap for a given data layer. It updates the colormap using the ColorMapManager, removes any existing break preferences, and sets up new layer or covariate breaks as necessary.",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "String",
+          "description": "The axis of the colormap, typically 'data' or another identifier."
+        },
+        {
+          "name": "colorMapName",
+          "type": "String",
+          "description": "The name of the colormap to be reloaded."
+        },
+        {
+          "name": "colorMap",
+          "type": "Object",
+          "description": "The colormap object containing the color mapping details."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes existing break preferences from the DOM.",
+        "Appends new break preferences to the 'layerPrefs' DIV in the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setupClassPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.setupClassPrefs(e, prefprefs)",
+      "defined_section": "COVARIATE CLASSIFICATION PREFERENCE PROCESSING FUNCTIONS",
+      "description": "Constructs a DIV panel containing all covariate bar preferences for a heat map. It includes a dropdown list of all covariate classification bars and individual DIVs for each data layer with breakpoints and colors. Additionally, it creates a 'front panel' DIV for 'ALL' classification bars with global preferences.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        },
+        {
+          "name": "prefprefs",
+          "type": "Object",
+          "description": "Preferences object for the classification bars."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by appending elements to the 'classPrefs' element.",
+        "Adds event listeners to dynamically created elements."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The DIV element containing all covariate bar preferences."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "el.onclick()",
+      "description": "This function is an event handler for the 'click' event on the element 'el'. It triggers the 'filterClassPrefs' method from the 'UPM' object with the argument 'true'.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "el",
+      "signature": "el.onchange()",
+      "description": "This function is an event handler for the 'onchange' event of the element 'el'. It triggers the 'showClassBreak' method of the 'UPM' object when the value of 'el' changes.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setupAllClassesPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.setupAllClassesPrefs()",
+      "description": "Constructs a DIV containing a list of all covariate bars with informational data and user preferences that are common to all bars (show/hide and size).",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A DIV element containing a table with covariate bars and their preferences."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "el.onclick()",
+      "description": "This function is an event handler for the 'click' event on the element 'el'. When the element is clicked, it calls the UPM.decrementAllHeights() function to decrement the heights of all relevant elements.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.decrementAllHeights() which may modify the heights of elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "el.onclick()",
+      "description": "This function is an event handler for the 'click' event on the element 'el'. When the element is clicked, it calls the 'incrementAllHeights' method from the 'UPM' object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the UPM.incrementAllHeights() method which may modify the heights of elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "el.onchange()",
+      "description": "This function is an event handler for the 'change' event on the element 'el'. When the 'change' event is triggered, it calls the UPM.showAllBars() function to display all bars.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.showAllBars() which may have its own side effects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "el.onchange()",
+      "description": "This function is an event handler for the 'change' event on the element 'el'. When the element's value changes, it triggers the UPM.setShowAll() method.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.setShowAll() method which may have its own side effects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "el.onchange()",
+      "description": "This function is an event handler for the 'change' event on the element 'el'. When the element's value changes, it triggers the UPM.setShowAll() method.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UPM.setShowAll() method which may have its own side effects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "setupClassBreaks",
+      "namespace": "UPM",
+      "signature": "UPM.setupClassBreaks(e, key, barType, classBar)",
+      "description": "Constructs a DIV containing informational data and a list of categories/colors for a given covariate classification bar.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        },
+        {
+          "name": "key",
+          "type": "String",
+          "description": "The key identifier for the classification bar."
+        },
+        {
+          "name": "barType",
+          "type": "String",
+          "description": "The type of the bar (e.g., 'color_plot', 'bar_plot')."
+        },
+        {
+          "name": "classBar",
+          "type": "Object",
+          "description": "An object containing properties of the classification bar, including 'bar_type', 'bg_color', 'fg_color', 'low_bound', and 'high_bound'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by creating and appending new elements.",
+        "Sets event handlers for dynamically created elements."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A DIV element containing the constructed classification bar settings and information."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "el.onchange()",
+      "description": "This function is an event handler for the 'change' event on the element 'el'. It triggers the display of plot type properties based on a key.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setupCovariateBreaks",
+      "namespace": "None",
+      "signature": "setupCovariateBreaks(colorMapAxis, covariateName)",
+      "description": "Sets up the covariate breaks for a given axis and covariate name by retrieving the heat map configuration and appending the break preferences to the class preferences element.",
+      "parameters": [
+        {
+          "name": "colorMapAxis",
+          "type": "String",
+          "description": "The axis of the color map for which the covariate breaks are being set up."
+        },
+        {
+          "name": "covariateName",
+          "type": "String",
+          "description": "The name of the covariate for which the breaks are being set up."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends break preferences to the element with id 'classPrefs'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showPlotTypeProperties",
+      "namespace": "UPM",
+      "signature": "UPM.showPlotTypeProperties(keyRC)",
+      "description": "This function toggles the display properties of plot type preferences based on the selected bar type. It shows or hides specific HTML elements depending on the value of the selected bar type.",
+      "parameters": [
+        {
+          "name": "keyRC",
+          "type": "String",
+          "description": "A key used to identify the specific plot type preference elements in the DOM."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of HTML elements identified by keyRC."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showAllBars",
+      "namespace": "UPM",
+      "signature": "UPM.showAllBars()",
+      "description": "Sets the condition of the 'show' checkbox for all covariate bars on the covariate bars tab of the user preferences dialog. When the 'show all' box is checked, all other boxes are checked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the checked state of checkboxes in the DOM based on the 'show all' checkbox state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "incrementAllHeights",
+      "namespace": "UPM",
+      "signature": "UPM.incrementAllHeights()",
+      "description": "Increments the height preferences of all row and column classification bars in the heat map by 1, but limits the maximum height to 99.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of height preferences for row and column classification bars in the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "decrementAllHeights",
+      "namespace": "UPM",
+      "signature": "UPM.decrementAllHeights()",
+      "description": "This function decrements the height preferences for all row and column classifications in a heat map, ensuring that the values do not go below zero.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of height preference elements in the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setShowAll",
+      "namespace": "UPM",
+      "signature": "UPM.setShowAll()",
+      "description": "Sets the condition of the 'show all' checkbox on the covariate bars tab of the user preferences dialog. If any individual covariate bar checkbox is unchecked, the 'show all' checkbox will be unchecked. If all covariate bar checkboxes are checked, the 'show all' checkbox will be checked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the checked state of the 'show all' checkbox in the user preferences dialog."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showClassBreak",
+      "namespace": "UPM",
+      "signature": "UPM.showClassBreak(selClass, selAxis)",
+      "description": "The purpose of this function is to show the appropriate classification bar panel based upon the user selection of the covariate dropdown on the covariates tab of the preferences screen. This function is also called when an error is trapped, opening the covariate DIV that contains the erroneous data entry.",
+      "parameters": [
+        {
+          "name": "selClass",
+          "type": "String",
+          "description": "The selected class from the dropdown."
+        },
+        {
+          "name": "selAxis",
+          "type": "String",
+          "description": "The selected axis, if any, to append to the class."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value of the element with id 'classPref_list'.",
+        "Changes the display style of elements with ids prefixed by 'breakPrefs_'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "filterClassPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.filterClassPrefs(filterOn)",
+      "description": "Initiates the process of filtering option choices for classifications. It is triggered when either the 'Filter Covariates' or 'Clear Filters' button is pressed on the covariates preferences dialog. The global filter value variable is set when filtering and cleared when clearing, and the editPreferences function is called to reload all preferences.",
+      "parameters": [
+        {
+          "name": "filterOn",
+          "type": "boolean",
+          "description": "Determines whether to apply or remove the filter. If true, the filter is applied; if false, the filter is removed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets UPM.searchPerformed to true.",
+        "Modifies the innerText of the filter button's span element.",
+        "Changes the onclick event of the filter button.",
+        "Updates the value of the search preference select element.",
+        "Sets or clears the global variable UPM.filterVal."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "filterButton.onclick()",
+      "description": "This function is an event handler for the 'onclick' event of the filterButton. When the button is clicked, it triggers the filterClassPrefs method from the UPM object with a parameter of false.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "filterButton",
+      "signature": "filterButton.onclick()",
+      "description": "This function is triggered when the filter button is clicked. It calls the UPM.filterClassPrefs function with a parameter of true to filter class preferences.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "filterAllClassesTable",
+      "namespace": "UPM",
+      "signature": "UPM.filterAllClassesTable(hiddenItems)",
+      "description": "Filters the rows of the 'tableAllClasses' table by hiding rows whose first cell's text matches any of the items in the hiddenItems array.",
+      "parameters": [
+        {
+          "name": "hiddenItems",
+          "type": "Array<String>",
+          "description": "An array of strings representing the items to be hidden in the table."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the class list of rows in the 'tableAllClasses' table by adding or removing the 'hide' class."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addClassPrefOptions",
+      "namespace": "UPM",
+      "signature": "UPM.addClassPrefOptions()",
+      "description": "Assigns option values to the Covariates dropdown control on the Covariates preferences tab. All covariates are loaded at startup, but the filter control limits the visible options in this dropdown. Returns a string array containing a list of all options that are not being displayed, which is used to hide rows on the ALL covariates panel.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the options of the HTML select element with id 'classPref_list'.",
+        "Updates the value of HTML elements representing bar type preferences for row and column classifications."
+      ],
+      "returns": {
+        "type": "Array",
+        "description": "A string array containing a list of all options that are not being displayed."
+      }
+    },
+    {
+      "name": "filterShow",
+      "namespace": "UPM",
+      "signature": "UPM.filterShow(key)",
+      "description": "The purpose of this function is to determine whether a given covariates bar should be shown based on the state of the covariates filter search text box.",
+      "parameters": [
+        {
+          "name": "key",
+          "type": "String",
+          "description": "The key to be checked against the filter value."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Boolean",
+        "description": "Returns true if the key matches the filter value or if the filter value is null; otherwise, returns false."
+      }
+    },
+    {
+      "name": "setupMapInfoPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.setupMapInfoPrefs(e, prefprefs)",
+      "defined_section": "ROW COLUMN PREFERENCE PROCESSING FUNCTIONS",
+      "description": "Sets up the map information preferences table by extracting map details from the heat map and populating a table with various map attributes, versions, layers, and other relevant information.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        },
+        {
+          "name": "prefprefs",
+          "type": "Object",
+          "description": "Preferences object containing user-defined settings for the map information display."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the inner HTML of the element with id 'infoPrefs' by appending a table containing map information."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The table element containing the map information preferences."
+      }
+    },
+    {
+      "name": "matchAny",
+      "namespace": "None",
+      "signature": "matchAny(str, regExpArray)",
+      "description": "Checks if a given string matches any of the regular expressions in the provided array.",
+      "parameters": [
+        {
+          "name": "str",
+          "type": "string",
+          "description": "The string to be tested against the array of regular expressions."
+        },
+        {
+          "name": "regExpArray",
+          "type": "Array<RegExp>",
+          "description": "An array of regular expressions to test the string against."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the string matches any of the regular expressions in the array, otherwise returns false."
+      }
+    },
+    {
+      "name": "setupRowColPrefs",
+      "namespace": "UPM",
+      "signature": "UPM.setupRowColPrefs(e, prefprefs)",
+      "description": "Constructs a DIV panel containing all row and column preferences. Two sections are presented, one for rows and the other for columns. Informational data begins each section, and properties for modifying the appearance of row/column dendrograms appear at the end.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        },
+        {
+          "name": "prefprefs",
+          "type": "Object",
+          "description": "Preferences object containing user-defined settings."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the inner HTML of the element with id 'rowsColsPrefs'.",
+        "Appends a newly created table element to the 'rowsColsPrefs' element."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The updated 'rowsColsPrefs' element containing the row and column preferences."
+      }
+    },
+    {
+      "name": "dendroShowOptions",
+      "namespace": "None",
+      "signature": "dendroShowOptions()",
+      "description": "Generates and returns an array of HTML option elements for a dropdown menu, providing options for displaying summary and detail, summary only, or hiding the content.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of HTML option elements."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "el.onchange()",
+      "description": "This function assigns an event handler to the 'onchange' event of the element 'el'. When the 'onchange' event is triggered, it calls the 'UPM.dendroRowShowChange' function.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The HTML element to which the 'onchange' event handler is being assigned."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the 'UPM.dendroRowShowChange' function when the 'onchange' event is triggered."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onchange",
+      "namespace": "None",
+      "signature": "el.onchange()",
+      "description": "This function is an event handler for the 'onchange' event of the element 'el'. It triggers the 'dendroColShowChange' function from the 'UPM' namespace when the event occurs.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the UPM.dendroColShowChange function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showDendroSelections",
+      "namespace": "UPM",
+      "signature": "UPM.showDendroSelections()",
+      "description": "Sets the states of the row and column dendrogram show and height preferences based on the current heatmap configuration.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value and options of the HTML select element with id 'rowDendroShowPref'.",
+        "Modifies the value and options of the HTML select element with id 'rowDendroHeightPref'.",
+        "Modifies the value and options of the HTML select element with id 'colDendroShowPref'.",
+        "Modifies the value and options of the HTML select element with id 'colDendroHeightPref'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showLabelSelections",
+      "namespace": "UPM",
+      "signature": "UPM.showLabelSelections()",
+      "description": "Sets the states of the label length and truncation preferences for both column and row labels based on the current heat map configuration.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the value of the HTML element with id 'colLabelSizePref' to the column label display length from the heat map configuration.",
+        "Updates the value of the HTML element with id 'colLabelAbbrevPref' to the column label display method from the heat map configuration.",
+        "Updates the value of the HTML element with id 'rowLabelSizePref' to the row label display length from the heat map configuration.",
+        "Updates the value of the HTML element with id 'rowLabelAbbrevPref' to the row label display method from the heat map configuration."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dendroRowShowChange",
+      "namespace": "UPM",
+      "signature": "UPM.dendroRowShowChange()",
+      "description": "This function responds to a change event on the show row dendrogram dropdown. If the selected value is 'NONE', it sets the row dendrogram height to 10 and disables the dropdown. If the selected value is not 'NONE' and the dropdown was previously disabled, it sets the height to the default value of 100 and enables the dropdown.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value and state of the 'rowDendroHeightPref' dropdown element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dendroColShowChange",
+      "namespace": "UPM",
+      "signature": "UPM.dendroColShowChange()",
+      "description": "This function responds to a change event on the 'show row dendrogram' dropdown. It adjusts the height preference and enables or disables the dropdown based on the selected value.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the value and state of the 'colDendroHeightPref' dropdown element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getResetVals",
+      "namespace": "UPM",
+      "signature": "UPM.getResetVals()",
+      "description": "This function retrieves the current configuration settings of a heat map, including dendrogram configurations, row and column configurations, matrix information, and classification configurations. It then serializes these settings into a JSON string to prevent changes as the user modifies preferences in the preference manager.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "A JSON string containing the current heat map configuration settings."
+      }
+    },
+    {
+      "name": "prefsResetButton",
+      "namespace": "UPM",
+      "signature": "UPM.prefsResetButton()",
+      "description": "Resets various user preferences to their default values as specified in the UPM.resetVal object. This includes resetting preferences for row and column dendrograms, data matrix panel items, and covariate bar panel items.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the values of various HTML input elements to reset preferences.",
+        "Calls UPM.dendroRowShowChange() and UPM.dendroColShowChange() to apply changes to dendrograms.",
+        "Calls UHM.loadColorPreviewDiv(dl) to update color previews.",
+        "Calls UPM.showPlotTypeProperties(name + \"_col\") to update plot type properties.",
+        "Calls UPM.prefsApplyButton(1) to apply the reset preferences."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

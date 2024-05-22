@@ -1,0 +1,1389 @@
+{
+  "filename": "NGCHM_Util.js",
+  "namespace": "NgChm.UTIL",
+  "description": [
+    "This module provides a collection of general-purpose JavaScript helper functions for the NGCHM (Next Generation Clustered Heat Map) API. It includes utilities for manipulating DOM elements, handling events, managing styles, and embedding heat maps within web pages. The module also offers functions for URL parameter extraction, string manipulation, and browser compatibility checks."
+  ],
+  "declares_functions_in": [
+    "UTIL",
+    "String",
+    "Element"
+  ],
+  "interacts_with": [
+    "NgChm.CFG"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "UTIL.containerElement",
+      "description": "The main container element for the NGCHM."
+    },
+    {
+      "name": "UTIL.defaultNgchmWidget",
+      "description": "The default path for the NGCHM widget JavaScript file."
+    },
+    {
+      "name": "UTIL.embedLoaded",
+      "description": "Flag indicating whether the embedded heat map has been loaded."
+    },
+    {
+      "name": "UTIL.embedThumbHeight",
+      "description": "The height of the thumbnail for the embedded heat map."
+    },
+    {
+      "name": "UTIL.embedThumbWidth",
+      "description": "The width of the thumbnail for the embedded heat map."
+    },
+    {
+      "name": "UTIL.isBuilderView",
+      "description": "Flag indicating whether the builder view is active."
+    },
+    {
+      "name": "UTIL.mapId",
+      "description": "The ID of the map extracted from the URL parameter."
+    },
+    {
+      "name": "UTIL.mapNameRef",
+      "description": "The name reference of the map extracted from the URL parameter."
+    },
+    {
+      "name": "UTIL.minLabelSize",
+      "description": "The minimum label size for the heat map."
+    },
+    {
+      "name": "UTIL.passiveCompat",
+      "description": "Function to determine browser support for the passive event listener option."
+    },
+    {
+      "name": "UTIL.showDetailPane",
+      "description": "Flag indicating whether the detail pane should be shown."
+    },
+    {
+      "name": "UTIL.showSummaryPane",
+      "description": "Flag indicating whether the summary pane should be shown."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "getURLParameter",
+      "namespace": "UTIL",
+      "signature": "UTIL.getURLParameter(name)",
+      "description": "Retrieves the value of a specified parameter from the URL query string.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the parameter to retrieve from the URL."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "The value of the specified URL parameter, or an empty string if the parameter is not found."
+      }
+    },
+    {
+      "name": "capitalize",
+      "namespace": "UTIL",
+      "signature": "UTIL.capitalize(str)",
+      "description": "Converts the first character of the input string to uppercase and returns the modified string.",
+      "parameters": [
+        {
+          "name": "str",
+          "type": "string",
+          "description": "The input string to be capitalized."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The input string with its first character converted to uppercase."
+      }
+    },
+    {
+      "name": "supportsPassive",
+      "namespace": "None",
+      "signature": "supportsPassive()",
+      "description": "Determines if the browser supports the passive flag for event listeners.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the browser supports the passive flag, otherwise false."
+      }
+    },
+    {
+      "name": "setKeyData",
+      "namespace": "UTIL",
+      "signature": "UTIL.setKeyData(key, data)",
+      "description": "Sets the provided data for the specified key in the keyMap.",
+      "parameters": [
+        {
+          "name": "key",
+          "type": "any",
+          "description": "The key for which the data is to be set."
+        },
+        {
+          "name": "data",
+          "type": "any",
+          "description": "The data to be associated with the specified key."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the keyMap by setting the provided data for the specified key."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getKeyData",
+      "namespace": "UTIL",
+      "signature": "UTIL.getKeyData(key)",
+      "description": "Retrieves the data associated with a given key from the keyMap.",
+      "parameters": [
+        {
+          "name": "key",
+          "type": "any",
+          "description": "The key for which the associated data is to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "any",
+        "description": "The data associated with the provided key, or undefined if the key does not exist in the keyMap."
+      }
+    },
+    {
+      "name": "addScript",
+      "namespace": "UTIL",
+      "signature": "UTIL.addScript(src, callback)",
+      "description": "Dynamically loads a JavaScript file by creating a script element and appending it to the document head. It supports both modern browsers and Internet Explorer.",
+      "parameters": [
+        {
+          "name": "src",
+          "type": "string",
+          "description": "The source URL of the JavaScript file to be loaded."
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "A callback function to be executed once the script is loaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a script element to the document head."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "onreadystatechange",
+      "namespace": "script",
+      "signature": "script.onreadystatechange()",
+      "description": "This function is an event handler for the 'readystatechange' event of a script element. It checks if the script's readyState is 'complete' and, if so, calls the provided callback function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addScripts",
+      "namespace": "UTIL",
+      "signature": "UTIL.addScripts(srcs, callback)",
+      "description": "Recursively loads a list of script URLs in the order provided. Once all scripts are loaded, it executes a callback function.",
+      "parameters": [
+        {
+          "name": "srcs",
+          "type": "Array",
+          "description": "An array of script URLs to be loaded."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "A function to be executed once all scripts have been loaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setElementPositionSize",
+      "namespace": "UTIL",
+      "signature": "UTIL.setElementPositionSize(el, vp, styleOnly)",
+      "description": "Sets the position and size of a DOM element based on the provided viewport dimensions. If the element is a canvas and styleOnly is false, it also sets the canvas width and height properties.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The DOM element whose position and size are to be set."
+        },
+        {
+          "name": "vp",
+          "type": "Object",
+          "description": "An object containing the viewport dimensions (left, top, width, height)."
+        },
+        {
+          "name": "styleOnly",
+          "type": "Boolean",
+          "description": "If true, only the style properties of the element are set. If false and the element is a canvas, the canvas width and height properties are also set."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the style properties of the provided DOM element.",
+        "If the element is a canvas and styleOnly is false, sets the canvas width and height properties."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "newTxt",
+      "namespace": "UTIL",
+      "signature": "UTIL.newTxt(txt)",
+      "description": "Creates a new text node with the provided text content.",
+      "parameters": [
+        {
+          "name": "txt",
+          "type": "string",
+          "description": "The text content to be included in the new text node."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Text",
+        "description": "A new text node containing the provided text content."
+      }
+    },
+    {
+      "name": "newSvgButton",
+      "namespace": "None",
+      "signature": "newSvgButton(iconIds, attrs, fn)",
+      "description": "Creates a new SVG icon button element. The function generates a button element containing one or more SVG symbols specified by the iconIds parameter. The button can be further customized with additional attributes and a callback function.",
+      "parameters": [
+        {
+          "name": "iconIds",
+          "type": "str",
+          "description": "One or more SVG symbol ids (separated by !) from icons.svg. The svgIds can be followed by an optional #id and .classes."
+        },
+        {
+          "name": "attrs",
+          "type": "object",
+          "description": "An object defining additional attributes to be set on the button element."
+        },
+        {
+          "name": "fn",
+          "type": "function",
+          "description": "A callback function to be executed when the button is interacted with."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The newly created button element decorated with the specified SVG symbols, attributes, and callback function."
+      }
+    },
+    {
+      "name": "newSvgMenuItem",
+      "namespace": "None",
+      "signature": "newSvgMenuItem(iconIds, attrs, fn)",
+      "description": "Creates a new SVG menu item element with specified icons, attributes, and a callback function. The function generates a DIV element containing SVG icons and decorates it with additional attributes and classes.",
+      "parameters": [
+        {
+          "name": "iconIds",
+          "type": "String",
+          "description": "A string containing icon identifiers separated by dots and hashes."
+        },
+        {
+          "name": "attrs",
+          "type": "Object",
+          "description": "An object containing attributes to be applied to the SVG menu item."
+        },
+        {
+          "name": "fn",
+          "type": "Function",
+          "description": "A callback function to be executed when the menu item is interacted with."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "A decorated DIV element containing the specified SVG icons."
+      }
+    },
+    {
+      "name": "newElement",
+      "namespace": "UTIL",
+      "signature": "UTIL.newElement(spec, attrs, content, fn)",
+      "description": "Creates a new DOM element based on the provided specification, attributes, content, and an optional function to further manipulate the element.",
+      "parameters": [
+        {
+          "name": "spec",
+          "type": "string",
+          "description": "A string specifying the element tag name, optionally followed by a single '#' and node id, followed by any number of '.' and class id. E.g., 'div#id.class1.class2'."
+        },
+        {
+          "name": "attrs",
+          "type": "object",
+          "description": "A dictionary of attributes to add to the new node. If attrs contains 'style' and/or 'dataset', the contents of those objects are added individually to the corresponding objects on the DOM element."
+        },
+        {
+          "name": "content",
+          "type": "DOM Node | DOM Node[]",
+          "description": "If defined, it is either a DOM node or an array of DOM nodes to include as children of the new DOM element."
+        },
+        {
+          "name": "fn",
+          "type": "function",
+          "description": "An optional function that is called with the new node as a parameter after it's constructed but before it's returned. It must return a DOM element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "DOM Element",
+        "description": "The newly created and decorated DOM element."
+      }
+    },
+    {
+      "name": "decorateElement",
+      "namespace": "None",
+      "signature": "decorateElement(el, names, classes, attrs, content, fn)",
+      "description": "Enhances a given DOM element by setting its ID, adding classes, setting attributes, appending content, and optionally applying a decorator function.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The DOM element to be decorated."
+        },
+        {
+          "name": "names",
+          "type": "Array",
+          "description": "An array where the second element is used as the ID for the element."
+        },
+        {
+          "name": "classes",
+          "type": "Array",
+          "description": "An array of class names to be added to the element."
+        },
+        {
+          "name": "attrs",
+          "type": "Object",
+          "description": "An object containing key-value pairs of attributes to be set on the element."
+        },
+        {
+          "name": "content",
+          "type": "Array or String",
+          "description": "Content to be appended to the element. Can be a string or an array of strings and/or HTMLElements."
+        },
+        {
+          "name": "fn",
+          "type": "Function",
+          "description": "An optional decorator function to be applied to the element. If it returns an HTMLElement, that element is returned."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the provided DOM element by setting its ID, adding classes, setting attributes, and appending content."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The decorated DOM element, or the result of the decorator function if it returns an HTMLElement."
+      }
+    },
+    {
+      "name": "newFragment",
+      "namespace": "UTIL",
+      "signature": "UTIL.newFragment(nodes)",
+      "description": "Creates a DOM fragment from an array of DOM nodes.",
+      "parameters": [
+        {
+          "name": "nodes",
+          "type": "Array<DOMNode>",
+          "description": "An array of DOM nodes to be added to the document fragment."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "DocumentFragment",
+        "description": "A document fragment containing the provided DOM nodes."
+      }
+    },
+    {
+      "name": "newButton",
+      "namespace": "UTIL",
+      "signature": "UTIL.newButton(buttonName, properties, handlers)",
+      "description": "Creates a new button element with specified properties and event handlers.",
+      "parameters": [
+        {
+          "name": "buttonName",
+          "type": "String",
+          "description": "The text to be displayed on the button."
+        },
+        {
+          "name": "properties",
+          "type": "Object",
+          "description": "An object containing properties to be applied to the button element."
+        },
+        {
+          "name": "handlers",
+          "type": "Object",
+          "description": "An object where keys are event types and values are event handler functions to be attached to the button."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The newly created button element."
+      }
+    },
+    {
+      "name": "showTab",
+      "namespace": "None",
+      "signature": "showTab(buttonId)",
+      "description": "This function shows the tab identified by buttonId and hides all the other tabs in the group. It ensures that the specified button is marked as selected and its corresponding tab is displayed, while all other tabs are hidden.",
+      "parameters": [
+        {
+          "name": "buttonId",
+          "type": "String",
+          "description": "The ID of the button that corresponds to the tab to be shown."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Adds the 'selected' class to the specified button and removes it from all other buttons in the group.",
+        "Removes the 'hide' class from the tab div identified by the data-for-tab attribute of the specified button and adds it to the divs identified by the other buttons."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "hideAllLinks",
+      "namespace": "None",
+      "signature": "hideAllLinks(btns)",
+      "description": "Hides all tabs and deselects all buttons within a given container.",
+      "parameters": [
+        {
+          "name": "btns",
+          "type": "HTMLElement",
+          "description": "The container element that holds the buttons which correspond to the tabs."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Adds 'hide' class to each tab element associated with the buttons.",
+        "Removes 'selected' class from each button."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "toTitleCase",
+      "namespace": "UTIL",
+      "signature": "UTIL.toTitleCase(string)",
+      "description": "The purpose of this function is to convert a given string to title case. It capitalizes the first letter of each word while converting the rest of the letters to lowercase. It also handles Latin-1 characters and replaces underscores with spaces.",
+      "parameters": [
+        {
+          "name": "string",
+          "type": "String",
+          "description": "The input string that needs to be converted to title case."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "A new string where the first letter of each word is capitalized and the rest are in lowercase."
+      }
+    },
+    {
+      "name": "getStyle",
+      "namespace": "UTIL",
+      "signature": "UTIL.getStyle(x, styleProp)",
+      "description": "The purpose of this function is to return the style property requested for a given screen object. It checks for the style property in the current style if available, otherwise it uses the computed style.",
+      "parameters": [
+        {
+          "name": "x",
+          "type": "HTMLElement",
+          "description": "The HTML element from which the style property is to be retrieved."
+        },
+        {
+          "name": "styleProp",
+          "type": "string",
+          "description": "The name of the style property to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The value of the requested style property."
+      }
+    },
+    {
+      "name": "returnToHome",
+      "namespace": "UTIL",
+      "signature": "UTIL.returnToHome()",
+      "description": "The purpose of this function is to open a 'home' URL in the same tab as the heatMap (when a link is present).",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Opens the URL specified by the 'collectionHome' parameter in the same tab."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "reverseObject",
+      "namespace": "UTIL",
+      "signature": "UTIL.reverseObject(Obj)",
+      "description": "The purpose of this function is to reverse the order of key elements in an object.",
+      "parameters": [
+        {
+          "name": "Obj",
+          "type": "object",
+          "description": "The object whose keys are to be reversed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "A new object with the keys in reverse order."
+      }
+    },
+    {
+      "name": "isScreenZoomed",
+      "namespace": "UTIL",
+      "signature": "UTIL.isScreenZoomed()",
+      "description": "Determines if the browser zoom level, set by the user, is zoomed (other than 100%).",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "Returns -1 if the zoom level is less than 89%, 1 if the zoom level is greater than 137.5%, and 0 if the zoom level is between 89% and 137.5%."
+      }
+    },
+    {
+      "name": "getBrowserType",
+      "namespace": "UTIL",
+      "signature": "UTIL.getBrowserType()",
+      "description": "Determines the type of web browser being utilized and returns that value as a string.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The type of web browser being used. Possible values are 'Opera', 'Chrome', 'Safari', 'Firefox', 'IE', or 'unknown'."
+      }
+    },
+    {
+      "name": "setMinFontSize",
+      "namespace": "None",
+      "signature": "function setMinFontSize()",
+      "description": "Determines if the user has set a minimum font size in their browser and sets the minimum label size accordingly.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies UTIL.minLabelSize to the determined minimum label size.",
+        "Temporarily adds and removes a div element to/from the document body."
+      ],
+      "returns": {
+        "type": "number",
+        "description": "The determined minimum font size setting found in the user's browser."
+      }
+    },
+    {
+      "name": "iESupport",
+      "namespace": "None",
+      "signature": "iESupport()",
+      "description": "The purpose of this function is to add support for JavaScript functions that Internet Explorer does not recognize. Specifically, it adds the 'startsWith' method to String.prototype and the 'remove' method to Element.prototype if they do not already exist.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies String.prototype by adding the 'startsWith' method if it does not exist.",
+        "Modifies Element.prototype by adding the 'remove' method if it does not exist."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "startsWith",
+      "namespace": "String.prototype",
+      "signature": "String.prototype.startsWith(searchString, position)",
+      "description": "Determines whether a string begins with the characters of a specified string, returning true or false as appropriate.",
+      "parameters": [
+        {
+          "name": "searchString",
+          "type": "string",
+          "description": "The characters to be searched for at the start of this string."
+        },
+        {
+          "name": "position",
+          "type": "number",
+          "description": "The position in this string at which to begin searching for searchString. Defaults to 0."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the given characters are found at the beginning of the string; otherwise, false."
+      }
+    },
+    {
+      "name": "remove",
+      "namespace": "Element.prototype",
+      "signature": "Element.prototype.remove()",
+      "description": "Removes the element from the DOM.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the element from its parent element in the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "startupChecks",
+      "namespace": "None",
+      "signature": "function startupChecks()",
+      "description": "The purpose of this function is to check for warning conditions that will be flagged for a given heat map at startup. These include checking if the browser type is Internet Explorer and if the minimum font size setting in the browser is greater than 5pt. If any of these conditions are met, a warning message button is displayed.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the element with id 'messageOpen_btn' based on warning conditions."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "blendTwoColors",
+      "namespace": "UTIL",
+      "signature": "UTIL.blendTwoColors(color1, color2)",
+      "description": "The purpose of this function is to blend two 6-character hex color code values into a single value that is halfway between.",
+      "parameters": [
+        {
+          "name": "color1",
+          "type": "string",
+          "description": "The first hex color code to blend. Defaults to '#000000' if not provided."
+        },
+        {
+          "name": "color2",
+          "type": "string",
+          "description": "The second hex color code to blend. Defaults to '#ffffff' if not provided."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The blended hex color code."
+      }
+    },
+    {
+      "name": "intToHex",
+      "namespace": "UTIL",
+      "signature": "UTIL.intToHex(num)",
+      "description": "Converts an integer value into a hexadecimal string.",
+      "parameters": [
+        {
+          "name": "num",
+          "type": "number",
+          "description": "The integer value to be converted to hexadecimal."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The hexadecimal representation of the input integer."
+      }
+    },
+    {
+      "name": "convertToArray",
+      "namespace": "UTIL",
+      "signature": "UTIL.convertToArray(value)",
+      "description": "The purpose of this function is to convert a single value into an array containing just that value. It is used for compatibility management.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "any",
+          "description": "The value to be converted into an array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array containing the input value as its only element."
+      }
+    },
+    {
+      "name": "removeElementsByClass",
+      "namespace": "UTIL",
+      "signature": "UTIL.removeElementsByClass(className)",
+      "description": "This function removes all DOM elements with a given className.",
+      "parameters": [
+        {
+          "name": "className",
+          "type": "string",
+          "description": "The class name of the elements to be removed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes all elements with the specified class name from the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "shadeColor",
+      "namespace": "UTIL",
+      "signature": "UTIL.shadeColor(color, pct)",
+      "description": "This function darkens or lightens a given color by a specified percentage. Positive percentages lighten the color, while negative percentages darken it.",
+      "parameters": [
+        {
+          "name": "color",
+          "type": "string",
+          "description": "The hex code of the color to be shaded."
+        },
+        {
+          "name": "pct",
+          "type": "number",
+          "description": "The percentage by which to lighten or darken the color. Positive values lighten the color, negative values darken it."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The hex code of the shaded color."
+      }
+    },
+    {
+      "name": "imageCanvas",
+      "namespace": "UTIL",
+      "signature": "UTIL.imageCanvas(canvas)",
+      "description": "Creates an in-memory canvas element and copies the content of the provided canvas onto it.",
+      "parameters": [
+        {
+          "name": "canvas",
+          "type": "HTMLCanvasElement",
+          "description": "The source canvas element whose content is to be copied."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLCanvasElement",
+        "description": "A new in-memory canvas element with the same content as the provided canvas."
+      }
+    },
+    {
+      "name": "isNaN",
+      "namespace": "UTIL",
+      "signature": "UTIL.isNaN(n)",
+      "description": "This function checks if the provided value is not a number (NaN) or an empty string and returns a boolean result.",
+      "parameters": [
+        {
+          "name": "n",
+          "type": "string",
+          "description": "The value to be checked if it is NaN or an empty string."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the value is NaN or an empty string, otherwise returns false."
+      }
+    },
+    {
+      "name": "isValidURL",
+      "namespace": "UTIL",
+      "signature": "UTIL.isValidURL(str)",
+      "description": "This function checks if a given string contains a valid URL address.",
+      "parameters": [
+        {
+          "name": "str",
+          "type": "string",
+          "description": "The string to be checked for a valid URL format."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the string is a valid URL, otherwise returns false."
+      }
+    },
+    {
+      "name": "dragElement",
+      "namespace": "UTIL",
+      "signature": "UTIL.dragElement(elmnt)",
+      "description": "This function adds drag-and-drop functionality to the specified HTML element, allowing it to be moved around within the browser window.",
+      "parameters": [
+        {
+          "name": "elmnt",
+          "type": "HTMLElement",
+          "description": "The HTML element to which drag-and-drop functionality will be added."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the position (left and top styles) of the input HTML element.",
+        "Temporarily attaches event listeners to the document for mouse movements and mouse button release."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dragMouseDown",
+      "namespace": "None",
+      "signature": "function dragMouseDown(e)",
+      "description": "Initializes the dragging of an element by setting up the necessary event listeners and calculating the initial positions and boundaries.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The mouse event that triggers the drag action."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets document.onmouseup to closeDragElement.",
+        "Sets document.onmousemove to elementDrag.",
+        "Calculates and sets global variables deltaMouseElementX, deltaMouseElementY, minLeft, maxLeft, and maxTop."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "elementDrag",
+      "namespace": "None",
+      "signature": "function elementDrag(e)",
+      "description": "Handles the dragging of an HTML element by updating its position based on the cursor's movement. Ensures the element stays within defined boundaries and adjusts its height if necessary.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object containing information about the drag event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the position of the global variable 'elmnt'.",
+        "Modifies the 'style.left' and 'style.top' properties of 'elmnt'.",
+        "Adjusts the 'style.height' property of 'elmnt' based on the content height."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "closeDragElement",
+      "namespace": "None",
+      "signature": "function closeDragElement()",
+      "description": "Stops the dragging operation by removing the event listeners for mouseup and mousemove events.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the onmouseup event listener from the document.",
+        "Removes the onmousemove event listener from the document."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "roundUpDown",
+      "namespace": "UTIL",
+      "signature": "UTIL.roundUpDown(inVal, limit)",
+      "description": "The purpose of this function is to take an input number and round it up or down depending upon where it is in the range either between 1 and 5 or 1 and 10 depending on the limit set. For example: 16 becomes 15 if limit is set to 5 but 20 with a limit of 10.",
+      "parameters": [
+        {
+          "name": "inVal",
+          "type": "number",
+          "description": "The input value to be rounded."
+        },
+        {
+          "name": "limit",
+          "type": "number",
+          "description": "The limit to determine the rounding range. It can be either 5 or 10."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The rounded value based on the specified limit."
+      }
+    },
+    {
+      "name": "createCheckBoxDropDown",
+      "namespace": "UTIL",
+      "signature": "UTIL.createCheckBoxDropDown(selectBoxId, checkBoxesId, boxText, items, maxHeight)",
+      "description": "Dynamically populates the HTML of a discrete check box dropdown with items.",
+      "parameters": [
+        {
+          "name": "selectBoxId",
+          "type": "String",
+          "description": "The ID of the select box element where the dropdown will be created."
+        },
+        {
+          "name": "checkBoxesId",
+          "type": "String",
+          "description": "The ID of the element where the checkboxes will be appended."
+        },
+        {
+          "name": "boxText",
+          "type": "String",
+          "description": "The text to display on the closed check box dropdown."
+        },
+        {
+          "name": "items",
+          "type": "Array",
+          "description": "An array of items to be included as checkboxes in the dropdown."
+        },
+        {
+          "name": "maxHeight",
+          "type": "String",
+          "description": "The maximum height of the checkboxes container."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of the select box element.",
+        "Modifies the innerHTML of the checkboxes container element.",
+        "Sets the height of the checkboxes container element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "toggleLabel",
+      "namespace": "None",
+      "signature": "function toggleLabel(event)",
+      "description": "This function toggles the state of a checkbox based on the event triggered. It utilizes the UTIL.toggleCheckBox method to perform the toggle action.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "Event",
+          "description": "The event object that triggered the function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the state of the checkbox associated with the event target."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearCheckBoxDropdown",
+      "namespace": "UTIL",
+      "signature": "UTIL.clearCheckBoxDropdown(checkBoxesId)",
+      "description": "The purpose of this function is to remove all check box rows from within a given checkBox dropdown control.",
+      "parameters": [
+        {
+          "name": "checkBoxesId",
+          "type": "String",
+          "description": "The ID of the checkbox dropdown control from which all checkbox rows will be removed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerHTML of the element with the specified ID, effectively clearing its content."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resetCheckBoxDropdown",
+      "namespace": "UTIL",
+      "signature": "UTIL.resetCheckBoxDropdown(checkBoxClass)",
+      "description": "The purpose of this function is to reset all checkboxes in a checkbox dropdown control to unselected.",
+      "parameters": [
+        {
+          "name": "checkBoxClass",
+          "type": "String",
+          "description": "The class name of the checkboxes to be reset."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the 'checked' property of all checkboxes with the specified class name to false."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "toggleCheckBox",
+      "namespace": "UTIL",
+      "signature": "UTIL.toggleCheckBox(event, item)",
+      "description": "The purpose of this function is to toggle the value of a checkbox when the user clicks on a checkbox row (highlighted LABEL element) but not directly on the box itself.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "Event",
+          "description": "The event object associated with the user's click action."
+        },
+        {
+          "name": "item",
+          "type": "HTMLElement",
+          "description": "The HTML element representing the checkbox row."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the 'checked' property of the first child element of 'item' if the event target is a LABEL element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "showCheckBoxDropDown",
+      "namespace": "UTIL",
+      "signature": "UTIL.showCheckBoxDropDown(checkBoxesId)",
+      "description": "The purpose of this function is to toggle the visibility of the contents (checkboxes) of a checkbox dropdown control. It changes the display style of the element with the given ID between 'none' and 'block'.",
+      "parameters": [
+        {
+          "name": "checkBoxesId",
+          "type": "String",
+          "description": "The ID of the checkbox dropdown element whose visibility is to be toggled."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of the element with the given ID."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "closeCheckBoxDropdown",
+      "namespace": "UTIL",
+      "signature": "UTIL.closeCheckBoxDropdown(selectBoxId, checkBoxesId)",
+      "description": "The purpose of this function is to close the contents of a checkbox dropdown control. It can be called from anywhere to ensure that if the dropdown has been left open and you click somewhere else, it will be closed.",
+      "parameters": [
+        {
+          "name": "selectBoxId",
+          "type": "String",
+          "description": "The ID of the select box element that triggers the dropdown."
+        },
+        {
+          "name": "checkBoxesId",
+          "type": "String",
+          "description": "The ID of the checkbox dropdown element that needs to be closed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "keepElementInViewport",
+      "namespace": "UTIL",
+      "signature": "UTIL.keepElementInViewport(elementId)",
+      "description": "Ensures that a specified HTML element remains within the viewport boundaries when the user resizes the window.",
+      "parameters": [
+        {
+          "name": "elementId",
+          "type": "String",
+          "description": "The ID of the HTML element to be kept within the viewport."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the style properties (height, left, top) of the specified HTML element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setNgchmWidget",
+      "namespace": "UTIL",
+      "signature": "UTIL.setNgchmWidget(path)",
+      "description": "This function allows the user to modify the default path for the nghcmWidget-min.js file to a fully pathed location for that file, which may be under a different name than the file itself.",
+      "parameters": [
+        {
+          "name": "path",
+          "type": "string",
+          "description": "The fully pathed location for the nghcmWidget-min.js file."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable UTIL.defaultNgchmWidget to the provided path."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "embedExpandableMap",
+      "namespace": "UTIL",
+      "signature": "UTIL.embedExpandableMap(options)",
+      "description": "This function constructs the HTML for embedding a heat map widget within an iframe object. It takes a JavaScript object (options) as an input. The minimum parameter within this object is the ngchm file entry. Optional entries may be provided for the thumbnail, height, width, and widget JS location.",
+      "parameters": [
+        {
+          "name": "options",
+          "type": "object",
+          "description": "A configuration object containing parameters for embedding the heat map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding an iframe to the specified div.",
+        "Sets global variables UTIL.embedThumbWidth and UTIL.embedThumbHeight."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "b64toBlob",
+      "namespace": "UTIL",
+      "signature": "UTIL.b64toBlob(b64Data)",
+      "description": "This function converts a base64 encoded string into a Blob object. It is used in HTML pages that contain an entire heat map (.ngchm, widget, html, embed).",
+      "parameters": [
+        {
+          "name": "b64Data",
+          "type": "string",
+          "description": "The base64 encoded string to be converted into a Blob."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Blob",
+        "description": "A Blob object created from the base64 encoded string."
+      }
+    },
+    {
+      "name": "getClickType",
+      "namespace": "UTIL",
+      "signature": "UTIL.getClickType(e)",
+      "description": "Determines the type of mouse click event. Returns 0 for left click and 1 for right click. It can be expanded to handle other types of clicks such as wheel clicks, browser back, and browser forward.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The mouse event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "Returns 0 for left click and 1 for right click."
+      }
+    },
+    {
+      "name": "getCursorPosition",
+      "namespace": "UTIL",
+      "signature": "UTIL.getCursorPosition(e)",
+      "description": "The purpose of this function is to return the cursor position over the canvas. It handles both mouse and touch events to determine the cursor's coordinates relative to the target element.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object containing information about the mouse or touch event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing the x and y coordinates of the cursor relative to the target element."
+      }
+    },
+    {
+      "name": "hexToComplimentary",
+      "namespace": "UTIL",
+      "signature": "UTIL.hexToComplimentary(hex)",
+      "description": "Converts a hex color value to its complimentary hex color value by shifting the hue by 45 degrees.",
+      "parameters": [
+        {
+          "name": "hex",
+          "type": "string",
+          "description": "The hex color value to be converted."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The complimentary hex color value."
+      }
+    },
+    {
+      "name": "getContigRanges",
+      "namespace": "UTIL",
+      "signature": "UTIL.getContigRanges(sortedArr)",
+      "description": "This function iterates through a sorted array of integers and returns an array containing entries for each contiguous range present in the original array. The elements of the returned array will be sub-arrays that each have two entries: one for the starting position and the other for the ending position.",
+      "parameters": [
+        {
+          "name": "sortedArr",
+          "type": "Array<number>",
+          "description": "A sorted array of integers to be processed for contiguous ranges."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array<Array<number>>",
+        "description": "An array of sub-arrays, each containing two integers representing the start and end of a contiguous range."
+      }
+    },
+    {
+      "name": "showSplashExample",
+      "namespace": "None",
+      "signature": "function showSplashExample()",
+      "description": "This function manages the splash screen by hiding the 'splashWaiting' element and showing the 'splashExample' element.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the class list of the 'splashWaiting' and 'splashExample' elements in the DOM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "showLoader",
+      "namespace": "None",
+      "signature": "function showLoader(message)",
+      "description": "Replaces the splash screen with a loader screen and updates the loader with a new message.",
+      "parameters": [
+        {
+          "name": "message",
+          "type": "String",
+          "description": "The message to be displayed on the loader screen."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the innerHTML of the loader element with the new message.",
+        "Replaces the class of the loader element from 'faded' to 'fadeinslow' on the first call.",
+        "Replaces the class of the splash element from 'fadeinslow' to 'fadeout' on the first call, if the splash element exists.",
+        "Modifies the global variable 'firstLoaderMessage'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "hideLoader",
+      "namespace": "None",
+      "signature": "hideLoader(hideAll)",
+      "description": "This function hides the loader element and optionally hides or shows other UI elements based on the hideAll parameter.",
+      "parameters": [
+        {
+          "name": "hideAll",
+          "type": "boolean",
+          "description": "If true, hides all elements marked with 'data-hide-on-load' and shows elements marked with 'data-show-on-load'. If false, only the loader element is hidden."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the class list of the loader element to replace 'fadeinslow' with 'fadeout'.",
+        "If hideAll is true, hides elements with 'data-hide-on-load' attribute and shows elements with 'data-show-on-load' attribute.",
+        "Replaces 'faded' class with 'fadein' on UTIL.containerElement."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick(event)",
+      "description": "This function is assigned to the onclick event of the element with the ID 'srchCovSelectBox'. When the element is clicked, it triggers the UTIL.showCheckBoxDropDown function to display a dropdown of checkboxes.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "Event",
+          "description": "The event object associated with the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the UTIL.showCheckBoxDropDown function to display a dropdown of checkboxes."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

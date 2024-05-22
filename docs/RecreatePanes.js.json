@@ -1,0 +1,288 @@
+{
+  "filename": "RecreatePanes.js",
+  "namespace": "NgChm.RecPanes",
+  "description": [
+    "NGCHM namespace responsible for reconstructing a saved pane layout. This module handles the restoration of pane configurations from a saved state, ensuring that the layout and content of panes are accurately recreated. It interacts with various other namespaces to manage pane content, resizing, and plugin integration."
+  ],
+  "declares_functions_in": [
+    "reconstructPanelsFromMapConfig",
+    "createLayout",
+    "addDividerControlsToResizeHelpers",
+    "addResizeHandlersToContainers",
+    "setPanesContent",
+    "getHighestPaneId",
+    "setSelections",
+    "setPaneContent",
+    "setUsedVersionNumbers",
+    "getUnusedVersionNumber",
+    "getPaneInfoFromMapConfig"
+  ],
+  "interacts_with": [
+    "NgChm.UTIL",
+    "NgChm.LNK",
+    "NgChm.SRCHSTATE",
+    "NgChm.SRCH",
+    "NgChm.Pane",
+    "NgChm.MMGR",
+    "NgChm.SMM",
+    "NgChm.SUM",
+    "NgChm.DVW",
+    "NgChm.DET",
+    "NgChm.DEV",
+    "NgChm.DMM",
+    "NgChm.CUST"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "RECPANES.mapConfigPanelConfiguration",
+      "description": "Stores the configuration of the panel layout from the mapConfig.json file."
+    }
+  ],
+  "global_variables": [
+    {
+      "name": "usedVersionNumbers",
+      "description": "Tracks the version numbers used by the saved panel configuration to ensure new maps get unused numbers."
+    }
+  ],
+  "functions": [
+    {
+      "name": "reconstructPanelsFromMapConfig",
+      "namespace": "None",
+      "signature": "reconstructPanelsFromMapConfig(initialLoc, savedState)",
+      "description": "Reconstructs the panels from data in the mapConfig.json file. This function waits for plugins to load before attempting to reconstruct the panel layout.",
+      "parameters": [
+        {
+          "name": "initialLoc",
+          "type": "object",
+          "description": "The initial location configuration for the panels."
+        },
+        {
+          "name": "savedState",
+          "type": "object",
+          "description": "The saved state of the panel configuration from the mapConfig.json file."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies RECPANES.mapConfigPanelConfiguration with the saved state.",
+        "Replaces children of UTIL.containerElement with the reconstructed panel layout.",
+        "Adds divider controls and resize handlers to containers.",
+        "Waits for plugins to load and then sets initial pane content, selections, and performs an initial search.",
+        "Resizes NGCHM panes and updates selections.",
+        "Hides the loader screen and displays NG-CHM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "populatePluginPanels",
+      "namespace": "None",
+      "signature": "populatePluginPanels()",
+      "description": "Initializes and populates the plugin panels by setting initial content, applying saved selections, performing an initial search, resizing panels, and updating the display.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Logs a message to the console if debug mode is enabled.",
+        "Calls setPanesContent() to set the initial content of the panes.",
+        "Calls setSelections() to apply any saved selections.",
+        "Calls SRCH.doInitialSearch() to perform an initial search, potentially overriding saved selections.",
+        "Calls PANE.resizeNGCHM() to resize the NG-CHM pane.",
+        "Calls MMGR.getHeatMap().setUnAppliedChanges(false) to mark changes as applied.",
+        "Calls DET.updateSelections(true) to update selections.",
+        "Modifies the dataset of an expanded panel element, if present.",
+        "Calls PANE.toggleScreenMode() to toggle the screen mode of the expanded panel.",
+        "Calls PANE.resizePane() on each pane element to resize them.",
+        "Calls UTIL.hideLoader(true) to hide the loader screen and display the NG-CHM."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createLayout",
+      "namespace": "None",
+      "signature": "createLayout(saveSpec, parent)",
+      "description": "Create an NgChm container/pane layout according to the given save state specification. Users should pass the saveSpec for the top level ngChmContainer and leave parent undefined. The function calls itself recursively. Panes in the generated layout are empty and need their content set. The pane/container sizes are set to those in the specification and have to be adjusted for the current window size.",
+      "parameters": [
+        {
+          "name": "saveSpec",
+          "type": "object",
+          "description": "The save state specification object that defines the layout structure, including type, dimensions, and children."
+        },
+        {
+          "name": "parent",
+          "type": "HTMLElement",
+          "description": "The parent HTML element to which the created layout will be appended. This is undefined for the top-level container."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by creating and appending new elements based on the saveSpec.",
+        "May collapse or expand panes based on the saveSpec properties.",
+        "Adds event listeners to the created elements."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The created HTML element representing the pane or container."
+      }
+    },
+    {
+      "name": "addDividerControlsToResizeHelpers",
+      "namespace": "None",
+      "signature": "addDividerControlsToResizeHelpers()",
+      "description": "Adds DividerControl methods to elements with the class 'resizerHelper'. This function iterates through all elements with the specified class and assigns a new instance of PANE.DividerControl to each element's dividerController property.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the dividerController property of elements with the class 'resizerHelper'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addResizeHandlersToContainers",
+      "namespace": "None",
+      "signature": "addResizeHandlersToContainers()",
+      "description": "Adds 'paneresize' event handlers to all elements with the class 'ngChmContainer'. This allows these elements to respond to resize events by invoking the PANE.resizeHandler function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Adds 'paneresize' event listeners to elements with the class 'ngChmContainer'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setPanesContent",
+      "namespace": "None",
+      "signature": "function setPanesContent()",
+      "description": "Iterates over elements with the class 'pane', sorts them based on specific criteria, sets their content, and resets the pane counter.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the content of elements with the class 'pane'.",
+        "Calls setUsedVersionNumbers() which may have its own side effects.",
+        "Calls setPaneContent(pane.id) for each pane.",
+        "Resets the pane counter using PANE.resetPaneCounter(getHighestPaneId() + 1)."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getHighestPaneId",
+      "namespace": "None",
+      "signature": "getHighestPaneId()",
+      "description": "Returns the highest pane ID for panes currently in the DOM. It retrieves all elements with the class 'pane', extracts their IDs, converts them to integers, and returns the maximum value.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error message to the console if an exception occurs."
+      ],
+      "returns": {
+        "type": "number",
+        "description": "The highest pane ID found among the elements with the class 'pane'."
+      }
+    },
+    {
+      "name": "setSelections",
+      "namespace": "None",
+      "signature": "function setSelections()",
+      "description": "This function sets the selections for rows and columns based on the configuration stored in RECPANES.mapConfigPanelConfiguration. It updates the search results vectors for rows and columns and restores selected dendrogram bars if they exist.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the search results vectors for rows and columns using SRCH.setAxisSearchResultsVec.",
+        "Restores selected row and column dendrogram bars using SUM.rowDendro.restoreSelectedBars and SUM.colDendro.restoreSelectedBars."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setPaneContent",
+      "namespace": "None",
+      "signature": "setPaneContent(paneid)",
+      "description": "Set a pane's content based on the 'config.type' attribute. This function updates the content of a specified pane by switching it to different types such as summaryMap, detailMap, plugin, or linkout based on the configuration provided.",
+      "parameters": [
+        {
+          "name": "paneid",
+          "type": "string",
+          "description": "The ID of the pane to be updated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the content of the specified pane.",
+        "Deletes the pane's configuration from RECPANES.mapConfigPanelConfiguration.",
+        "May update displayed labels, zoom/pan state, and resize the pane.",
+        "May throw an error if a specified plugin fails to load."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "setUsedVersionNumbers",
+      "namespace": "None",
+      "signature": "function setUsedVersionNumbers()",
+      "description": "Tracks and saves the version numbers used by the saved panel configuration. This function ensures that a new unused number can be safely assigned to any saved map that doesn't have a version number. It must be called before panels are restored, as restoring a panel removes its information from the saved panel configuration.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable 'usedVersionNumbers' by setting it to an array of version numbers extracted from the RECPANES.mapConfigPanelConfiguration."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getUnusedVersionNumber",
+      "namespace": "None",
+      "signature": "getUnusedVersionNumber()",
+      "description": "Get the first unused version number and note that it is now used. This function iterates through the list of used version numbers and finds the first number that is not in use. It then adds this number to the list of used version numbers and returns it.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global array 'usedVersionNumbers' by adding the newly found unused version number."
+      ],
+      "returns": {
+        "type": "number",
+        "description": "The first unused version number."
+      }
+    },
+    {
+      "name": "getPaneInfoFromMapConfig",
+      "namespace": "None",
+      "signature": "getPaneInfoFromMapConfig(paneId)",
+      "description": "Retrieves the configuration information for a specific pane from the global RECPANES.mapConfigPanelConfiguration object. If the pane configuration is not found, it returns an empty object. If a TypeError occurs, it returns false; otherwise, it throws the error.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The identifier of the pane whose configuration information is to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs a warning message if the pane configuration is not found."
+      ],
+      "returns": {
+        "type": "Object",
+        "description": "The configuration information for the specified pane. Returns an empty object if the configuration is not found, or false if a TypeError occurs."
+      }
+    }
+  ]
+}

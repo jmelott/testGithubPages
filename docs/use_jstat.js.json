@@ -1,0 +1,112 @@
+{
+  "filename": "use_jstat.js",
+  "namespace": [],
+  "description": [
+    "This module provides statistical functions for calculating basic statistics, Welch's t-test, degrees of freedom, and p-values. It utilizes the jStat library to perform these calculations."
+  ],
+  "declares_functions_in": [
+    "getStats",
+    "Welch_tValue",
+    "degreesOfFreedom",
+    "pValue"
+  ],
+  "interacts_with": [
+    "jStat"
+  ],
+  "classes": [],
+  "member_variables": [],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "getStats",
+      "namespace": "None",
+      "signature": "getStats(dist)",
+      "description": "Calculates statistical metrics (mean, standard deviation, variance, and sample size) for a given distribution.",
+      "parameters": [
+        {
+          "name": "dist",
+          "type": "Array",
+          "description": "An array of numerical values representing the distribution."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Object",
+        "description": "An object containing the mean (mu), standard deviation (std), variance, and sample size (n) of the distribution."
+      }
+    },
+    {
+      "name": "Welch_tValue",
+      "namespace": "None",
+      "signature": "Welch_tValue(s1, s2)",
+      "description": "Function to return the test statistic for Welch's t-test, which is used to determine if there is a significant difference between the means of two sets of values with unequal variances and possibly unequal sizes.",
+      "parameters": [
+        {
+          "name": "s1",
+          "type": "object",
+          "description": "Summary statistics for the first set. This is the output of the getStats function."
+        },
+        {
+          "name": "s2",
+          "type": "object",
+          "description": "Summary statistics for the second set. This is the output of the getStats function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The t-value, which is the test statistic for Welch's t-test."
+      }
+    },
+    {
+      "name": "degreesOfFreedom",
+      "namespace": "None",
+      "signature": "degreesOfFreedom(s1, s2)",
+      "description": "Calculates the degrees of freedom for two sets with different variances. This is useful in statistical tests to determine the number of values that are free to vary.",
+      "parameters": [
+        {
+          "name": "s1",
+          "type": "SummaryStatistics",
+          "description": "Summary statistics for the first set. This is the output of the getStats function."
+        },
+        {
+          "name": "s2",
+          "type": "SummaryStatistics",
+          "description": "Summary statistics for the second set. This is the output of the getStats function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The number of values free to vary."
+      }
+    },
+    {
+      "name": "pValue",
+      "namespace": "None",
+      "signature": "pValue(tvalue, dof)",
+      "description": "Calculates the p-value for a given t-value and degrees of freedom using the cumulative distribution function (CDF) of the Student's t-distribution.",
+      "parameters": [
+        {
+          "name": "tvalue",
+          "type": "number",
+          "description": "The test statistic, typically the output of a t-test."
+        },
+        {
+          "name": "dof",
+          "type": "number",
+          "description": "The degrees of freedom associated with the t-test."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The p-value corresponding to the given t-value and degrees of freedom."
+      }
+    }
+  ]
+}

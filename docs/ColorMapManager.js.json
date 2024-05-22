@@ -1,0 +1,706 @@
+{
+  "filename": "ColorMapManager.js",
+  "namespace": "NgChm.CMM",
+  "description": [
+    "The ColorMapManager module is responsible for managing color maps within the NGCHM API. It provides functionalities to create, manipulate, and retrieve color maps for heatmaps. This includes handling different types of color maps (quantile, discrete), managing thresholds, and converting colors between different formats (hex, rgba). The module also supports blending colors and adjusting color luminance."
+  ],
+  "declares_functions_in": [
+    "CMM"
+  ],
+  "interacts_with": [
+    "NgChm.MAPREP"
+  ],
+  "classes": [
+    {
+      "name": "ContColorMap",
+      "description": "A class that handles continuous color mapping based on thresholds and color values."
+    }
+  ],
+  "member_variables": [],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "ColorMap",
+      "namespace": "CMM",
+      "signature": "CMM.ColorMap(heatMap, colorMapObj)",
+      "description": "This function initializes a ColorMap object used for managing color mappings in a heatmap visualization. It sets up thresholds, colors, and provides methods for manipulating and retrieving color information based on data values.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "object",
+          "description": "The heatmap object to which the color map will be applied."
+        },
+        {
+          "name": "colorMapObj",
+          "type": "object",
+          "description": "An object containing color mapping information, including type, thresholds, colors, and optional RGBA colors."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the internal state of the ColorMap object, including thresholds and colors."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "Returns an instance of the ColorMap object with methods to manipulate and retrieve color information."
+      }
+    },
+    {
+      "name": "getThresholds",
+      "namespace": "None",
+      "signature": "getThresholds()",
+      "description": "This function returns the current thresholds.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array containing the current threshold values."
+      }
+    },
+    {
+      "name": "setThresholds",
+      "namespace": "None",
+      "signature": "setThresholds(newthresholds)",
+      "description": "Sets the new threshold values by updating the 'thresholds' variable with the provided 'newthresholds' parameter.",
+      "parameters": [
+        {
+          "name": "newthresholds",
+          "type": "Array",
+          "description": "An array containing the new threshold values to be set."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the 'thresholds' variable with the new values provided."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getContinuousThresholdKeys",
+      "namespace": "None",
+      "signature": "getContinuousThresholdKeys()",
+      "description": "This function calculates and returns an array containing 10 continuous threshold breakpoint keys from the original thresholds submitted. It is used only for rendering a continuous classification bar.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of 10 continuous threshold breakpoint keys."
+      }
+    },
+    {
+      "name": "getContinuousThresholdKeySize",
+      "namespace": "None",
+      "signature": "getContinuousThresholdKeySize()",
+      "description": "This function calculates the size separating each 'interim' threshold key for a continuous classification bar.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The size separating each interim threshold key."
+      }
+    },
+    {
+      "name": "getColors",
+      "namespace": "None",
+      "signature": "getColors()",
+      "description": "Returns the list of colors stored in the 'colors' variable.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array containing the list of colors."
+      }
+    },
+    {
+      "name": "setColors",
+      "namespace": "None",
+      "signature": "setColors(newcolors)",
+      "description": "Sets the colors to the provided new colors.",
+      "parameters": [
+        {
+          "name": "newcolors",
+          "type": "Array",
+          "description": "An array of new color values to be set."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global or outer variable 'colors' by setting it to the value of 'newcolors'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getType",
+      "namespace": "None",
+      "signature": "getType()",
+      "description": "Returns the value of the 'type' variable.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "unknown",
+        "description": "The value of the 'type' variable."
+      }
+    },
+    {
+      "name": "getMissingColor",
+      "namespace": "None",
+      "signature": "getMissingColor()",
+      "description": "Returns the value of the missingColor variable.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "unknown",
+        "description": "The value of the missingColor variable."
+      }
+    },
+    {
+      "name": "setMissingColor",
+      "namespace": "None",
+      "signature": "setMissingColor(color)",
+      "description": "Sets the missing color to the specified value.",
+      "parameters": [
+        {
+          "name": "color",
+          "type": "String",
+          "description": "The color value to set as the missing color."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable 'missingColor' by setting it to the provided color value."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "constructor",
+      "namespace": "ContColorMap",
+      "signature": "ContColorMap:constructor(colorMap, thresholds)",
+      "description": "Initializes a ContColorMap object with the provided color map and thresholds. It sets up the minimum and maximum breakpoints and retrieves the color cuts from the color map.",
+      "parameters": [
+        {
+          "name": "colorMap",
+          "type": "ColorMap",
+          "description": "An object that provides color mapping functionalities, including a method to get color cuts."
+        },
+        {
+          "name": "thresholds",
+          "type": "Array",
+          "description": "An array of threshold values used to define breakpoints for the color map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "None",
+        "description": "This is a constructor function and does not return a value."
+      }
+    },
+    {
+      "name": "getColor",
+      "namespace": "ContColorMap",
+      "signature": "ContColorMap:getColor(value)",
+      "description": "Returns a color based on the provided value. If the value is 'Missing' or not a number, it returns a predefined missing color. Otherwise, it converts the value to a number and returns a corresponding color from the continuous color map.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "any",
+          "description": "The value to be mapped to a color. Can be a number or the string 'Missing'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The color corresponding to the provided value. If the value is 'Missing' or not a number, returns the missing color."
+      }
+    },
+    {
+      "name": "contColor",
+      "namespace": "ContColorMap",
+      "signature": "ContColorMap:contColor(value)",
+      "description": "Determines the color representation for a given value based on predefined thresholds and color mappings.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "number",
+          "description": "The numerical value to be mapped to a color."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The color corresponding to the input value, represented as a string."
+      }
+    },
+    {
+      "name": "getContColorMap",
+      "namespace": "None",
+      "signature": "getContColorMap()",
+      "description": "Creates and returns a new instance of the ContColorMap class using the current object and thresholds.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "ContColorMap",
+        "description": "A new instance of the ContColorMap class."
+      }
+    },
+    {
+      "name": "getCutsColor",
+      "namespace": "None",
+      "signature": "getCutsColor()",
+      "description": "Retrieves the color for cuts from the current data layer in the heat map. If the color is not defined, it returns a default white color in RGBA format.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object representing the RGBA color of the cuts. If the color is defined in the data layer, it returns the color converted to RGBA format. Otherwise, it returns a default white color."
+      }
+    },
+    {
+      "name": "getColor",
+      "namespace": "None",
+      "signature": "getColor(value)",
+      "description": "Returns an RGBA color value based on the provided value. The function determines the color by comparing the value against predefined thresholds and conditions.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "number|string",
+          "description": "The value to be evaluated for determining the corresponding RGBA color. It can be a number or the string 'Missing'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The RGBA color value corresponding to the provided value."
+      }
+    },
+    {
+      "name": "getClassificationColor",
+      "namespace": "None",
+      "signature": "getClassificationColor(value)",
+      "description": "Determines the color classification for a given value based on predefined thresholds and color mappings. Handles both discrete and continuous value types.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "any",
+          "description": "The value to classify and determine the corresponding color."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object representing the RGBA color corresponding to the input value."
+      }
+    },
+    {
+      "name": "addBreakpoint",
+      "namespace": "None",
+      "signature": "addBreakpoint(value, color)",
+      "description": "Adds a breakpoint to the thresholds and colors arrays at the appropriate position based on the given value.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "number",
+          "description": "The value at which to add the breakpoint."
+        },
+        {
+          "name": "color",
+          "type": "string",
+          "description": "The color associated with the breakpoint, in hexadecimal format."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global thresholds array by inserting the value at the correct position.",
+        "Modifies the global colors array by inserting the color at the correct position.",
+        "Modifies the global rgbaColors array by inserting the RGBA equivalent of the color at the correct position."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "changeBreakpoint",
+      "namespace": "None",
+      "signature": "changeBreakpoint(value, newColor)",
+      "description": "Updates the breakpoint value and its associated color in the thresholds, colors, and rgbaColors arrays.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "number",
+          "description": "The new breakpoint value to be inserted."
+        },
+        {
+          "name": "newColor",
+          "type": "string",
+          "description": "The new color associated with the breakpoint, in hexadecimal format."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the thresholds array by replacing the element at the lower bound index with the new value.",
+        "Modifies the colors array by replacing the element at the lower bound index with the new color.",
+        "Modifies the rgbaColors array by replacing the element at the lower bound index with the RGBA equivalent of the new color."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removeBreakpoint",
+      "namespace": "None",
+      "signature": "removeBreakpoint(value)",
+      "description": "Removes a breakpoint from the thresholds, colors, and rgbaColors arrays based on the provided value.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "any",
+          "description": "The value used to find and remove the corresponding breakpoint."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the thresholds array by removing an element.",
+        "Modifies the colors array by removing an element.",
+        "Modifies the rgbaColors array by removing an element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "findBounds",
+      "namespace": "None",
+      "signature": "findBounds(value, thresholds)",
+      "defined_section": "internal helper functions",
+      "description": "Determines the upper and lower bounds for a given value within a set of thresholds.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "number",
+          "description": "The value for which the bounds are to be found."
+        },
+        {
+          "name": "thresholds",
+          "type": "Array<number>",
+          "description": "An array of threshold values used to determine the bounds."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the upper and lower bounds for the given value."
+      }
+    },
+    {
+      "name": "blendColors",
+      "namespace": "None",
+      "signature": "blendColors(value, idx, thresholds)",
+      "description": "Blends two colors based on a value's position between two thresholds. The function calculates the ratio of the value between the given thresholds and uses this ratio to interpolate between two colors, returning the resulting blended color.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "number",
+          "description": "The value used to determine the blend ratio between the two colors."
+        },
+        {
+          "name": "idx",
+          "type": "number",
+          "description": "The index of the lower threshold in the thresholds array."
+        },
+        {
+          "name": "thresholds",
+          "type": "number[]",
+          "description": "An array of threshold values used to determine the range for blending colors."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object representing the blended color in RGBA format with properties r, g, b, and a."
+      }
+    },
+    {
+      "name": "hexToRgb",
+      "namespace": "None",
+      "signature": "hexToRgb(hex)",
+      "description": "Converts a hexadecimal color code to an RGB color object.",
+      "parameters": [
+        {
+          "name": "hex",
+          "type": "string",
+          "description": "The hexadecimal color code to be converted. It should be in the format '#RRGGBB' or 'RRGGBB'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object representing the RGB color with properties 'r', 'g', and 'b'. Returns null if the input is not a valid hexadecimal color code."
+      }
+    },
+    {
+      "name": "getColorLuminance",
+      "namespace": "None",
+      "signature": "getColorLuminance(color)",
+      "description": "Calculates the luminance of a given color in hexadecimal format. The function converts the hex color to its RGB components and then computes the luminance using the standard formula.",
+      "parameters": [
+        {
+          "name": "color",
+          "type": "string",
+          "description": "The color in hexadecimal format (e.g., '#FFFFFF')."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The luminance of the color as a number. Returns null if the color cannot be converted to RGB."
+      }
+    },
+    {
+      "name": "isColorDark",
+      "namespace": "None",
+      "signature": "isColorDark(rgb)",
+      "description": "Determines if a given RGB color is considered dark based on its luminance value.",
+      "parameters": [
+        {
+          "name": "rgb",
+          "type": "object",
+          "description": "An object representing the RGB color with properties r, g, and b."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the color is considered dark, otherwise false."
+      }
+    },
+    {
+      "name": "getRgbToHex",
+      "namespace": "None",
+      "signature": "getRgbToHex(rgb)",
+      "description": "Converts an RGB color object to its hexadecimal string representation.",
+      "parameters": [
+        {
+          "name": "rgb",
+          "type": "object",
+          "description": "An object containing the red (r), green (g), and blue (b) color components."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The hexadecimal string representation of the RGB color."
+      }
+    },
+    {
+      "name": "rgbToHex",
+      "namespace": "None",
+      "signature": "rgbToHex(rgb)",
+      "description": "Converts an RGB color object to its hexadecimal string representation.",
+      "parameters": [
+        {
+          "name": "rgb",
+          "type": "object",
+          "description": "An object containing the red (r), green (g), and blue (b) color values."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The hexadecimal string representation of the RGB color."
+      }
+    },
+    {
+      "name": "componentToHex",
+      "namespace": "None",
+      "signature": "componentToHex(c)",
+      "description": "Converts a single color component (0-255) to its hexadecimal representation.",
+      "parameters": [
+        {
+          "name": "c",
+          "type": "number",
+          "description": "The color component value ranging from 0 to 255."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The hexadecimal representation of the color component, padded with a leading zero if necessary."
+      }
+    },
+    {
+      "name": "blendHexColors",
+      "namespace": "None",
+      "signature": "blendHexColors(color1, color2, ratio)",
+      "description": "Blends two hex color values based on a given ratio and returns the resulting hex color. The ratio determines the weight of each color in the blend.",
+      "parameters": [
+        {
+          "name": "color1",
+          "type": "string",
+          "description": "The first hex color value to blend."
+        },
+        {
+          "name": "color2",
+          "type": "string",
+          "description": "The second hex color value to blend."
+        },
+        {
+          "name": "ratio",
+          "type": "number",
+          "description": "The ratio to blend the colors. A value between 0.0 and 1.0, where 0.0 means only color2 is used and 1.0 means only color1 is used."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The resulting blended color in hex format."
+      }
+    },
+    {
+      "name": "darkenHexColorIfNeeded",
+      "namespace": "None",
+      "signature": "darkenHexColorIfNeeded(hex)",
+      "description": "This function checks if the given hex color needs to be darkened. If the lowest RGB component is greater than 240, it darkens the color to ensure the lowest component is 240 or less. Otherwise, it returns the original hex color.",
+      "parameters": [
+        {
+          "name": "hex",
+          "type": "string",
+          "description": "The hex color code to be checked and potentially darkened."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "string",
+        "description": "The original or darkened hex color code."
+      }
+    },
+    {
+      "name": "ColorMapManager",
+      "namespace": "CMM",
+      "signature": "CMM.ColorMapManager(heatMap)",
+      "description": "Manages color maps for a heat map, allowing retrieval and setting of color maps for different data layers, row classifications, and column classifications.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "HeatMap",
+          "description": "The heat map object that contains the map configuration and data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the color maps within the heatMap object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This constructor function does not return a value."
+      }
+    },
+    {
+      "name": "getColorMap",
+      "namespace": "None",
+      "signature": "getColorMap(type, colorMapName)",
+      "description": "Retrieves a color map based on the specified type and color map name. It creates a new instance of CMM.ColorMap using the heat map and the color map data from the colorMapCollection.",
+      "parameters": [
+        {
+          "name": "type",
+          "type": "String",
+          "description": "Specifies the type of color map to retrieve. It can be 'data', 'row', or other types."
+        },
+        {
+          "name": "colorMapName",
+          "type": "String",
+          "description": "The name of the color map to retrieve from the colorMapCollection."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "CMM.ColorMap",
+        "description": "A new instance of CMM.ColorMap initialized with the specified color map data."
+      }
+    },
+    {
+      "name": "setColorMap",
+      "namespace": "None",
+      "signature": "setColorMap(colorMapName, colorMap, type)",
+      "description": "Sets the color map for a given type (data, row, or column) by updating the existing color map with new colors, thresholds, and missing color values.",
+      "parameters": [
+        {
+          "name": "colorMapName",
+          "type": "String",
+          "description": "The name of the color map to be set."
+        },
+        {
+          "name": "colorMap",
+          "type": "ColorMap",
+          "description": "An object containing the new color map details."
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "description": "The type of color map, which can be 'data', 'row', or 'column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the existing color map in the colorMapCollection with new colors, thresholds, and missing color values."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "hexToRgba",
+      "namespace": "None",
+      "signature": "hexToRgba(hex)",
+      "description": "Converts a hexadecimal color code to an RGBA color object with a fixed alpha value of 255.",
+      "parameters": [
+        {
+          "name": "hex",
+          "type": "string",
+          "description": "The hexadecimal color code to be converted."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object representing the RGBA color with properties r, g, b, and a. Returns null if the input is not a valid hexadecimal color code."
+      }
+    }
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "filename": "ModuleLayoutEngine.js",
+  "namespace": [],
+  "description": [
+    "This module is responsible for laying out graph nodes and edges using a force-directed algorithm. It calculates the positions of nodes based on repulsive and attractive forces to create a visually appealing and non-overlapping layout."
+  ],
+  "declares_functions_in": [],
+  "interacts_with": [],
+  "classes": [
+    {
+      "name": "ModuleLayoutEngine",
+      "description": "A class that handles the layout of graph nodes and edges using a force-directed algorithm."
+    }
+  ],
+  "member_variables": [
+    {
+      "name": "graph",
+      "description": "The graph object containing nodes and edges to be laid out."
+    },
+    {
+      "name": "iterations",
+      "description": "The number of iterations to perform for the layout algorithm."
+    },
+    {
+      "name": "maxRepulsiveForceDistance",
+      "description": "The maximum distance at which repulsive forces are calculated between nodes."
+    },
+    {
+      "name": "k",
+      "description": "A constant used in the calculation of repulsive forces."
+    },
+    {
+      "name": "c",
+      "description": "A constant used to scale the movement of nodes."
+    },
+    {
+      "name": "maxVertexMovement",
+      "description": "The maximum distance a node can move in a single iteration."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "constructor",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:constructor(graph)",
+      "description": "Initializes a new instance of the ModuleLayoutEngine class, setting up the graph and various parameters for the layout algorithm.",
+      "parameters": [
+        {
+          "name": "graph",
+          "type": "Graph",
+          "description": "The graph object that the layout engine will operate on."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes the graph property of the instance.",
+        "Sets default values for iterations, maxRepulsiveForceDistance, k, c, and maxVertexMovement.",
+        "Calls the layout method to start the layout process."
+      ],
+      "returns": {
+        "type": "ModuleLayoutEngine",
+        "description": "A new instance of the ModuleLayoutEngine class."
+      }
+    },
+    {
+      "name": "create",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:create()",
+      "description": "Creates a new instance of the ModuleLayoutEngine class using the provided arguments.",
+      "parameters": [
+        {
+          "name": "args",
+          "type": "Array",
+          "description": "A variable number of arguments to be passed to the ModuleLayoutEngine constructor."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "ModuleLayoutEngine",
+        "description": "A new instance of the ModuleLayoutEngine class."
+      }
+    },
+    {
+      "name": "layout",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:layout()",
+      "description": "Executes the layout process by preparing the layout, iterating through the layout steps, and calculating the layout bounds.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "layoutPrepare",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:layoutPrepare()",
+      "description": "Initializes the layout properties for each node in the graph by setting their position and force attributes to zero.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the layoutPosX, layoutPosY, layoutForceX, and layoutForceY properties of each node in the graph."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "layoutCalcBounds",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:layoutCalcBounds()",
+      "description": "Calculates the bounding box for the layout by iterating over all nodes in the graph and updating the minimum and maximum x and y coordinates.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates this.graph.layoutMinX with the minimum x-coordinate of the nodes.",
+        "Updates this.graph.layoutMaxX with the maximum x-coordinate of the nodes.",
+        "Updates this.graph.layoutMinY with the minimum y-coordinate of the nodes.",
+        "Updates this.graph.layoutMaxY with the maximum y-coordinate of the nodes."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "layoutIteration",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:layoutIteration()",
+      "description": "Performs a single iteration of the layout algorithm for the graph. It calculates the forces on nodes due to repulsions and attractions, and then moves the nodes accordingly.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the position (layoutPosX, layoutPosY) and force (layoutForceX, layoutForceY) properties of nodes in the graph."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "nodeSep",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:nodeSep(node1, node2)",
+      "description": "Calculates the separation distance between two nodes, including the x and y distances, the squared distance, and the Euclidean distance. If the nodes are too close, it introduces a small random separation to avoid zero distance.",
+      "parameters": [
+        {
+          "name": "node1",
+          "type": "Node",
+          "description": "The first node object containing layout position and dimensions."
+        },
+        {
+          "name": "node2",
+          "type": "Node",
+          "description": "The second node object containing layout position and dimensions."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the x distance (dx), y distance (dy), squared distance (d2), and Euclidean distance (d) between the two nodes."
+      }
+    },
+    {
+      "name": "layoutRepulsive",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:layoutRepulsive(node1, node2)",
+      "description": "Calculates and applies repulsive forces between two nodes to adjust their positions in a layout. This function ensures that nodes do not overlap by pushing them apart based on a repulsive force calculation.",
+      "parameters": [
+        {
+          "name": "node1",
+          "type": "object",
+          "description": "The first node object involved in the repulsive force calculation."
+        },
+        {
+          "name": "node2",
+          "type": "object",
+          "description": "The second node object involved in the repulsive force calculation."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies node1.layoutForceX and node1.layoutForceY to apply the repulsive force.",
+        "Modifies node2.layoutForceX and node2.layoutForceY to apply the repulsive force.",
+        "Logs repulsive force details to the console if tracing is enabled on both nodes."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "layoutAttractive",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:layoutAttractive(edge)",
+      "description": "Calculates and applies attractive forces between two nodes connected by an edge in a graph layout. Adjusts node positions based on the type of edge and its properties.",
+      "parameters": [
+        {
+          "name": "edge",
+          "type": "Edge",
+          "description": "An object representing the edge between two nodes, containing properties such as source, target, attraction, op, directed, and trace."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the layoutForceX property of node1 and node2 based on calculated attractive forces.",
+        "May modify the level property of node2 if the edge is directed.",
+        "Logs edge trace information to the console if edge.trace is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "each",
+      "namespace": "ModuleLayoutEngine",
+      "signature": "ModuleLayoutEngine:each(nodes, fn)",
+      "description": "Iterates over each element in the 'nodes' array and applies the provided function 'fn' to each element.",
+      "parameters": [
+        {
+          "name": "nodes",
+          "type": "Array",
+          "description": "An array of nodes to be iterated over."
+        },
+        {
+          "name": "fn",
+          "type": "Function",
+          "description": "A function to be applied to each element in the 'nodes' array."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

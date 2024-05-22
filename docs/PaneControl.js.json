@@ -1,0 +1,1709 @@
+{
+  "filename": "PaneControl.js",
+  "namespace": "NgChm.Pane",
+  "description": [
+    "This module is responsible for managing the pane layout and interactions within the NGCHM (Next Generation Clustered Heat Map) API. It provides functionalities to initialize, resize, split, and manage panes and containers. It also handles events related to pane interactions, such as collapsing, expanding, and resizing panes, as well as managing pane content and icons."
+  ],
+  "declares_functions_in": [
+    "DividerControl"
+  ],
+  "interacts_with": [
+    "NgChm.UTIL",
+    "NgChm.MMGR",
+    "NgChm.UHM",
+    "NgChm.TOUR"
+  ],
+  "classes": [
+    {
+      "name": "DividerControl",
+      "description": "Manages dragging events on a divider, including starting, moving, and ending the divider movement."
+    }
+  ],
+  "member_variables": [
+    {
+      "name": "PANE.ngchmContainerHeight",
+      "description": "Percent of window height to use for NGCHM."
+    },
+    {
+      "name": "PANE.ngchmContainerWidth",
+      "description": "Percent of window width to use for NGCHM."
+    },
+    {
+      "name": "PANE.showPaneHeader",
+      "description": "Boolean indicating whether to show the pane header."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "resetPaneCounter",
+      "namespace": "None",
+      "signature": "resetPaneCounter(count)",
+      "description": "Resets the counter for generating unique pane IDs. If a count is provided, it sets the counter to that value; otherwise, it resets the counter to 1.",
+      "parameters": [
+        {
+          "name": "count",
+          "type": "number",
+          "description": "The value to set the pane counter to. If null, the counter is reset to 1."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable nextUniquePaneId."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getUniquePaneId",
+      "namespace": "None",
+      "signature": "function getUniquePaneId()",
+      "description": "Generates a unique identifier for a pane by appending an incrementing number to the string 'pane'.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Increments the global variable nextUniquePaneId."
+      ],
+      "returns": {
+        "type": "string",
+        "description": "A unique identifier string for a pane."
+      }
+    },
+    {
+      "name": "getUniqueContainerId",
+      "namespace": "None",
+      "signature": "function getUniqueContainerId()",
+      "description": "Generates and returns a unique ID for a container element, which is useful for automated tests.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Increments the global variable nextUniqueContainerId."
+      ],
+      "returns": {
+        "type": "string",
+        "description": "A unique ID string for a container element."
+      }
+    },
+    {
+      "name": "findPaneLocation",
+      "namespace": "None",
+      "signature": "findPaneLocation(element)",
+      "description": "Return a pane location object for the pane containing the specified element. The function traverses up the DOM tree to find and return relevant HTML elements associated with the pane, such as the pane itself, its container, header, and title.",
+      "parameters": [
+        {
+          "name": "element",
+          "type": "HTMLElement",
+          "description": "The DOM element that is either the pane element or any element inside the pane element."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs errors to the console if the pane, container, pane header, or pane title elements are not found as expected."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the following properties: pane (DOM element for the pane), container (DOM element for the enclosing container), paneHeader (DOM element for the pane header), and paneTitle (DOM element for the pane title)."
+      }
+    },
+    {
+      "name": "layout",
+      "namespace": "None",
+      "signature": "layout(el)",
+      "description": "Returns a save state specification for the layout of the provided element. The function processes the element and its children recursively to generate a detailed layout specification.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The top-level HTML element (usually an ngChmContainer) whose layout state is to be saved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object representing the layout details of the element. The object includes properties such as id, width, height, type, and other relevant layout information. Returns null for elements that should not be included in the layout specification."
+      }
+    },
+    {
+      "name": "initializePanes",
+      "namespace": "None",
+      "signature": "initializePanes()",
+      "description": "Initializes the pane structure within the 'ngChmContainer' element. This function sets up the initial pane, handles resizing, and ensures the container is cleared of previous contents.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets PANE.resizeNGCHM to the resizeNGCHM function.",
+        "Assigns window.onresize to the resizeNGCHM function.",
+        "Clears the contents of the 'ngChmContainer' element.",
+        "Sets panesInitialized to true."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The initial location of the pane."
+      }
+    },
+    {
+      "name": "resizeNGCHM",
+      "namespace": "None",
+      "signature": "resizeNGCHM()",
+      "description": "Resizes the NGCHM (Next Generation Clustered Heat Map) container based on the dimensions of its parent element and updates the positions of various popups to ensure they remain within the viewport.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the dimensions of the NGCHM container.",
+        "Dispatches 'paneresize' events to update the width and height of the container.",
+        "Calls updatePopupPositions() to adjust popup positions.",
+        "Calls UTIL.keepElementInViewport() to ensure specific elements remain within the viewport."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "initializePaneIconMenu",
+      "namespace": "None",
+      "signature": "initializePaneIconMenu(icon)",
+      "description": "Initializes a DOM IMG element icon to a panel menu, setting up event listeners for mouseover, mouseout, and click events.",
+      "parameters": [
+        {
+          "name": "icon",
+          "type": "HTMLElement",
+          "description": "The DOM IMG element to be initialized with the panel menu."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the onmouseout event handler for the icon.",
+        "Sets the onmouseover event handler for the icon.",
+        "Adds a click event listener to the icon.",
+        "May log debug information to the console.",
+        "Calls newIconMenu function which may have additional side effects."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "icon",
+      "signature": "icon.onmouseout(e)",
+      "description": "This function is an event handler for the 'mouseout' event on the 'icon' element. It calls the 'UHM.hlpC()' function when the mouse pointer leaves the icon.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the 'mouseout' event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "icon",
+      "signature": "icon.onmouseover(e)",
+      "description": "Handles the mouseover event for the icon element, displaying a help tooltip.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The mouseover event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a tooltip with the message 'Open panel menu' near the icon element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "toggleScreenMode",
+      "namespace": "None",
+      "signature": "toggleScreenMode(paneId)",
+      "defined_section": "SCREEN MODE FUNCTIONS",
+      "description": "Toggle screen mode for the specified pane by changing the screen mode icon.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The ID of the pane for which the screen mode should be toggled."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "initializePaneScreenMode",
+      "namespace": "None",
+      "signature": "initializePaneScreenMode(expander, shrinker, paneId)",
+      "description": "Initializes the DOM IMG elements for the screen mode (expand/contract) functionality by setting their IDs, mouseover and mouseout events, and click event listeners.",
+      "parameters": [
+        {
+          "name": "expander",
+          "type": "HTMLElement",
+          "description": "The DOM element that will be used to expand the pane."
+        },
+        {
+          "name": "shrinker",
+          "type": "HTMLElement",
+          "description": "The DOM element that will be used to shrink the pane."
+        },
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The unique identifier for the pane."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the ID of the expander element.",
+        "Sets the ID of the shrinker element.",
+        "Adds mouseover and mouseout event listeners to the expander element.",
+        "Adds mouseover and mouseout event listeners to the shrinker element.",
+        "Adds click event listeners to both the expander and shrinker elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "expander",
+      "signature": "expander.onmouseout(e)",
+      "description": "Handles the mouseout event for the expander element by calling the UHM.hlpC function.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The mouseout event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the UHM.hlpC function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "expander",
+      "signature": "expander.onmouseover(e)",
+      "description": "Handles the mouseover event for the expander element, triggering a helper function to display a tooltip.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The mouseover event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.hlp to display a tooltip with the message 'Expand Panel'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseout",
+      "namespace": "shrinker",
+      "signature": "shrinker.onmouseout(e)",
+      "description": "This function is an event handler for the 'mouseout' event on the 'shrinker' object. It calls the 'UHM.hlpC()' function when the mouse pointer leaves the 'shrinker' element.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the 'mouseout' event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls the UHM.hlpC() function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "shrinker",
+      "signature": "shrinker.onmouseover(e)",
+      "description": "Handles the mouseover event for the shrinker element by calling the UHM.hlp function to display a help tooltip.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the mouseover event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.hlp to display a help tooltip."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "changeScreenMode",
+      "namespace": "None",
+      "signature": "changeScreenMode(icon)",
+      "description": "Changes the screen mode and updates the icon button when the user invokes the functionality. It toggles between full screen and normal mode for a specific pane based on the icon's ID.",
+      "parameters": [
+        {
+          "name": "icon",
+          "type": "HTMLElement",
+          "description": "The icon element that triggers the screen mode change. Its ID is used to determine the pane to be toggled."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the dataset attribute 'expanded' of the icon's parent element.",
+        "Calls the functions closeFullScreen(paneId) and openFullScreen(paneId) which are assumed to change the screen mode of the pane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getActiveContainers",
+      "namespace": "None",
+      "signature": "getActiveContainers(paneId)",
+      "description": "This function collects the IDs of all parent elements of a given pane until it reaches an element with the ID 'ngChmContainer'. It stores these IDs in the global array 'activeContainers'.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "HTMLElement",
+          "description": "The starting pane element whose parent elements' IDs are to be collected."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global array 'activeContainers' by appending the IDs of parent elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "openFullScreen",
+      "namespace": "None",
+      "signature": "openFullScreen(paneId)",
+      "description": "Expands a specified pane to full screen by resizing it and its parent container to fill the top container. It hides all other panes, resizers, and containers except the top container and the container holding the pane being expanded.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "string",
+          "description": "The ID of the pane to be expanded to full screen."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets isPaneExpanded to true.",
+        "Hides all other panes, resizers, and containers except the top container and the container holding the pane being expanded.",
+        "Resizes the specified pane and its parent container to fill the top container."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "closeFullScreen",
+      "namespace": "None",
+      "signature": "function closeFullScreen(paneId)",
+      "description": "Reverts a pane from full-screen mode back to its original size and restores the visibility of all panes, resizers, and containers.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The ID of the pane to be reverted from full-screen mode."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets isPaneExpanded to false.",
+        "Restores the original dimensions of the pane and its parent container.",
+        "Resets origPane, origContainer, and activeContainers to empty states.",
+        "Calls displayPanes, displayResizers, and displayContainers to restore visibility.",
+        "Resizes all panes to their original sizes."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "displayPanes",
+      "namespace": "None",
+      "signature": "displayPanes(method)",
+      "description": "This function retrieves all elements with the class name 'pane' and sets their display style based on the provided method. It is used to show or hide all panes.",
+      "parameters": [
+        {
+          "name": "method",
+          "type": "string",
+          "description": "The display style to be applied to all elements with the class name 'pane'. Common values are 'block' to show and 'none' to hide."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of all elements with the class name 'pane'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "displayResizers",
+      "namespace": "None",
+      "signature": "displayResizers(method)",
+      "description": "This function toggles the display property of all elements with the class name 'resizerHelper' based on the provided method.",
+      "parameters": [
+        {
+          "name": "method",
+          "type": "string",
+          "description": "The display method to apply to the resizer elements (e.g., 'block', 'none')."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of elements with the class name 'resizerHelper'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "displayContainers",
+      "namespace": "None",
+      "signature": "displayContainers(method)",
+      "description": "This function toggles the display style of HTML elements with the class name 'ngChmContainer'. It hides or shows all containers except the one with the ID 'ngChmContainer' and those listed in the 'activeContainers' array.",
+      "parameters": [
+        {
+          "name": "method",
+          "type": "string",
+          "description": "The display style to be applied to the containers (e.g., 'none' to hide, 'block' to show)."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the display style of HTML elements with the class name 'ngChmContainer'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setPaneTitle",
+      "namespace": "None",
+      "signature": "setPaneTitle(loc, title)",
+      "defined_section": "END SCREEN MODE FUNCTIONS",
+      "description": "Sets the title of a pane by updating the innerText property of the paneTitle element within the provided location object.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the paneTitle element whose innerText will be updated."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "The new title to set for the pane."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the innerText property of the paneTitle element within the loc object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addPanelIcons",
+      "namespace": "None",
+      "signature": "addPanelIcons(loc, userIcons)",
+      "description": "Adds user-defined icons to the panel header icon group before the pane menu icon.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the pane header element."
+        },
+        {
+          "name": "userIcons",
+          "type": "array",
+          "description": "An array of user-defined icon elements to be added to the panel header."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by inserting user-defined icons into the panel header icon group."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearExistingDialogs",
+      "namespace": "None",
+      "signature": "clearExistingDialogs(paneId)",
+      "description": "This function checks for and clears any existing dialog popups within a specified pane by removing the associated popup elements.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The ID of the pane where the function will search for and clear existing dialog popups."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes popup elements associated with icons within the specified pane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resizeHandler",
+      "namespace": "None",
+      "signature": "resizeHandler(e)",
+      "description": "Handler for custom resize event for both Panels (leaf nodes) and Containers. The width or height of the target node is modified by e.detail.amount pixels. If the target is a Panel, it resizes the view if it contains a Heatmap view. If the target is a Container, it divides e.detail.amount by the number of children and resizes each by that amount if the change direction matches the container direction, otherwise, it resizes each subcontainer by e.detail.amount.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The custom resize event containing details about the resize operation."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the style of the target element.",
+        "Logs debug information if debug mode is enabled.",
+        "Dispatches custom 'paneresize' events to child elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resizeChildren",
+      "namespace": "None",
+      "signature": "resizeChildren()",
+      "description": "This function resizes the children elements of a container when a resize event is triggered. It handles both vertical and horizontal resizing by dispatching custom 'paneresize' events to the children elements.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Dispatches 'paneresize' events to the children elements of the container."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "newPane",
+      "namespace": "None",
+      "signature": "newPane(style, title, paneid)",
+      "description": "Creates and returns a new Pane element with specified styles, title, and pane ID. If a title is provided, the pane will include a header with various elements such as title text, screen mode buttons, and icon groups.",
+      "parameters": [
+        {
+          "name": "style",
+          "type": "object",
+          "description": "A dictionary of styles to add to the Pane element."
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "The pane's initial title. If provided, a pane header will be initialized."
+        },
+        {
+          "name": "paneid",
+          "type": "string",
+          "description": "The ID to assign to the new pane. If null, a unique pane ID will be generated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the heat map's unapplied changes to true.",
+        "Adds a new pane element to the DOM.",
+        "Initializes pane header and its elements if a title is provided."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The newly created pane element."
+      }
+    },
+    {
+      "name": "setPaneClientIcons",
+      "namespace": "None",
+      "signature": "setPaneClientIcons(loc, spec)",
+      "description": "Adds a group of icons to the pane header. It removes any existing client icons and inserts new ones based on the provided specification.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing references to the pane header and pane title elements."
+        },
+        {
+          "name": "spec",
+          "type": "object",
+          "description": "An object specifying the icons to add and the grid template to use. It contains the following properties: icons (array of icons or buttonSets) and template (grid-template-columns for the .client_icons div)."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes existing client icons from the pane header.",
+        "Inserts new client icons into the pane header."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "splitPaneCheck",
+      "namespace": "None",
+      "signature": "splitPaneCheck(vertical, loc)",
+      "description": "Function to determine if a pane can be divided without loss of PathwayMapper state. If no loss of PathwayMapper state, then divide the pane. If division would result in loss of PathwayMapper state, present a system message with a warning, and allow the user to decide if they want to proceed or not.",
+      "parameters": [
+        {
+          "name": "vertical",
+          "type": "boolean",
+          "description": "Indicates whether the pane should be split vertically."
+        },
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the pane and container elements."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a message box to the user if the pane split would reset PathwayMapper.",
+        "Calls splitPane function to divide the pane.",
+        "Logs error to console if user cancels the pane split."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "promisePrompt",
+      "namespace": "None",
+      "signature": "promisePrompt(vertical, loc)",
+      "description": "Displays a confirmation message box to the user, asking if they want to proceed with an action that will delete all information in PathwayMapper. Returns a promise that resolves if the user confirms, and rejects if the user cancels.",
+      "parameters": [
+        {
+          "name": "vertical",
+          "type": "boolean",
+          "description": "Indicates whether the message box should be displayed vertically."
+        },
+        {
+          "name": "loc",
+          "type": "string",
+          "description": "The location where the message box should be displayed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a message box to the user.",
+        "Resolves or rejects a promise based on user interaction."
+      ],
+      "returns": {
+        "type": "Promise",
+        "description": "A promise that resolves if the user confirms the action, and rejects if the user cancels."
+      }
+    },
+    {
+      "name": "splitPane",
+      "namespace": "None",
+      "signature": "splitPane(vertical, loc)",
+      "description": "Splits a given pane into two panes either vertically or horizontally based on the provided parameters. If the split direction matches the enclosing container's direction, it inserts a divider and a new pane after the current pane and resizes them. Otherwise, it converts the pane into a container, creates two new child panes and a divider, and moves the original pane's contents into the first child pane.",
+      "parameters": [
+        {
+          "name": "vertical",
+          "type": "boolean",
+          "description": "Determines the direction of the split. If true, the pane is split vertically; otherwise, it is split horizontally."
+        },
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the pane and container elements to be split."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by adding new elements and changing the structure of existing elements.",
+        "Moves data properties from the original pane to the new first child pane."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the two new child panes and the divider element."
+      }
+    },
+    {
+      "name": "isCollapsedPane",
+      "namespace": "None",
+      "signature": "isCollapsedPane(paneLoc)",
+      "description": "Checks if a given pane location is in the list of collapsed panes.",
+      "parameters": [
+        {
+          "name": "paneLoc",
+          "type": "object",
+          "description": "An object containing the pane location to check."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the pane location is in the list of collapsed panes, otherwise false."
+      }
+    },
+    {
+      "name": "collapsePane",
+      "namespace": "None",
+      "signature": "collapsePane(paneLoc)",
+      "description": "Collapses a specified pane by hiding its contents and adjusting its dimensions. This function can also re-collapse an already collapsed pane, which is useful when reloading from a saved state.",
+      "parameters": [
+        {
+          "name": "paneLoc",
+          "type": "object",
+          "description": "An object containing references to the pane and its elements that need to be collapsed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Adds 'collapsed' class to the pane element.",
+        "Adds the pane to the global collapsedPanes array if not already present.",
+        "Hides all child elements of the pane except the pane header.",
+        "Adjusts the display style of the pane title and the width of the pane header.",
+        "Adjusts the dimensions of the pane based on its container's orientation."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "expandPane",
+      "namespace": "None",
+      "signature": "expandPane(paneLoc)",
+      "description": "Expands a pane by removing the 'collapsed' class and adjusting its dimensions based on the container's orientation.",
+      "parameters": [
+        {
+          "name": "paneLoc",
+          "type": "object",
+          "description": "An object containing references to the pane and its container. The object should have 'pane' and 'container' properties."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the class list of paneLoc.pane by removing the 'collapsed' class.",
+        "Adjusts the width or height of paneLoc.pane based on the container's orientation."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "registerPaneContentOption",
+      "namespace": "None",
+      "signature": "registerPaneContentOption(menuEntry, callback)",
+      "description": "Registers a new pane content option by adding it to the paneContentOptions array.",
+      "parameters": [
+        {
+          "name": "menuEntry",
+          "type": "String",
+          "description": "The menu entry to be added to the pane content options."
+        },
+        {
+          "name": "callback",
+          "type": "Function",
+          "description": "The callback function to be executed when the menu entry is selected."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global paneContentOptions array by adding a new object containing menuEntry and callback."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "registerPaneExtraOption",
+      "namespace": "None",
+      "signature": "registerPaneExtraOption(name, enabled, switcher, data)",
+      "description": "Registers an extra option for a pane by adding it to the paneExtraOptions array.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "String",
+          "description": "The name of the extra option."
+        },
+        {
+          "name": "enabled",
+          "type": "Boolean",
+          "description": "Indicates whether the extra option is enabled."
+        },
+        {
+          "name": "switcher",
+          "type": "Function",
+          "description": "A function to switch the state of the extra option."
+        },
+        {
+          "name": "data",
+          "type": "Object",
+          "description": "Additional data related to the extra option."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global paneExtraOptions array by adding a new extra option object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "getExpandedSibling",
+      "namespace": "None",
+      "signature": "getExpandedSibling(loc)",
+      "description": "This function retrieves the next or previous unexpanded sibling of a given pane within its parent container.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the container and pane elements. It should have the properties 'container' (the parent container element) and 'pane' (the current pane element)."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "Returns the next or previous unexpanded sibling pane element if found, otherwise returns null."
+      }
+    },
+    {
+      "name": "newIconMenu",
+      "namespace": "None",
+      "signature": "newIconMenu(icon)",
+      "description": "Creates a dynamic context menu for a given icon element, providing various options for manipulating pane content and layout.",
+      "parameters": [
+        {
+          "name": "icon",
+          "type": "HTMLElement",
+          "description": "The DOM element representing the icon for which the menu is created."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a menu to the DOM near the specified icon.",
+        "Modifies pane content and layout based on user interactions.",
+        "Registers and removes event listeners for menu interactions.",
+        "May log debug information to the console if debug mode is enabled."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "menuHeader",
+      "namespace": "None",
+      "signature": "menuHeader(text)",
+      "description": "Creates a new menu header element, sets its text content, and appends it to the menu.",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text content to be displayed in the menu header."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new DIV element with the class 'menuHeader' to the global 'menu' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "mh",
+      "signature": "mh.onclick()",
+      "description": "Defines an empty event handler for the 'onclick' event of the 'mh' object. This function is intended to be executed when the 'mh' object is clicked.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "menuItem",
+      "namespace": "None",
+      "signature": "menuItem(text, callback)",
+      "description": "Creates a new menu item element, sets its text, and assigns a click event that triggers the provided callback function with the pane location.",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text to display inside the menu item."
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "The function to call when the menu item is clicked. It receives the pane location as an argument."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new menu item element to the global 'menu' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "mi",
+      "signature": "mi.onclick()",
+      "description": "This function sets an onclick event handler for the 'mi' object. When the 'mi' object is clicked, it executes a callback function with the result of the findPaneLocation function, passing the 'icon' as an argument.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "menuItemDisabled",
+      "namespace": "None",
+      "signature": "function menuItemDisabled(text)",
+      "description": "Creates a disabled menu item with the specified text and appends it to the menu.",
+      "parameters": [
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text to be displayed on the disabled menu item."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new disabled menu item to the global 'menu' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "mi",
+      "signature": "mi.onclick()",
+      "description": "This function is an event handler for the 'onclick' event of the 'mi' object. Currently, it is defined as an empty arrow function, meaning it does not perform any actions when the 'onclick' event is triggered.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "menuSeparator",
+      "namespace": "None",
+      "signature": "menuSeparator()",
+      "description": "Creates a new DIV element with the class 'menuItemBorder' and appends it to the menu.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new DIV element to the global 'menu' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "replaceContainerWithOnlyChild",
+      "namespace": "None",
+      "signature": "replaceContainerWithOnlyChild()",
+      "description": "Function to replace a container with its only remaining child. This involves moving all child contents into the container, removing the old child, updating pane handlers, and resizing the container or merging it with its parent if necessary.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Moves child elements from the first child to the container.",
+        "Removes the first child from the container.",
+        "Updates pane handlers if the first child is a pane.",
+        "Changes the container's class and ID if the first child is a pane.",
+        "Resizes the container and its children.",
+        "Merges child elements into the parent container if they share the same orientation."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "removePaneAndAdjacentDivider",
+      "namespace": "None",
+      "signature": "removePaneAndAdjacentDivider()",
+      "description": "Function to remove a pane and its adjacent divider from a container. Depending on the position of the pane, it either removes the divider before or after the pane.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by removing child elements from paneLoc.container.",
+        "Modifies the array 'c' by removing elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "promisePrompt",
+      "namespace": "None",
+      "signature": "promisePrompt(paneLoc)",
+      "description": "Function to create a dialog for the user to choose 'Cancel' or 'OK'. Returns a promise: resolves if 'OK' button is clicked, rejects if 'Cancel' button is clicked. This function is used to warn the user about resetting the PathwayMapper pane.",
+      "parameters": [
+        {
+          "name": "paneLoc",
+          "type": "String",
+          "description": "The location of the pane to be reset."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Displays a message box to the user."
+      ],
+      "returns": {
+        "type": "Promise",
+        "description": "Resolves if 'OK' button is clicked, rejects if 'Cancel' button is clicked."
+      }
+    },
+    {
+      "name": "closeMenu",
+      "namespace": "None",
+      "signature": "function closeMenu()",
+      "description": "Closes the currently open menu by removing the popup near the icon, resetting the open icon menu variable, and removing the event listener for closing the menu.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the popup near the icon.",
+        "Resets the global variable openIconMenu to null.",
+        "Removes the 'click' event listener for closing the menu."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "insertPopupNearIcon",
+      "namespace": "None",
+      "signature": "insertPopupNearIcon(popup, icon)",
+      "description": "This function positions a popup element near a specified icon element within a container. It ensures the popup is visible within the container's boundaries and adjusts its position and size if necessary.",
+      "parameters": [
+        {
+          "name": "popup",
+          "type": "HTMLElement",
+          "description": "The popup element to be positioned near the icon."
+        },
+        {
+          "name": "icon",
+          "type": "HTMLElement",
+          "description": "The icon element near which the popup will be positioned."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends the popup to UTIL.containerElement if it is not already a child.",
+        "Modifies the position and size of the popup element.",
+        "Updates the neighborPopups and neighborIcons arrays."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updatePopupPositions",
+      "namespace": "None",
+      "signature": "function updatePopupPositions()",
+      "description": "Updates the positions of all neighbor popups by inserting each popup near its corresponding icon.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the positions of elements in the neighborPopups array."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removePopupNearIcon",
+      "namespace": "None",
+      "signature": "removePopupNearIcon(popup, icon)",
+      "description": "Removes a specified popup element from the DOM and its associated icon from the neighborPopups and neighborIcons arrays. If the popup and icon are not found in the arrays, an error is logged.",
+      "parameters": [
+        {
+          "name": "popup",
+          "type": "HTMLElement",
+          "description": "The popup element to be removed."
+        },
+        {
+          "name": "icon",
+          "type": "HTMLElement",
+          "description": "The icon element associated with the popup to be removed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the popup element from the DOM.",
+        "Modifies the neighborPopups and neighborIcons arrays by removing the specified popup and icon.",
+        "Logs an error if the popup and icon are not found in the arrays."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "registerPaneEventHandler",
+      "namespace": "None",
+      "signature": "registerPaneEventHandler(pane, name, callback)",
+      "description": "Sets a callback function as the event handler for a specified pane and event. If an event handler for the pane and event already exists, it updates the handler with the new callback. Otherwise, it registers a new handler.",
+      "parameters": [
+        {
+          "name": "pane",
+          "type": "DOMElement",
+          "description": "The DOM element representing the pane."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The name of the event to handle (e.g., 'empty', 'resize')."
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "The callback function to be set as the event handler."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates or registers event handlers in the global arrays panesWithEventHandlers, paneEventNames, and paneEventHandlers.",
+        "Logs debug information if the debug flag is set."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "updatePaneHandlers",
+      "namespace": "None",
+      "signature": "updatePaneHandlers(oldpane, newpane)",
+      "description": "This function updates the pane event handlers by replacing references to the old pane with the new pane in the global panesWithEventHandlers array.",
+      "parameters": [
+        {
+          "name": "oldpane",
+          "type": "HTMLElement",
+          "description": "The DOM element representing the old pane whose event handlers need to be moved."
+        },
+        {
+          "name": "newpane",
+          "type": "HTMLElement",
+          "description": "The DOM element representing the new pane to which the event handlers should be moved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global panesWithEventHandlers array by replacing instances of oldpane with newpane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removePaneHandlers",
+      "namespace": "None",
+      "signature": "removePaneHandlers(oldpane)",
+      "description": "Removes any event handlers associated with the specified pane (oldpane) from the global arrays tracking panes, event names, and event handlers.",
+      "parameters": [
+        {
+          "name": "oldpane",
+          "type": "HTMLElement",
+          "description": "The DOM element representing the pane from which event handlers should be removed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global arrays: panesWithEventHandlers, paneEventNames, and paneEventHandlers by removing entries associated with oldpane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getPaneEventHandler",
+      "namespace": "None",
+      "signature": "getPaneEventHandler(pane, name)",
+      "description": "Returns the event handler for the specified pane and event name. If no handler is found, returns a dummy handler function.",
+      "parameters": [
+        {
+          "name": "pane",
+          "type": "object",
+          "description": "The pane object for which the event handler is being retrieved."
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "The name of the event for which the handler is being retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "function",
+        "description": "The event handler function for the specified pane and event name, or a dummy handler function if no handler is found."
+      }
+    },
+    {
+      "name": "emptyPaneLocation",
+      "namespace": "None",
+      "signature": "emptyPaneLocation(loc)",
+      "description": "This function empties the pane identified by the Pane Location object 'loc'. It removes all client elements (excluding the Pane Header) from the DOM, calls the empty handler if it exists, resets the Pane Header to empty, and returns the removed client elements.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "PaneLocation",
+          "description": "An object representing the pane location, containing the pane and paneHeader elements."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes all client elements from the pane.",
+        "Calls the empty handler if it exists.",
+        "Resets the Pane Header to empty.",
+        "Hides the gear icon and removes client icons.",
+        "Updates the heat map configuration by removing pane info."
+      ],
+      "returns": {
+        "type": "Array",
+        "description": "An array of the removed client elements."
+      }
+    },
+    {
+      "name": "removePanelMenuGroupIcons",
+      "namespace": "None",
+      "signature": "removePanelMenuGroupIcons(loc)",
+      "description": "Removes all icons from the panel menu group except for the PanelMenuIcon.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the paneHeader element which includes the panel menu icons."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by removing certain child elements from the icon group."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "createInitialPane",
+      "namespace": "None",
+      "signature": "function createInitialPane()",
+      "description": "Creates an initial, immediate child pane of the top-level container. This function is used only during the initialization of the panel interface. If the top-level container already has children, it logs an error and returns the first child.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new pane to the top-level container if it is empty.",
+        "Logs debug information to the console if the debug flag is set."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The newly created initial pane or the first child of the top-level container if it already exists."
+      }
+    },
+    {
+      "name": "DividerControl",
+      "namespace": "None",
+      "signature": "DividerControl(divider)",
+      "defined_section": "PANE SIZING",
+      "description": "Creation function for an object that manages dragging events on a divider. This function initializes the divider element and sets up event listeners for mouse and touch events to handle the start of divider movement.",
+      "parameters": [
+        {
+          "name": "divider",
+          "type": "HTMLElement",
+          "description": "The HTML element that acts as the divider to be controlled."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets up event listeners on the divider element for 'mousedown' and 'touchstart' events.",
+        "Initializes debounce-related properties (debounceT, debounceX, debounceY, debounceN) on the DividerControl instance."
+      ],
+      "returns": {
+        "type": "DividerControl",
+        "description": "An instance of the DividerControl object."
+      }
+    },
+    {
+      "name": "onmousedown",
+      "namespace": "None",
+      "signature": "onmousedown(e)",
+      "description": "This function assigns an event handler to the 'mousedown' event of the 'dividerElement' in the 'dc' object. When the 'mousedown' event is triggered, it calls the 'dividerStart' method of the 'dc' object, passing the event object 'e' as an argument.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the 'mousedown' event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Assigns an event handler to the 'mousedown' event of 'dc.dividerElement'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "ontouchstart",
+      "namespace": "None",
+      "signature": "ontouchstart(e)",
+      "description": "This function is an event handler for the 'touchstart' event on the divider element. It triggers the 'dividerStart' method when a touch event begins.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The touch event object that contains details about the touch interaction."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the 'dividerStart' method on the 'dc' object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dividerStart",
+      "namespace": "DividerControl.prototype",
+      "signature": "DividerControl.prototype.dividerStart(e)",
+      "description": "This method is called when a divider move is initiated. It sets global listeners for pointer movement and release events, and prevents iframes from grabbing the pointer while the divider is moving.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the pointer event that initiates the divider move."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Adds 'nopointer' class to all iframes to prevent them from grabbing the pointer.",
+        "Calls UHM.hlpC() function.",
+        "Calls MMGR.getHeatMap().setUnAppliedChanges(true) if a heatmap is present.",
+        "Initializes this.excessDrag to 0.",
+        "Registers global event listeners for 'mousemove', 'touchmove', 'mouseup', 'touchend', and 'mouseleave' events."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dividerMove",
+      "namespace": "DividerControl.prototype",
+      "signature": "DividerControl.prototype.dividerMove(e)",
+      "description": "This method is called for each pointer movement while moving the divider. It debounces the movement events and calls debouncedDividerMove periodically.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object representing the pointer movement."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies this.debounceX by adding the movement in the x direction.",
+        "Modifies this.debounceY by adding the movement in the y direction.",
+        "Increments this.debounceN to count the number of movements.",
+        "Schedules a timeout to call debouncedDividerMove if not already scheduled."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getPrevUncollapsedPane",
+      "namespace": "None",
+      "signature": "function getPrevUncollapsedPane(el)",
+      "description": "Retrieves the closest preceding sibling element that is not collapsed. The function skips over any elements with the class 'collapsed' and any divider elements.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The starting element from which to find the previous uncollapsed pane."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The closest preceding sibling element that is not collapsed, or null if no such element exists."
+      }
+    },
+    {
+      "name": "getNextUncollapsedPane",
+      "namespace": "None",
+      "signature": "getNextUncollapsedPane(el)",
+      "description": "Retrieves the closest uncollapsed pane or container element that follows the provided divider element.",
+      "parameters": [
+        {
+          "name": "el",
+          "type": "HTMLElement",
+          "description": "The starting divider element from which to find the next uncollapsed pane."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The next uncollapsed pane or container element after the provided divider element."
+      }
+    },
+    {
+      "name": "debouncedDividerMove",
+      "namespace": "DividerControl.prototype",
+      "signature": "DividerControl.prototype.debouncedDividerMove(x, y)",
+      "description": "This method handles debounced move events while moving a divider between panes. It calculates the allowed change in position for the divider and propagates the change to the neighboring panes, ensuring that the panes do not collapse below a minimum size.",
+      "parameters": [
+        {
+          "name": "x",
+          "type": "number",
+          "description": "The total change in the x-axis since the last time this function was called."
+        },
+        {
+          "name": "y",
+          "type": "number",
+          "description": "The total change in the y-axis since the last time this function was called."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the width or height of neighboring panes.",
+        "Dispatches 'paneresize' events to neighboring panes.",
+        "Updates popup positions.",
+        "Logs debug information if debug mode is enabled."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "dividerEnd",
+      "namespace": "DividerControl.prototype",
+      "signature": "DividerControl.prototype.dividerEnd(e)",
+      "description": "This method is called when the divider move is completed. It removes the global pointer listeners, resets the DOM state, and fine-tunes container space distribution if needed.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object associated with the end of the divider move."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears any outstanding debounce timeout.",
+        "Allows iframes to see the pointer again by removing the 'nopointer' class.",
+        "Removes global event listeners for 'mousemove', 'mouseup', 'touchmove', and 'touchend'.",
+        "Fine-tunes container space distribution if the divider is between expanded siblings."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "redistributeContainer",
+      "namespace": "None",
+      "signature": "function redistributeContainer(container, spaceTarget)",
+      "description": "This function redistributes the space in the container so that the total space (height or width) assigned to subelements and dividers equals the space of the container. Any space adjustment needed is made by altering the space for the element spaceTarget (a child element of container).",
+      "parameters": [
+        {
+          "name": "container",
+          "type": "HTMLElement",
+          "description": "The container element whose child elements' space needs to be redistributed."
+        },
+        {
+          "name": "spaceTarget",
+          "type": "HTMLElement",
+          "description": "The target child element within the container whose space will be adjusted."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs debug information if the debug flag is set.",
+        "Dispatches a 'paneresize' event on the spaceTarget element if space adjustment is needed.",
+        "Sets the heatmap's DividerPref if the Pane configuration matches the standard configuration."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDividerPref",
+      "namespace": "None",
+      "signature": "setDividerPref(percent)",
+      "description": "Sets the percentage of the display width to use for the summary panel and updates the display if the panes are in the standard configuration.",
+      "parameters": [
+        {
+          "name": "percent",
+          "type": "number",
+          "description": "The percentage of the display width to allocate to the summary panel."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the divider preference in the heat map.",
+        "Logs a debug message if debugging is enabled.",
+        "Calls setPanePropWidths to adjust the widths of the summary and detail panes and the divider."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setPanePropWidths",
+      "namespace": "None",
+      "signature": "setPanePropWidths(percent, left, right, divider)",
+      "description": "Sets the widths of two pane elements based on a given percentage and adjusts their sizes accordingly.",
+      "parameters": [
+        {
+          "name": "percent",
+          "type": "number",
+          "description": "The percentage of the total width to allocate to the left pane."
+        },
+        {
+          "name": "left",
+          "type": "HTMLElement",
+          "description": "The left pane element whose width will be set."
+        },
+        {
+          "name": "right",
+          "type": "HTMLElement",
+          "description": "The right pane element whose width will be set."
+        },
+        {
+          "name": "divider",
+          "type": "HTMLElement",
+          "description": "The divider element between the left and right panes."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the width style property of the left and right pane elements.",
+        "Calls resizePane function on both left and right pane elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "resizePane",
+      "namespace": "None",
+      "signature": "resizePane(pane)",
+      "description": "The function resizes a given pane by adjusting the height of its content area based on the height of its header and triggers a resize event handler.",
+      "parameters": [
+        {
+          "name": "pane",
+          "type": "HTMLElement",
+          "description": "The DOM element representing the pane to be resized."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the height style of the pane's content area.",
+        "Triggers a resize event handler for the pane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getStandardConfiguration",
+      "namespace": "None",
+      "signature": "getStandardConfiguration()",
+      "description": "This function checks if the panel configuration is in its initial standard configuration, which consists of a summary heat map and a detail heat map side-by-side. If the configuration matches, it returns an object containing the PaneLocations of the summary and detail NG-CHMs. Otherwise, it returns an empty object.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the PaneLocations of the summary and detail NG-CHMs if the configuration matches the standard; otherwise, an empty object."
+      }
+    }
+  ]
+}

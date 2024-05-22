@@ -1,0 +1,421 @@
+{
+  "filename": "SummaryHeatMapManager.js",
+  "namespace": "NgChm.SMM",
+  "description": [
+    "The SummaryHeatMapManager module is responsible for managing the summary heat map view within the NGCHM (Next Generation Clustered Heat Map) application. It handles user interactions such as mouse and touch events to facilitate navigation and selection within the summary heat map. The module also manages the initialization, resizing, and switching of the summary heat map pane."
+  ],
+  "declares_functions_in": [
+    "SMM"
+  ],
+  "interacts_with": [
+    "NgChm.MAPREP",
+    "NgChm.MMGR",
+    "NgChm.SUM",
+    "NgChm.DVW",
+    "NgChm.DMM",
+    "NgChm.Pane",
+    "NgChm.SRCH"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "SUM.chmElement",
+      "description": "DOM element representing the summary heat map."
+    }
+  ],
+  "global_variables": [
+    {
+      "name": "mouseEventActive",
+      "description": "Indicates if a mouse event is currently active."
+    },
+    {
+      "name": "dragSelect",
+      "description": "Indicates if the user has made a drag selection on the summary panel."
+    },
+    {
+      "name": "clickStartRow",
+      "description": "End row of the current selected position."
+    },
+    {
+      "name": "clickStartCol",
+      "description": "Left column of the current selected position."
+    }
+  ],
+  "functions": [
+    {
+      "name": "onMouseUpSelRowCanvas",
+      "namespace": "SMM",
+      "signature": "SMM.onMouseUpSelRowCanvas(evt)",
+      "description": "Handles the mouse up event on the selection row canvas. This function finalizes the selection of a row in the summary heatmap when the user releases the mouse button or touch input. It calculates the selected row based on the mouse or touch position and updates the selection in the primary map.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The mouse or touch event that triggered the function."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the current row selection in the primary map.",
+        "Calls DVW.setCurrentRowFromSum to set the current row.",
+        "Calls DVW.primaryMap.updateSelection to update the selection.",
+        "Resets clickStartRow and clickStartCol to null.",
+        "Calls DVW.checkRow and DVW.checkCol to ensure the selected row and column are within bounds.",
+        "Sets mouseEventActive to false.",
+        "Calls SRCH.enableDisableSearchButtons to enable or disable search buttons based on the current selection."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onMouseUpSelColCanvas",
+      "namespace": "SMM",
+      "signature": "SMM.onMouseUpSelColCanvas(evt)",
+      "description": "Handles the mouse up event on the selection column canvas. This function finalizes the selection of a column in the matrix when the mouse button is released, ensuring the selected column is within bounds and updating the selection state.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The mouse up event object containing details about the event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the current column selection in the matrix.",
+        "Ensures the selected row and column are within the bounds of the matrix.",
+        "Disables the mouse event activity.",
+        "Enables or disables search buttons based on the current state of the primary map."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getTouchEventOffset",
+      "namespace": "SMM",
+      "signature": "SMM.getTouchEventOffset(evt)",
+      "description": "Calculates the offset of a touch event relative to the target element's bounding rectangle.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "TouchEvent",
+          "description": "The touch event object containing touch information."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies global variables sumOffsetX and sumOffsetY with the calculated offset values."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the offsetX and offsetY properties representing the touch event's offset relative to the target element."
+      }
+    },
+    {
+      "name": "onMouseDownCanvas",
+      "namespace": "SMM",
+      "signature": "SMM.onMouseDownCanvas(evt)",
+      "description": "Handles the mouse down event on the canvas, initiating a selection process by setting the cursor style and calculating the starting row and column based on the event coordinates.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The mouse event object containing details about the mouse down action."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets mouseEventActive to true.",
+        "Prevents the default action and stops propagation of the event.",
+        "Changes the cursor style of the canvas to 'crosshair' if the calculated row and column are greater than 0.",
+        "Calculates and sets the starting row and column for a selection process."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onMouseOut",
+      "namespace": "SMM",
+      "signature": "SMM.onMouseOut(evt)",
+      "description": "Handles the mouse out event on the canvas. If a drag selection is active, it triggers the mouse up event handler. It also resets the cursor style and updates the selection on the primary map if detail maps are present.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The mouse out event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers SMM.onMouseUpCanvas(evt) if dragSelect is true.",
+        "Sets mouseEventActive to false.",
+        "Changes SUM.canvas.style.cursor to 'default'.",
+        "Calls DVW.primaryMap.updateSelection() if DVW.detailMaps.length > 0."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "onMouseMoveCanvas",
+      "namespace": "SMM",
+      "signature": "SMM.onMouseMoveCanvas(evt)",
+      "description": "Handles the mouse move event on the canvas. Depending on the state of the mouse event and the keys pressed, it either drags the selection or moves the canvas.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The mouse event object containing details about the mouse movement."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls SMM.dragSelection(evt) if the shift key is pressed or if the event is a touch event.",
+        "Calls SMM.dragMove(evt) if the shift key is not pressed and the event is not a touch event."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "onMouseUpCanvas",
+      "namespace": "SMM",
+      "signature": "SMM.onMouseUpCanvas(evt)",
+      "description": "Handles the mouse up event on the canvas, translating the click into a row and column position and performing selection operations based on the event details.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The mouse up event object containing details about the event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Prevents the default action and stops propagation of the event.",
+        "Modifies global variables: clickStartRow, clickStartCol, dragSelect, mouseEventActive.",
+        "Updates the cursor style of the canvas.",
+        "Calls functions to check and update the primary map's row and column selections.",
+        "Enables or disables search buttons based on the primary map's state."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clickSelection",
+      "namespace": "SMM",
+      "signature": "SMM.clickSelection(xPos, yPos)",
+      "description": "Handles the selection click event on a map by converting canvas coordinates to matrix coordinates and updating the map's selection.",
+      "parameters": [
+        {
+          "name": "xPos",
+          "type": "number",
+          "description": "The x-coordinate of the click position on the canvas."
+        },
+        {
+          "name": "yPos",
+          "type": "number",
+          "description": "The y-coordinate of the click position on the canvas."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the current row and column selection in DVW.primaryMap.",
+        "Calls DVW.primaryMap.updateSelection() to refresh the map selection.",
+        "Enables or disables search buttons based on the current map state using SRCH.enableDisableSearchButtons()."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dragMove",
+      "namespace": "SMM",
+      "signature": "SMM.dragMove(evt)",
+      "description": "Handles the drag movement event on the primary map, updating the current row and column based on the event's offset and recalculating the selection and search button states.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The event object containing details about the drag movement, including touch or mouse event data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the current row and column in DVW.primaryMap based on the drag event.",
+        "Calls DVW.primaryMap.updateSelection() to update the selection on the map.",
+        "Calls SRCH.enableDisableSearchButtons(DVW.primaryMap) to enable or disable search buttons based on the map state.",
+        "Calls MMGR.getHeatMap().setUnAppliedChanges(true) to mark that there are unapplied changes in the heat map."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "dragSelection",
+      "namespace": "SMM",
+      "signature": "SMM.dragSelection(evt)",
+      "description": "Handles the dragging selection on the summary side of the heat map. It calculates the start and end positions of the drag and updates the primary map's data accordingly. This function is responsible for drawing the green box during the drag operation.",
+      "parameters": [
+        {
+          "name": "evt",
+          "type": "Event",
+          "description": "The event object containing information about the drag event, including mouse or touch positions."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates DVW.primaryMap properties such as dataPerRow, dataPerCol, currentRow, and currentCol.",
+        "Calls SRCH.enableDisableSearchButtons to enable or disable search buttons based on the primary map state.",
+        "Calls SUM.drawLeftCanvasBox to draw the green box on the summary side during the drag operation."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "initSummaryEventHandlers",
+      "namespace": "SMM",
+      "signature": "SMM.initSummaryEventHandlers()",
+      "description": "Initializes event handlers for various canvas elements related to the summary view. This function sets up mouse and touch event listeners for different canvas elements to handle user interactions.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Adds mouseup event listeners to elements with IDs 'summary_row_select_canvas', 'summary_row_top_items_canvas', 'summary_col_select_canvas', and 'summary_col_top_items_canvas'.",
+        "Sets various mouse and touch event handlers on the 'SUM.canvas' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "summaryResize",
+      "namespace": "SMM",
+      "signature": "SMM.summaryResize()",
+      "description": "This function handles the resizing of the summary map. It checks if the 'NGCHMEmbed' element is present and visible, and if so, it finds the location of the summary map element and triggers the resize handler for the summary pane.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "May trigger the summary pane resize handler.",
+        "Checks and potentially modifies the display state of the 'NGCHMEmbed' element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "switchPaneToSummary",
+      "namespace": "None",
+      "signature": "switchPaneToSummary(loc)",
+      "description": "Switches a pane to display the summary view of the heat map. If the summary view is currently displayed in another pane, it removes it from that pane before displaying it in the target pane. It also sets up event handlers and updates the pane's metadata.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the pane information where the summary view should be displayed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears existing dialogs in the target pane.",
+        "Removes the summary view from its current pane if it is already displayed.",
+        "Empties the target pane.",
+        "Initializes the summary panel in the target pane.",
+        "Sets the title of the target pane to 'Heat Map Summary'.",
+        "Registers event handlers for 'empty' and 'resize' events on the target pane.",
+        "Updates the dataset attributes 'title' and 'intro' of the target pane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "initializeSummaryPanel",
+      "namespace": "None",
+      "signature": "initializeSummaryPanel(pane)",
+      "description": "Initializes the summary panel by setting up the necessary DOM elements and event handlers. This function ensures that the summary panel is only initialized once and prepares the canvas elements for rendering summary views.",
+      "parameters": [
+        {
+          "name": "pane",
+          "type": "HTMLElement",
+          "description": "The DOM element to which the summary panel will be appended."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable SUM.chmElement.",
+        "Appends the summary panel element to the provided pane.",
+        "Sets the display style of the summary panel element.",
+        "Initializes summary display and event handlers.",
+        "Resizes various canvas elements for the summary panel."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "emptySummaryPane",
+      "namespace": "None",
+      "signature": "emptySummaryPane(pane, elements)",
+      "description": "This function is called when a pane showing the summary NG-CHM (Next-Generation Clustered Heat Map) is emptied. It saves the current summary element in the templates and then clears the summary element.",
+      "parameters": [
+        {
+          "name": "pane",
+          "type": "HTMLElement",
+          "description": "The pane element that is being emptied."
+        },
+        {
+          "name": "elements",
+          "type": "Array",
+          "description": "An array of elements related to the summary pane."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends SUM.chmElement to the 'templates' element in the document.",
+        "Sets SUM.chmElement to null."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resizeSummaryPane",
+      "namespace": "None",
+      "signature": "resizeSummaryPane(loc)",
+      "description": "This function is called when a pane showing the summary NG-CHM is resized. It calculates a new layout and redraws the pane's contents.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "unknown",
+          "description": "The location or context in which the summary pane is being resized."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls SUM.calcSummaryLayout() to calculate a new layout.",
+        "Calls SUM.redrawSummaryPane() to redraw the pane's contents."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

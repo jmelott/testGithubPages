@@ -1,0 +1,495 @@
+{
+  "filename": "NgChm.js",
+  "namespace": [],
+  "description": [
+    "This module is part of the NGCHM API and is responsible for managing namespaces, dynamically loading scripts, and visualizing module dependencies using a graph layout. It provides functions to export and import namespaces, log operations, and dynamically load JavaScript files. Additionally, it includes functionality to draw and animate a graph representing module dependencies."
+  ],
+  "declares_functions_in": [
+    "NgChm.undefined()",
+    "animate()",
+    "dracula()",
+    "dracula.start()",
+    "dracula.stop()",
+    "drawGraph(script)",
+    "dynload(srcs, next)",
+    "exportToNS(namespace, content)",
+    "getLog()",
+    "getNS(namespace, op)",
+    "importNS(namespace)",
+    "markFile()",
+    "mouseDown(ev)",
+    "mouseDrag(ev)",
+    "mouseUp(ev)",
+    "nodeColor(id)",
+    "script.onerror()",
+    "script.onload()",
+    "setEnabled(value)",
+    "xit(x)",
+    "xt(x)",
+    "yit(y)",
+    "yt(y)"
+  ],
+  "interacts_with": [],
+  "classes": [],
+  "member_variables": [],
+  "global_variables": [
+    {
+      "name": "NgChm",
+      "description": "Global object for the NGCHM API."
+    }
+  ],
+  "functions": [
+    {
+      "name": "markFile",
+      "namespace": "NgChm",
+      "signature": "NgChm.markFile()",
+      "description": "This function is defined for widget mode, though its specific functionality is currently not implemented.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "undefined",
+        "description": "This function currently does not return any value."
+      }
+    },
+    {
+      "name": "importNS",
+      "namespace": "None",
+      "signature": "importNS(namespace)",
+      "description": "This function is used to import a namespace. In the development mode, it calls the getNS function with the provided namespace and the string 'import'. In the compiled code, it is a no-op.",
+      "parameters": [
+        {
+          "name": "namespace",
+          "type": "string",
+          "description": "The namespace to be imported."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "any",
+        "description": "Returns the result of the getNS function call with the provided namespace and 'import' string."
+      }
+    },
+    {
+      "name": "exportToNS",
+      "namespace": "None",
+      "signature": "exportToNS(namespace, content)",
+      "description": "This function exports the provided content to a specified namespace. It retrieves the namespace object and merges the content into it if provided.",
+      "parameters": [
+        {
+          "name": "namespace",
+          "type": "string",
+          "description": "The name of the namespace to which the content will be exported."
+        },
+        {
+          "name": "content",
+          "type": "object",
+          "description": "The content to be exported to the namespace. If not provided, no content will be added."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the namespace object by merging the provided content into it."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The namespace object with the merged content."
+      }
+    },
+    {
+      "name": "getNS",
+      "namespace": "None",
+      "signature": "getNS(namespace, op)",
+      "description": "Creates and returns a nested namespace within the global NgChm object. Optionally logs namespace operations and tracks imports and exports for debugging purposes.",
+      "parameters": [
+        {
+          "name": "namespace",
+          "type": "string",
+          "description": "The dot-separated string representing the namespace to be created or accessed."
+        },
+        {
+          "name": "op",
+          "type": "string",
+          "description": "The operation to be performed, either 'import' or 'export'. Used for logging and tracking purposes."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global NgChm object by adding nested namespaces.",
+        "Logs namespace operations and tracks imports and exports if the operation is specified.",
+        "Modifies the global variables lastFile, log, definedNamespaces, and importsBeforeDefinition."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The deepest element in the namespace hierarchy, which is either newly created or already existing."
+      }
+    },
+    {
+      "name": "getLog",
+      "namespace": "None",
+      "signature": "getLog()",
+      "description": "Returns a copy of the current log array.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "A copy of the log array."
+      }
+    },
+    {
+      "name": "dynload",
+      "namespace": "None",
+      "signature": "dynload(srcs, next)",
+      "description": "Dynamically loads a list of JavaScript files in sequence. Once all scripts are loaded, it executes a callback function.",
+      "parameters": [
+        {
+          "name": "srcs",
+          "type": "Array",
+          "description": "An array of script source URLs to be loaded."
+        },
+        {
+          "name": "next",
+          "type": "Function",
+          "description": "A callback function to be executed after all scripts have been loaded."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends script elements to the document head.",
+        "Logs messages to the console."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "None",
+      "signature": "script.onload()",
+      "description": "This function is triggered when the script element has finished loading. It logs the source of the loaded script and then calls the dynload function to load the next script in the sequence.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Logs the source of the loaded script to the console.",
+        "Calls the dynload function with the parameters srcs and next."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onerror",
+      "namespace": "script",
+      "signature": "script.onerror()",
+      "description": "This function is an error handler for a script element. It logs an error message to the console when the script fails to load.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error message to the console."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "markFile",
+      "namespace": "None",
+      "signature": "function markFile()",
+      "description": "Marks the current JavaScript file by updating the fileColorTable with a distinct color for marked files. This function extracts the file name from the stack trace and assigns a specific color to it.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the global variable 'lastFile' with the name of the current JavaScript file.",
+        "Modifies the global 'fileColorTable' object by setting the color for the current file to 'markedFileColor'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "dracula",
+      "namespace": "None",
+      "signature": "dracula()",
+      "description": "The `dracula` function dynamically loads necessary scripts and initializes a graph visualization on a canvas element. It handles the creation and layout of nodes and edges, and provides interactive features such as dragging nodes.",
+      "parameters": [],
+      "called_urls": [
+        "javascript/lib/raphael.js",
+        "javascript/lib/dracula.min.js",
+        "javascript/ModuleLayoutEngine.js"
+      ],
+      "side_effects": [
+        "Modifies the global variable `scriptLoaded`.",
+        "Creates and modifies a canvas element in the DOM.",
+        "Adds event listeners to the canvas element.",
+        "Modifies the display style of child elements of the content element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawGraph",
+      "namespace": "None",
+      "signature": "drawGraph(script)",
+      "description": "This function initializes and draws a graph on a canvas element based on a provided script. It sets up the canvas, handles mouse events for dragging nodes, and animates the graph layout. The graph is constructed using the Dracula library and visualizes relationships between nodes with directed edges.",
+      "parameters": [
+        {
+          "name": "script",
+          "type": "String",
+          "description": "The script used to generate the graph."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable 'scriptLoaded'.",
+        "Creates and modifies a canvas element in the DOM.",
+        "Adds event listeners to the canvas element.",
+        "Hides other children of the 'content' element.",
+        "Modifies the layout and properties of graph nodes and edges."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "start",
+      "namespace": "dracula",
+      "signature": "dracula.start()",
+      "description": "Starts the Dracula animation by enabling the animation flag, requesting the next animation frame, and restoring the previous animation speed.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Enables the animation by calling setEnabled(true).",
+        "Requests the next animation frame using requestAnimationFrame(animate).",
+        "Restores the previous animation speed by setting layout.c to oldc."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "stop",
+      "namespace": "dracula",
+      "signature": "dracula.stop()",
+      "description": "Stops the dracula layout by disabling it and reducing its speed to a minimal value.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Disables the dracula layout by calling setEnabled(false).",
+        "Saves the current speed of the layout to the variable oldc.",
+        "Reduces the layout speed to a minimal value by setting layout.c to 0.000001."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setEnabled",
+      "namespace": "None",
+      "signature": "setEnabled(value)",
+      "description": "Sets the global variable 'enabled' to the provided value.",
+      "parameters": [
+        {
+          "name": "value",
+          "type": "boolean",
+          "description": "The new value to set for the 'enabled' variable."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable 'enabled'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "mouseDown",
+      "namespace": "None",
+      "signature": "mouseDown(ev)",
+      "description": "Handles the mouse down event to detect if a node in the graph layout is clicked. If a node is clicked, it sets the node as the one being dragged.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "MouseEvent",
+          "description": "The mouse event object containing details about the mouse down event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the global variable 'dragNode' to the node being dragged.",
+        "Sets the global variable 'dragging' to true if a node is clicked."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "mouseDrag",
+      "namespace": "None",
+      "signature": "function mouseDrag(ev)",
+      "description": "Handles the dragging of a node by updating its position based on mouse movement events.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "MouseEvent",
+          "description": "The mouse event containing information about the movement."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the layout position of dragNode based on mouse movement.",
+        "May trigger an animation frame if not already enabled."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "mouseUp",
+      "namespace": "None",
+      "signature": "mouseUp(ev)",
+      "description": "Handles the mouse up event by setting the dragging state to false.",
+      "parameters": [
+        {
+          "name": "ev",
+          "type": "Event",
+          "description": "The mouse event object."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the global variable 'dragging' to false."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "nodeColor",
+      "namespace": "None",
+      "signature": "nodeColor(id)",
+      "description": "Determines the color associated with a given node ID. If the ID represents a JavaScript file, it returns a specific color from a predefined table or a default color if not found. Otherwise, it returns a module color.",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "String",
+          "description": "The identifier of the node, which can be a file name or a module name."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "The color associated with the given node ID."
+      }
+    },
+    {
+      "name": "animate",
+      "namespace": "None",
+      "signature": "function animate()",
+      "description": "This function animates a graph layout by iterating through the layout, calculating bounds, and drawing nodes and edges on a canvas. It handles the positioning and rendering of nodes and edges, ensuring they are displayed correctly according to their layout positions.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable 'count'.",
+        "Modifies the global variable 'enabled'.",
+        "Updates the canvas by clearing it and redrawing nodes and edges."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "xt",
+      "namespace": "None",
+      "signature": "xt(x)",
+      "description": "Calculates a transformed value based on the input and some global variables.",
+      "parameters": [
+        {
+          "name": "x",
+          "type": "number",
+          "description": "The input value to be transformed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The transformed value calculated using the input and global variables tt.xp and tt.xs."
+      }
+    },
+    {
+      "name": "xit",
+      "namespace": "None",
+      "signature": "xit(x)",
+      "description": "Calculates a transformed value based on the input parameter and some global variables.",
+      "parameters": [
+        {
+          "name": "x",
+          "type": "number",
+          "description": "The input value to be transformed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The transformed value after applying the formula (x - 2) / tt.xs - tt.xp."
+      }
+    },
+    {
+      "name": "yt",
+      "namespace": "None",
+      "signature": "yt(y)",
+      "description": "Calculates a value based on the input parameter and properties of the global object 'tt'.",
+      "parameters": [
+        {
+          "name": "y",
+          "type": "number",
+          "description": "The input value to be used in the calculation."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The result of the calculation: 2 plus the product of the sum of 'y' and 'tt.yp' with 'tt.ys'."
+      }
+    },
+    {
+      "name": "yit",
+      "namespace": "None",
+      "signature": "yit(y)",
+      "description": "Calculates a transformed value based on the input parameter 'y' using predefined constants 'tt.ys' and 'tt.yp'.",
+      "parameters": [
+        {
+          "name": "y",
+          "type": "number",
+          "description": "The input value to be transformed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The transformed value after applying the formula (y - 2) / tt.ys - tt.yp."
+      }
+    }
+  ]
+}

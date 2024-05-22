@@ -1,0 +1,382 @@
+{
+  "filename": "API.js",
+  "namespace": "NgChm.API",
+  "description": [
+    "This module provides various API functions for the NG-CHM (Next Generation Clustered Heat Map) viewer. It includes functions for downloading PNG images of the summary canvas, editing widget options, hiding embedded maps, and loading tiles. The module interacts with other namespaces such as UTIL, MAPREP, MMGR, SUM, PANE, DEV, PDF, and LNK to perform its operations."
+  ],
+  "declares_functions_in": [],
+  "interacts_with": [
+    "NgChm.UTIL",
+    "NgChm.MAPREP",
+    "NgChm.MMGR",
+    "NgChm.SUM",
+    "NgChm.Pane",
+    "NgChm.DEV",
+    "NgChm.PDF",
+    "NgChm.LNK"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "LNK.enableBuilderUploads",
+      "description": "Controls whether builder uploads are enabled."
+    },
+    {
+      "name": "PANE.showPaneHeader",
+      "description": "Controls the visibility of the pane header."
+    },
+    {
+      "name": "SUM.flagDrawClassBarLabels",
+      "description": "Flag to determine if class bar labels should be drawn in the summary view."
+    },
+    {
+      "name": "UTIL.showDetailPane",
+      "description": "Controls the visibility of the detail pane."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "heatMapLoaded",
+      "namespace": "None",
+      "signature": "function heatMapLoaded()",
+      "description": "Checks if a heat map is currently loaded in the system.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if a heat map is loaded, otherwise false."
+      }
+    },
+    {
+      "name": "getSummaryHist",
+      "namespace": "None",
+      "signature": "getSummaryHist(thresholds)",
+      "description": "Returns a histogram of the summary values of the current data layer. It utilizes the first and last values from the provided thresholds array.",
+      "parameters": [
+        {
+          "name": "thresholds",
+          "type": "Array<number>",
+          "description": "An array of numeric thresholds. Only the first and last values are used."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "A histogram object representing the summary values of the current data layer."
+      }
+    },
+    {
+      "name": "getLinkoutTypes",
+      "namespace": "None",
+      "signature": "getLinkoutTypes()",
+      "description": "Returns a promise that resolves to an array of all linkout types available for the NG-CHM. The promise resolves after the NG-CHM's customization file has loaded.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Promise<Array>",
+        "description": "A promise that resolves to an array of linkout types."
+      }
+    },
+    {
+      "name": "downloadSummaryPng",
+      "namespace": "None",
+      "signature": "downloadSummaryPng(e)",
+      "description": "This function downloads a PNG image of the summary canvas including dendrograms. It scales and combines multiple canvas elements into a single image and triggers a download.",
+      "parameters": [
+        {
+          "name": "e",
+          "type": "Event",
+          "description": "The event object that triggered the function. If the event's target element has the 'disabled' class, the function will return early."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Appends an anchor element to the document body to trigger the download.",
+        "Removes the anchor element after the download is triggered."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "colDCImg",
+      "signature": "colDCImg.onload()",
+      "description": "This function is triggered when the colDCImg image is loaded. It sequentially scales and combines multiple PNG images, sets the resulting image as a downloadable link, and triggers the download.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Sets the 'src' attribute of colDRImg and mapImg to the data URL of the scaled canvas.",
+        "Combines colDCImg, colDRImg, and mapImg into a single image.",
+        "Sets the 'href' and 'download' attributes of the dl element to the combined image data URL and a filename, respectively.",
+        "Appends the dl element to the document body, triggers a click event to start the download, and then removes the dl element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "colDRImg",
+      "signature": "colDRImg.onload()",
+      "description": "Handles the onload event for the colDRImg image element. This function scales a PNG image, combines it with other images, and triggers a download of the resulting image.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a download link element to the document body.",
+        "Triggers a click event on the download link.",
+        "Removes the download link element from the document body."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "None",
+      "signature": "mapImg.onload()",
+      "description": "This function is triggered when the map image (mapImg) is fully loaded. It combines multiple images into a single PNG image and initiates a download of the resulting image.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a download link element to the document body.",
+        "Triggers a click event on the download link to start the download.",
+        "Removes the download link element from the document body."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "downloadSummaryMapPng",
+      "namespace": "None",
+      "signature": "function downloadSummaryMapPng()",
+      "description": "This function downloads a PNG image of the summary canvas without dendrograms. It retrieves the map name, converts the canvas to a data URL, scales the image, and triggers a download of the scaled image.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Creates an anchor element and appends it to the document body.",
+        "Triggers a download of the PNG image.",
+        "Removes the anchor element from the document body."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "combinePngImage",
+      "namespace": "None",
+      "signature": "combinePngImage(img1, img2, img3, width, height, dl, callback)",
+      "description": "This function takes the scaled row dendrogram image, scaled column dendrogram image, and heat map image and combines them into one PNG image. It dynamically adjusts the canvas size based on the presence of row and column dendrograms and then draws the images onto the canvas. Finally, it executes a callback function with the canvas element and a download flag.",
+      "parameters": [
+        {
+          "name": "img1",
+          "type": "HTMLImageElement",
+          "description": "The image element for the column dendrogram."
+        },
+        {
+          "name": "img2",
+          "type": "HTMLImageElement",
+          "description": "The image element for the row dendrogram."
+        },
+        {
+          "name": "img3",
+          "type": "HTMLImageElement",
+          "description": "The image element for the heat map."
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "The width of the heat map image."
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "description": "The height of the heat map image."
+        },
+        {
+          "name": "dl",
+          "type": "boolean",
+          "description": "A flag indicating whether the image should be downloaded."
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "A callback function to execute with the canvas element and the download flag."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value but executes a callback with the canvas element and download flag."
+      }
+    },
+    {
+      "name": "scalePngImage",
+      "namespace": "None",
+      "signature": "scalePngImage(origCanvas, width, height, dl, callback)",
+      "description": "This function scales a PNG image from an original canvas to the specified width and height, and then executes a callback function with the scaled canvas and an additional parameter.",
+      "parameters": [
+        {
+          "name": "origCanvas",
+          "type": "HTMLCanvasElement",
+          "description": "The original canvas element containing the image to be scaled."
+        },
+        {
+          "name": "width",
+          "type": "number",
+          "description": "The desired width of the scaled image."
+        },
+        {
+          "name": "height",
+          "type": "number",
+          "description": "The desired height of the scaled image."
+        },
+        {
+          "name": "dl",
+          "type": "any",
+          "description": "An additional parameter to be passed to the callback function."
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "A callback function to be executed with the scaled canvas and the additional parameter."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "img",
+      "signature": "img.onload()",
+      "description": "This function is triggered when the image (`img`) has finished loading. It creates a canvas element, draws the image onto it at double the original size, then creates a second canvas element and draws the resized image back to the original size. Finally, it executes a callback function with the second canvas and an additional parameter `dl`.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Creates two canvas elements and modifies their properties.",
+        "Draws the image onto the canvas elements.",
+        "Executes a callback function with the second canvas and an additional parameter `dl`."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onload",
+      "namespace": "None",
+      "signature": "img2.onload()",
+      "description": "This function is triggered when the image 'img2' has finished loading. It creates a canvas element, sets its dimensions, and draws the image onto the canvas with specific image smoothing settings. Finally, it executes a callback function with the canvas element and an additional parameter 'dl'.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Creates a new canvas element.",
+        "Modifies the image smoothing settings of the canvas context.",
+        "Draws the loaded image onto the canvas.",
+        "Executes a callback function with the canvas element and an additional parameter 'dl'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "editWidget",
+      "namespace": "None",
+      "signature": "editWidget(options)",
+      "description": "The editWidget function customizes the NG-CHM widget based on the provided options. It allows for the specialization of the widget by enabling or disabling certain features.",
+      "parameters": [
+        {
+          "name": "options",
+          "type": "Array",
+          "description": "An array of standard widget features to turn off or modify. Possible values include 'noheader', 'nodetailview', 'nopanelheaders', 'showSummaryCovariateLabels', 'noBuilderUploads', and 'requireFocus'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Hides the service header if 'noheader' is in options.",
+        "Disables panel headers if 'nopanelheaders' is in options.",
+        "Shows only the summary panel and hides the summary box canvas if 'nodetailview' is in options.",
+        "Shows covariate bar labels in the summary view if 'showSummaryCovariateLabels' is in options.",
+        "Disables builder uploads if 'noBuilderUploads' is in options.",
+        "Sets the 'require-focus' key data to true if 'requireFocus' is in options."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "hideEmbed",
+      "namespace": "None",
+      "signature": "hideEmbed(thumbStyle)",
+      "description": "This function hides the embedded map when the user clicks on the collapse map button. It adjusts the styles of the iframe and embedded elements based on the provided thumbStyle or default values.",
+      "parameters": [
+        {
+          "name": "thumbStyle",
+          "type": "object",
+          "description": "An optional style object to apply to the iframe and embedded elements. If undefined, default thumbnail height is used."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the className and style of the iframe element.",
+        "Modifies the style of the embedded wrapper and map elements.",
+        "Changes the display property of the embedded map and collapse elements."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "loadAllTilesTimer",
+      "namespace": "None",
+      "signature": "loadAllTilesTimer()",
+      "description": "This function checks the dimensions of the heat map and returns a delay timer value to be used when setting the read window to the entire map.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The delay timer value based on the dimensions of the heat map."
+      }
+    },
+    {
+      "name": "onclick",
+      "namespace": "None",
+      "signature": "onclick(event)",
+      "description": "This function is an event handler for the 'onclick' event of the element with the ID 'menuPng'. When the element is clicked, it triggers the download of a summary PNG image.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "Event",
+          "description": "The event object associated with the 'onclick' event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Triggers the download of a summary PNG image by calling the downloadSummaryPng function."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

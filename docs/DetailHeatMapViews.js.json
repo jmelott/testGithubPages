@@ -1,0 +1,610 @@
+{
+  "filename": "DetailHeatMapViews.js",
+  "namespace": "NgChm.DVW",
+  "description": [
+    "This code tracks detailed heat map views (called mapItems) and their locations. It is responsible for handling changes in position of selected heat map region. It handles mouse, keyboard, and button events that change the position of the selected region."
+  ],
+  "declares_functions_in": [
+    "DVW"
+  ],
+  "interacts_with": [
+    "NgChm.MAPREP",
+    "NgChm.MMGR"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "DVW.detailMaps",
+      "description": "An array of mapItems for all current detailHeatMapViews. Defined for read-only access."
+    },
+    {
+      "name": "DVW.primaryMap",
+      "description": "References the primary DetailHeatMap. Defined for read-only access."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "getMatchingMap",
+      "namespace": "None",
+      "signature": "getMatchingMap(matches)",
+      "description": "This function searches through the DVW.detailMaps array to find and return the first mapItem that matches the criteria defined by the matches function. If no matching mapItem is found, it returns the DVW.primaryMap if it exists, otherwise it logs an error and returns null.",
+      "parameters": [
+        {
+          "name": "matches",
+          "type": "function",
+          "description": "A function that takes a mapItem as an argument and returns true if the mapItem matches the required criteria."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs a warning to the console if no matching mapItem is found and DVW.primaryMap is returned.",
+        "Logs an error to the console if no matching mapItem is found and DVW.primaryMap is null."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The first mapItem that matches the criteria defined by the matches function, or DVW.primaryMap if no match is found, or null if neither is available."
+      }
+    },
+    {
+      "name": "getMapItemFromChm",
+      "namespace": "DVW",
+      "signature": "DVW.getMapItemFromChm(chm)",
+      "description": "The purpose of this function is to retrieve a detail heat map object using the provided chm.",
+      "parameters": [
+        {
+          "name": "chm",
+          "type": "String",
+          "description": "The chm identifier used to find the corresponding map item."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Object",
+        "description": "The map item object that matches the provided chm."
+      }
+    },
+    {
+      "name": "getMapItemFromPane",
+      "namespace": "DVW",
+      "signature": "DVW.getMapItemFromPane(paneId)",
+      "description": "The purpose of this function is to retrieve a detail heat map object using the panel id associated with that map object.",
+      "parameters": [
+        {
+          "name": "paneId",
+          "type": "String",
+          "description": "The ID of the pane associated with the map object to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Object",
+        "description": "The map object that matches the provided pane ID."
+      }
+    },
+    {
+      "name": "getMapItemFromCanvas",
+      "namespace": "DVW",
+      "signature": "DVW.getMapItemFromCanvas(canvas)",
+      "description": "Retrieves a detail heat map object using the canvas associated with that map object.",
+      "parameters": [
+        {
+          "name": "canvas",
+          "type": "HTMLCanvasElement",
+          "description": "The canvas element associated with the map object to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "MapItem",
+        "description": "The map item object that matches the provided canvas."
+      }
+    },
+    {
+      "name": "getMapItemFromDendro",
+      "namespace": "DVW",
+      "signature": "DVW.getMapItemFromDendro(dendro)",
+      "description": "The purpose of this function is to retrieve a detail heat map object using the dendrogram associated with that map object.",
+      "parameters": [
+        {
+          "name": "dendro",
+          "type": "any",
+          "description": "The dendrogram associated with the map object to be retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "The map item object that matches the provided dendrogram."
+      }
+    },
+    {
+      "name": "anyVisible",
+      "namespace": "DVW",
+      "signature": "DVW.anyVisible()",
+      "description": "Checks if any Detail View in the DVW.detailMaps array is visible and returns true if at least one is visible, otherwise returns false.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if any Detail View is visible, otherwise returns false."
+      }
+    },
+    {
+      "name": "removeLabels",
+      "namespace": "DVW",
+      "signature": "DVW.removeLabels(label)",
+      "description": "This function removes a specified label from all items in the detailMaps array.",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "String",
+          "description": "The label to be removed from each detail map item."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the detailMaps array by removing the specified label from each map item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addLabelDivs",
+      "namespace": "DVW",
+      "signature": "DVW.addLabelDivs(parent, id, className, text, longText, left, top, fontSize, rotate, index, axis, xy)",
+      "description": "This function adds a label div to all detail map items in the DVW.detailMaps array.",
+      "parameters": [
+        {
+          "name": "parent",
+          "type": "HTMLElement",
+          "description": "The parent HTML element to which the label div will be appended."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "description": "The ID to assign to the label div."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "description": "The class name to assign to the label div."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text content of the label div."
+        },
+        {
+          "name": "longText",
+          "type": "string",
+          "description": "The long text content of the label div."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The left position of the label div."
+        },
+        {
+          "name": "top",
+          "type": "number",
+          "description": "The top position of the label div."
+        },
+        {
+          "name": "fontSize",
+          "type": "string",
+          "description": "The font size of the label div text."
+        },
+        {
+          "name": "rotate",
+          "type": "number",
+          "description": "The rotation angle of the label div."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The index of the label div."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis along which the label div is aligned."
+        },
+        {
+          "name": "xy",
+          "type": "object",
+          "description": "An object containing the x and y coordinates for the label div."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DVW.detailMaps array by adding label divs to each map item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getLevelFromMode",
+      "namespace": "DVW",
+      "signature": "DVW.getLevelFromMode(mapItem, lvl)",
+      "description": "This function returns the level associated with a given mode. A level is passed in from either the summary or detail display as a default value and returned if the mode is not one of the Ribbon modes.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing the mode information."
+        },
+        {
+          "name": "lvl",
+          "type": "number",
+          "description": "The default level value to be returned if the mode is not one of the Ribbon modes."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The level associated with the given mode or the default level if the mode is not recognized."
+      }
+    },
+    {
+      "name": "setMode",
+      "namespace": "DVW",
+      "signature": "DVW.setMode(mapItem, newMode)",
+      "description": "This function sets the mode for the given mapItem. It updates the mode of the mapItem to the newMode provided and stores the previous mode.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item whose mode is to be set. This object should have 'mode' and 'prevMode' properties."
+        },
+        {
+          "name": "newMode",
+          "type": "string",
+          "description": "The new mode to be set for the mapItem."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the 'mode' property of the mapItem.",
+        "Stores the previous mode in the 'prevMode' property of the mapItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getDetailWindow",
+      "namespace": "None",
+      "signature": "getDetailWindow(mapItem)",
+      "description": "The purpose of this function is to return an object containing selection information for a given detail heat map window.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item which contains the heat map data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing selection information for the detail heat map window."
+      }
+    },
+    {
+      "name": "getCurrentSumRow",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentSumRow(mapItem)",
+      "defined_section": "HEATMAP POSITIONING FUNCTIONS",
+      "description": "This function converts the current row value from detail level to summary level using the heat map's row summary ratio. It is used to set the proper row location on the summary pane when a user clicks in the detail pane.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing the current row and heat map details."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The current row value converted to the summary level."
+      }
+    },
+    {
+      "name": "getCurrentSumCol",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentSumCol(mapItem)",
+      "description": "Calculates the current column sum based on the provided map item and its heat map's column summary ratio.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing the current column and heat map information."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The rounded value of the current column divided by the column summary ratio."
+      }
+    },
+    {
+      "name": "getCurrentDetRow",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentDetRow(mapItem)",
+      "defined_section": "FUNCTIONS - getCurrentDetRow()",
+      "description": "This function converts the currentRow coordinate from a full matrix position to a detail view position. This is usually the same, but when in ribbon view on a large matrix, the positions are scaled.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing details about the current map state, including currentRow, mode, selectedStart, and heatMap."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The detail view row position, adjusted for ribbon view if applicable."
+      }
+    },
+    {
+      "name": "getCurrentDetCol",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentDetCol(mapItem)",
+      "description": "Determines the current detailed column based on the map item properties. Adjusts the column if the map is in 'RIBBONH' mode and a specific start position is selected.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing properties such as currentCol, mode, selectedStart, and heatMap."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The current detailed column index."
+      }
+    },
+    {
+      "name": "getCurrentDetDataPerRow",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentDetDataPerRow(mapItem)",
+      "description": "Calculates the detailed data per row for a given map item. This function adjusts the data per row based on the mode of the map item, particularly for 'RIBBONH' and 'FULL_MAP' modes, where the value needs to be scaled.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing properties such as dataPerRow, mode, selectedStart, selectedStop, and heatMap."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The adjusted detailed data per row for the given map item."
+      }
+    },
+    {
+      "name": "getCurrentDetDataPerCol",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentDetDataPerCol(mapItem)",
+      "description": "Calculates and returns the detailed data per column for a given map item, adjusting based on the mode and selected range.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing properties such as dataPerCol, mode, selectedStart, selectedStop, and heatMap."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The calculated detailed data per column for the given map item."
+      }
+    },
+    {
+      "name": "getCurrentSumDataPerRow",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentSumDataPerRow(mapItem)",
+      "defined_section": "FUNCTIONS - getCurrentSumDataPerRow()",
+      "description": "This function performs the conversion of dataPerRow from detail to summary. It calculates the summary data per row using the summary ratio for the specified level, which is used to properly calculate the view pane on the summary heat map.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing the heat map and data per row information."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The summary data per row calculated using the summary ratio for the specified level."
+      }
+    },
+    {
+      "name": "getCurrentSumDataPerCol",
+      "namespace": "DVW",
+      "signature": "DVW.getCurrentSumDataPerCol(mapItem)",
+      "description": "Calculates the sum of data per column for a given map item by dividing the data per column by the row summary ratio.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item which contains heatMap and dataPerCol properties."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The calculated sum of data per column."
+      }
+    },
+    {
+      "name": "setDataPerRowFromDet",
+      "namespace": "DVW",
+      "signature": "DVW.setDataPerRowFromDet(detDataPerRow, mapItem)",
+      "description": "Sets the data per row for a given map item, adjusting for different view modes such as ribbon view or full map view.",
+      "parameters": [
+        {
+          "name": "detDataPerRow",
+          "type": "number",
+          "description": "The data per row in full matrix coordinates."
+        },
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object which contains details about the heat map and view mode."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the dataPerRow property of the mapItem object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDataPerColFromDet",
+      "namespace": "DVW",
+      "signature": "DVW.setDataPerColFromDet(detDataPerCol, mapItem)",
+      "description": "Sets the data per column for a given map item based on detailed data and the mode of the map item. Adjusts the data per column based on the selected start and mode of the map item.",
+      "parameters": [
+        {
+          "name": "detDataPerCol",
+          "type": "number",
+          "description": "The detailed data per column to be set."
+        },
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object which contains the heat map and other properties."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.dataPerCol based on the mode and selected start of the map item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setCurrentRowFromSum",
+      "namespace": "DVW",
+      "signature": "DVW.setCurrentRowFromSum(mapItem, sumRow)",
+      "defined_section": "FUNCTIONS - setCurrentRow(Col)FromSum",
+      "description": "This function converts the current row coordinate from a summary level to a detail level. It uses the heatmap row summary ratio to calculate the appropriate detail row coordinate and updates the mapItem's currentRow property accordingly. It also checks the row after updating.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item which contains the heatmap and currentRow properties."
+        },
+        {
+          "name": "sumRow",
+          "type": "number",
+          "description": "The row number at the summary level that needs to be converted to the detail level."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates mapItem.currentRow with the calculated detail row coordinate.",
+        "Calls DVW.checkRow(mapItem) to perform additional checks on the updated row."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setCurrentColFromSum",
+      "namespace": "DVW",
+      "signature": "DVW.setCurrentColFromSum(mapItem, sumCol)",
+      "description": "Sets the current column of the map item by scaling the summary column to its detailed equivalent and then checks the column.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object which contains the current column and heat map details."
+        },
+        {
+          "name": "sumCol",
+          "type": "number",
+          "description": "The summary column value that needs to be scaled."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates mapItem.currentCol with the scaled value.",
+        "Calls DVW.checkCol(mapItem) to perform additional checks on the column."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "checkRow",
+      "namespace": "DVW",
+      "signature": "DVW.checkRow(mapItem)",
+      "description": "This function ensures that the currentRow setting in the mapItem object is valid and adjusts it to fit within the viewing pane if it is not. It is called just prior to calling UpdateSelection().",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the map item, containing properties such as currentRow, mode, selectedStart, heatMap, and dataPerCol."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.currentRow to ensure it is within valid boundaries."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "checkCol",
+      "namespace": "DVW",
+      "signature": "DVW.checkCol(mapItem)",
+      "description": "Adjusts the current column of the map item based on its mode and boundaries. Ensures the column is within valid limits for the given view mode and detail level.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the map item, containing properties such as currentCol, mode, selectedStart, heatMap, and dataPerRow."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.currentCol to ensure it is within valid boundaries."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    }
+  ]
+}

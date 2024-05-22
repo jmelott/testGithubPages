@@ -1,0 +1,533 @@
+{
+  "filename": "SummaryDendrogram.js",
+  "namespace": "NgChm.SUMDDR",
+  "description": [
+    "This module defines properties and methods applicable to summary dendrograms within the NGCHM API. Summary dendrograms set the number of leaves in 3N space, the spacing between adjacent leaves (points per leaf), an array of selected bars (set by the detail dendrogram), and the chosen bar for ribbon mode selection. It provides functionality to build, draw, and interact with dendrograms, including selecting and managing bars."
+  ],
+  "declares_functions_in": [
+    "SUMDDR"
+  ],
+  "interacts_with": [
+    "NgChm.DDR"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "dendroConfig",
+      "description": "Configuration settings for the dendrogram."
+    },
+    {
+      "name": "dendroData",
+      "description": "Data used to build the dendrogram."
+    },
+    {
+      "name": "numLeaves",
+      "description": "Number of leaves in the dendrogram."
+    },
+    {
+      "name": "callbacks",
+      "description": "Callback functions for dendrogram interactions."
+    },
+    {
+      "name": "maxHeight",
+      "description": "Height of the highest bar in the dendrogram."
+    },
+    {
+      "name": "bars",
+      "description": "Array of bars in the dendrogram."
+    },
+    {
+      "name": "dendroViewHeight",
+      "description": "Height of the dendrogram view."
+    },
+    {
+      "name": "dendroViewWidth",
+      "description": "Width of the dendrogram view."
+    },
+    {
+      "name": "ribbonModeBar",
+      "description": "Index of the bar selected in ribbon mode."
+    },
+    {
+      "name": "selectedBars",
+      "description": "Array of selected bars in the dendrogram."
+    },
+    {
+      "name": "lastRibbonBar",
+      "description": "Index of the last ribbon bar."
+    },
+    {
+      "name": "lastVectorView",
+      "description": "Last generated vector view of the dendrogram."
+    }
+  ],
+  "global_variables": [
+    {
+      "name": "SUMDDR",
+      "description": "Namespace for summary dendrogram functions."
+    },
+    {
+      "name": "DDR",
+      "description": "Namespace for dendrogram functions."
+    }
+  ],
+  "functions": [
+    {
+      "name": "SummaryDendrogram",
+      "namespace": "None",
+      "signature": "SummaryDendrogram(config, data, numLeaves, callbacks)",
+      "description": "This function defines a SummaryDendrogram object, which is used to manage and render a summary dendrogram. The summary dendrogram includes properties and methods for handling dendrogram data, calculating positions and boundaries in 3N space, and supporting user interactions such as bar selection and ribbon mode.",
+      "parameters": [
+        {
+          "name": "config",
+          "type": "object",
+          "description": "Configuration settings for the dendrogram."
+        },
+        {
+          "name": "data",
+          "type": "array",
+          "description": "Array of dendrogram data entries, each representing a bar in the dendrogram."
+        },
+        {
+          "name": "numLeaves",
+          "type": "number",
+          "description": "The number of leaves in the dendrogram."
+        },
+        {
+          "name": "callbacks",
+          "type": "object",
+          "description": "Callback functions for handling user interactions and updates."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the dendrogram configuration and data properties.",
+        "Updates the selected bars and ribbon mode bar based on user interactions."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "An instance of the SummaryDendrogram object with methods and properties for managing and rendering the dendrogram."
+      }
+    },
+    {
+      "name": "isVisible",
+      "namespace": "None",
+      "signature": "isVisible()",
+      "description": "Determines if the current object should be visible based on its configuration settings.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the object's 'show' configuration is not set to 'NONE', otherwise returns false."
+      }
+    },
+    {
+      "name": "getLocalBarIndex",
+      "namespace": "None",
+      "signature": "getLocalBarIndex(globalIdx, idx)",
+      "description": "Returns the local index of the bar with the given global index. If the bar does not exist locally, it returns the provided index.",
+      "parameters": [
+        {
+          "name": "globalIdx",
+          "type": "number",
+          "description": "The global index of the bar."
+        },
+        {
+          "name": "idx",
+          "type": "number",
+          "description": "The index to return if the bar does not exist locally."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The local index of the bar if it exists, otherwise the provided index."
+      }
+    },
+    {
+      "name": "getPointsPerLeaf",
+      "namespace": "None",
+      "signature": "getPointsPerLeaf()",
+      "description": "Returns the number of points per leaf, which is used to determine the height of the highest bar in a dendrogram. The value may be adjusted for very small dendrograms to ensure the matrix width is sufficient.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The number of points per leaf."
+      }
+    },
+    {
+      "name": "findLocation",
+      "namespace": "None",
+      "signature": "findLocation(objid)",
+      "description": "Returns the position of an object in a 3N space. If the objid is negative, it returns the position of the corresponding leaf. If the objid is positive, it returns the center position of the corresponding bar.",
+      "parameters": [
+        {
+          "name": "objid",
+          "type": "number",
+          "description": "The ID of the object. A negative value indicates a leaf, and a positive value indicates a bar."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The position of the object in 3N space."
+      }
+    },
+    {
+      "name": "findLeftBoundary",
+      "namespace": "None",
+      "signature": "findLeftBoundary(objid)",
+      "description": "Returns the left boundary of the object in 3N space. If objid is negative, it calculates and returns the position of the leaf 0-objid. If objid is positive, it returns the left edge of the leftmost descendent of bar objid-1.",
+      "parameters": [
+        {
+          "name": "objid",
+          "type": "number",
+          "description": "The identifier of the object. If negative, it represents a leaf; if positive, it represents a bar."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The left boundary position of the specified object."
+      }
+    },
+    {
+      "name": "findRightBoundary",
+      "namespace": "None",
+      "signature": "findRightBoundary(objid)",
+      "description": "Returns the right boundary of the object in 3N space. If objid is negative, it returns the position of the leaf 0-objid. If objid is positive, it returns the right edge of the rightmost descendent of bar objid-1.",
+      "parameters": [
+        {
+          "name": "objid",
+          "type": "number",
+          "description": "The identifier of the object. If negative, it represents a leaf; if positive, it represents a bar."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The right boundary position of the specified object in 3N space."
+      }
+    },
+    {
+      "name": "buildDendrogram",
+      "namespace": "None",
+      "signature": "buildDendrogram()",
+      "description": "Creates and configures the dendrogram bars based on the dendrogram data. Each bar is mapped into a 3N space and has left and right edges, which may terminate above the base if the edge is to a lower bar. The bars are stored in ascending order of height.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies this.dendroViewHeight to set the height of the dendrogram view.",
+        "Modifies this.dendroViewWidth to set the width of the dendrogram view.",
+        "Modifies this.bars to store the configured bars."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSelectedRegion",
+      "namespace": "None",
+      "signature": "clearSelectedRegion()",
+      "description": "Clears the selected ribbon mode bar in the dendrogram visualization. If a bar is currently selected, it resets the selection and triggers a redraw of the dendrogram.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Resets the ribbonModeBar property to -1.",
+        "Triggers a redraw of the dendrogram by calling the draw() method."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setRibbonModeBar",
+      "namespace": "None",
+      "signature": "setRibbonModeBar(start, stop)",
+      "description": "Sets the ribbon mode bar to a specific region defined by the start and stop parameters. If the ribbon mode bar is already set, it logs an error. If the specified region is found within the bars, it sets the ribbon mode bar and triggers a redraw. If the region is not found, it logs a warning.",
+      "parameters": [
+        {
+          "name": "start",
+          "type": "number",
+          "description": "The starting point of the region to set the ribbon mode bar."
+        },
+        {
+          "name": "stop",
+          "type": "number",
+          "description": "The stopping point of the region to set the ribbon mode bar."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error if the ribbon mode bar is already set.",
+        "Sets the ribbon mode bar to the specified region if found.",
+        "Triggers a redraw by calling the draw method.",
+        "Logs a warning if the specified region is not found."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setSelectedBar",
+      "namespace": "None",
+      "signature": "setSelectedBar(barIndex)",
+      "description": "This function handles the selection of a bar in the dendrogram. It toggles the ribbon mode based on whether the same bar is clicked again or a different bar is selected. If the same bar is clicked, it clears the selected region. If a different bar is clicked, it updates the selected bar and sets the selected region accordingly.",
+      "parameters": [
+        {
+          "name": "barIndex",
+          "type": "number",
+          "description": "The index of the bar that was clicked."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the ribbonModeBar property of the object.",
+        "Calls clearSelectedRegion method on the object.",
+        "Calls draw method on the object.",
+        "Calls setSelectedRegion method from callbacks with updated region boundaries."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "subDendroClick",
+      "namespace": "None",
+      "signature": "subDendroClick(element, event)",
+      "description": "Handles click events on the canvas, converting the click position into application-level coordinates and checking for hits on dendrogram bars.",
+      "parameters": [
+        {
+          "name": "element",
+          "type": "HTMLElement",
+          "description": "The HTML element that received the click event."
+        },
+        {
+          "name": "event",
+          "type": "MouseEvent",
+          "description": "The mouse event object containing details about the click event."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the selected bar in the dendrogram view."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "getSelectedBars",
+      "namespace": "None",
+      "signature": "getSelectedBars()",
+      "description": "Returns the list of bars selected by the user in the detail window. This function supports the selection of multiple bars in the dendrogram by returning an array that stores a copy of each selected bar.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array containing the selected bars."
+      }
+    },
+    {
+      "name": "saveSelectedBars",
+      "namespace": "None",
+      "signature": "saveSelectedBars(bars)",
+      "description": "This function retrieves the indices of the selected bars and returns them as an array.",
+      "parameters": [
+        {
+          "name": "bars",
+          "type": "Array",
+          "description": "An array of bar objects from which the selected bars are to be saved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of indices representing the selected bars."
+      }
+    },
+    {
+      "name": "restoreSelectedBars",
+      "namespace": "None",
+      "signature": "restoreSelectedBars(bars)",
+      "description": "Restores the selected bars from a saved state. The saved state is assumed to include the resulting selection separately.",
+      "parameters": [
+        {
+          "name": "bars",
+          "type": "Array<number>",
+          "description": "An array of indices representing the bars to be restored to the selected state."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the selectedBars property with the bars corresponding to the provided indices."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearSelectedBars",
+      "namespace": "None",
+      "signature": "clearSelectedBars()",
+      "description": "Clears the list of selected bars by resetting the selectedBars array to an empty array.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Resets the selectedBars array to an empty array."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addSelectedBar",
+      "namespace": "None",
+      "signature": "addSelectedBar(barIdx, shift, ctrl, labelLastClicked)",
+      "description": "Adds a bar to the selected bars list based on the provided index and modifies the selection based on shift and ctrl key states. It also updates the search results for the axis.",
+      "parameters": [
+        {
+          "name": "barIdx",
+          "type": "number",
+          "description": "The index of the bar to be selected."
+        },
+        {
+          "name": "shift",
+          "type": "boolean",
+          "description": "Indicates if the shift key is pressed."
+        },
+        {
+          "name": "ctrl",
+          "type": "boolean",
+          "description": "Indicates if the ctrl key is pressed."
+        },
+        {
+          "name": "labelLastClicked",
+          "type": "number",
+          "description": "The position of the last clicked label."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies this.selectedBars array by adding or removing bars.",
+        "Calls callbacks.clearSearchItems(this.axis) to clear search items for the axis.",
+        "Calls callbacks.setAxisSearchResults(this.axis, selectLeft, selectRight) to set search results for the axis.",
+        "Calls callbacks.clearSearchRange(this.axis, selectLeft, selectRight) to clear search range for the axis."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the selection was modified, otherwise false."
+      }
+    },
+    {
+      "name": "_getScaledView",
+      "namespace": "None",
+      "signature": "_getScaledView()",
+      "description": "Generates a scaled view of the dendrogram as vectors within a viewport of unit dimensions. The function scales the dendrogram view to fit within a unit square by adjusting the dimensions of each bar in the dendrogram.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the global variable lastRibbonBar.",
+        "Modifies the global variable lastVectorView."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getScaledView",
+      "namespace": "None",
+      "signature": "getScaledView()",
+      "description": "Returns the scaled view of the current object. If the ribbon mode bar has changed since the last call, it updates the view using an internal method.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "May call the internal method _getScaledView() to update the view.",
+        "Depends on the state of this.ribbonModeBar and lastRibbonBar."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The last vector view object."
+      }
+    },
+    {
+      "name": "draw",
+      "namespace": "None",
+      "signature": "draw()",
+      "description": "This function checks if the current view is visible and, if so, calls the drawView method to render the view.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "SummaryColumnDendrogram",
+      "namespace": "SUMDDR",
+      "signature": "SUMDDR.SummaryColumnDendrogram(heatMap, callbacks)",
+      "defined_section": "The functions below create the two summary dendrograms.",
+      "description": "Creates a summary column dendrogram by initializing and configuring the dendrogram with the provided heatMap and callbacks.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "HeatMap",
+          "description": "An instance of the HeatMap class containing configuration and data for the dendrogram."
+        },
+        {
+          "name": "callbacks",
+          "type": "object",
+          "description": "An object containing callback functions to be used during the dendrogram creation."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "undefined",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "SummaryRowDendrogram",
+      "namespace": "SUMDDR",
+      "signature": "SUMDDR.SummaryRowDendrogram(heatMap, callbacks)",
+      "description": "Initializes a summary row dendrogram for a given heatmap, setting up the necessary configurations and callbacks.",
+      "parameters": [
+        {
+          "name": "heatMap",
+          "type": "HeatMap",
+          "description": "The heatmap object containing configuration and data for the dendrogram."
+        },
+        {
+          "name": "callbacks",
+          "type": "object",
+          "description": "An object containing callback functions to be used within the dendrogram."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "undefined",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

@@ -1,0 +1,183 @@
+body, html {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Prevents overall page scroll */
+}
+
+h1
+{
+	margin: 1px;
+	padding: 1px;
+	background-color: rgba(55, 55, 232, 0.782);
+    text-shadow: 2px 2px 4px rgb(0, 0, 0);
+    color:#bcbfdb;
+}
+
+h2
+{
+	margin: 1px;
+	padding: 1px;
+	background-color: #77a;
+    color:#fff;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgb(0, 0, 0);
+}
+
+h3
+{
+	margin: 0px;
+	padding: 1px;
+	background-color: #e4e4ff;
+    border: 1px solid #77a;
+}
+
+#headerDiv
+{
+    background-color: rgba(255, 255, 255, 0.782);
+    display: flex;
+    justify-content: space-between;
+}
+
+#versionSpan
+{
+    font-size: 14px;
+    color: rgba(55, 55, 232, 0.782);
+    text-emphasis: bold;
+}
+
+#llmWarning
+{
+    font-size: 14px;
+    color: #cf0b0b;
+    text-emphasis: bold;
+}
+
+.highlighted {
+    background-color: #77a;
+    color: #fff;
+}
+
+header {
+    width: 100%;
+    background-color: #ffffff;
+    color: rgb(6, 0, 0);
+    text-align: center;
+	margin: 0px;
+	padding: 1px 0px 0px 1px;
+	border: 2px solid #77a; 
+}
+
+.table-header
+{
+    border : 1px solid black;
+    padding : 8px;
+    background-color : #e4e4ff;
+}
+
+.parameter-table
+{
+    border : 1px solid black;
+    border-collapse: collapse;
+    padding : 8px;
+    margin: 0px;
+    background-color : #e4e4ff;
+}
+
+.parameter-table th
+{
+    border : 1px solid black;
+    padding : 8px;
+    background-color : #e4e4ff;
+}
+
+.parameter-table td
+{
+    border : 1px solid black;
+    padding : 8px;
+    background-color : #fff;
+}
+
+#appContainer {
+    display: flex;
+    flex-direction: row; /* Sidebar and main content area in a row */
+    height: calc(100vh - 60px); /* Subtract the header height from the viewport height */
+}
+
+#right-side {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Takes remaining space after #fileTree */
+    height: 100%; /* Full height of its container */
+    overflow: hidden; /* Prevents scroll on the container itself */
+}
+
+#fileTree {
+    flex: 0 0 250px; /* Fixed width for the sidebar */
+    background-color: #e4e4ff;
+    height: 100%;
+    overflow-y: auto; 
+    padding: 10px;
+    box-sizing: border-box;
+	border: 2px solid #77a; 
+}
+
+#fileDetails {
+    flex: 0 0 30%; 
+    overflow-y: auto;
+    padding: 5px;
+    box-sizing: border-box;
+	border: 1px solid #77a; 
+    border-collapse: collapse;
+}
+
+#functionDetails {
+    display: flex;
+    flex-direction: row; 
+    height: 67%;  
+    overflow: hidden;  
+    border: 1px solid #77a; 
+    border-collapse: collapse;
+    padding: 0px;
+}
+
+.function-details {
+	border: 1px solid #77a;
+    padding: 5px;
+    box-sizing: border-box;
+    margin: 0px 0px 5px 0px;
+}
+
+#functionList {
+    flex: 0 0 250px;  
+    height: calc(100% - 50px);
+    overflow-y: auto;
+    background-color: #e4e4ff;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+#functionInfo {
+    flex-grow: 1;  
+    height: calc(100% - 50px);  
+    overflow-y: auto;  
+    padding: 10px;
+    background-color: #fff;
+}
+
+.function-signature
+{
+    /*font-weight: bold;*/
+    color:rgb(12, 3, 147);
+    margin: 5px;
+    padding: 5px;
+}
+
+.text-description
+{
+    color:rgb(62, 55, 154);
+    margin: 5px;
+    padding: 5px;
+}

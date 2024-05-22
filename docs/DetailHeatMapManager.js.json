@@ -1,0 +1,771 @@
+{
+  "filename": "DetailHeatMapManager.js",
+  "namespace": "NgChm.DMM",
+  "description": [
+    "This module manages the creation, configuration, and display of detailed heat maps within the NGCHM framework. It handles the addition and removal of detail maps, setting primary and secondary maps, resizing canvases, and updating the display based on user interactions and selections."
+  ],
+  "declares_functions_in": [
+    "DMM"
+  ],
+  "interacts_with": [
+    "NgChm.UTIL",
+    "NgChm.MAPREP",
+    "NgChm.MMGR",
+    "NgChm.DVW",
+    "NgChm.DET",
+    "NgChm.DEV",
+    "NgChm.DETDDR",
+    "NgChm.Pane",
+    "NgChm.PIM",
+    "NgChm.SUM",
+    "NgChm.LNK",
+    "NgChm.SRCHSTATE",
+    "NgChm.SRCH"
+  ],
+  "classes": [
+    {
+      "name": "DetailHeatMapView",
+      "description": "Represents a detailed heat map view, managing its state, rendering, and interactions."
+    }
+  ],
+  "member_variables": [
+    {
+      "name": "DMM.nextMapNumber",
+      "description": "Next available heatmap object iterator (used for subscripting new map DOM elements)."
+    },
+    {
+      "name": "DVW.primaryMap",
+      "description": "Reference to the primary detail heat map object."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "constructor",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:constructor(template)",
+      "description": "Initializes a new instance of the DetailHeatMapView class, setting up various properties and resetting fields to their default values.",
+      "parameters": [
+        {
+          "name": "template",
+          "type": "object",
+          "description": "Template object containing initialization values for all pertinent variables."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes various properties of the DetailHeatMapView instance to their default values."
+      ],
+      "returns": {
+        "type": "DetailHeatMapView",
+        "description": "A new instance of the DetailHeatMapView class."
+      }
+    },
+    {
+      "name": "heatMap",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:heatMap()",
+      "description": "Getter method that retrieves the heat map displayed in the mapItem.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HeatMap",
+        "description": "The heat map object displayed in the mapItem."
+      }
+    },
+    {
+      "name": "isVisible",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:isVisible()",
+      "description": "Return true if the mapItem is visible, i.e., contained in a visible pane.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the mapItem is in a pane that is not collapsed and is displayed."
+      }
+    },
+    {
+      "name": "getScaledVisibleCovariates",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:getScaledVisibleCovariates(axis)",
+      "description": "Return the scaled covariates for the specified axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which to get the scaled covariates. Typically 'row' or 'column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of scaled covariates for the specified axis."
+      }
+    },
+    {
+      "name": "getCovariateBarLabelFont",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:getCovariateBarLabelFont(axis)",
+      "description": "Returns the font to use for covariate bars on the specified axis.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the covariate bar label font is to be determined. Typically, this will be either 'row' or 'column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "String",
+        "description": "The font to be used for the covariate bar labels on the specified axis."
+      }
+    },
+    {
+      "name": "setCovariateBarLabelFont",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:setCovariateBarLabelFont(axis, font)",
+      "description": "Sets the font to be used for covariate bars on the specified axis. Depending on whether the axis is a row or column, it updates the corresponding font property.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the font should be set. It can be either a row or a column."
+        },
+        {
+          "name": "font",
+          "type": "String",
+          "description": "The font to be used for the covariate bars on the specified axis."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the rowClassLabelFont property if the axis is a row.",
+        "Updates the colClassLabelFont property if the axis is a column."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updateSelection",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:updateSelection(noResize)",
+      "description": "The purpose of this function is to set the state of a given detail heat map panel. This function is called when the selected row or column is changed. It redraws the yellow selection box and sets a timeout for redrawing the selection.",
+      "parameters": [
+        {
+          "name": "noResize",
+          "type": "boolean",
+          "description": "Indicates whether the resize operation should be skipped."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Redraws the yellow selection box on the summary heat map.",
+        "Sets a timeout for redrawing the selection."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removeLabel",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:removeLabel(label)",
+      "description": "Removes a specified label from the DetailHeatMapView instance by delegating the task to the DET.removeLabel function.",
+      "parameters": [
+        {
+          "name": "label",
+          "type": "String",
+          "description": "The label to be removed from the DetailHeatMapView instance."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the state of the DetailHeatMapView instance by removing the specified label."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addLabelDiv",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:addLabelDiv(parent, id, className, text, longText, left, top, fontSize, rotate, index, axis, xy)",
+      "description": "Adds a label div element to the specified parent element with various customization options such as position, font size, rotation, and axis alignment.",
+      "parameters": [
+        {
+          "name": "parent",
+          "type": "HTMLElement",
+          "description": "The parent element to which the label div will be added."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "description": "The ID to assign to the label div."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "description": "The class name to assign to the label div."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text content of the label div."
+        },
+        {
+          "name": "longText",
+          "type": "string",
+          "description": "The long text content of the label div, used for additional information."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The left position (in pixels) of the label div relative to the parent element."
+        },
+        {
+          "name": "top",
+          "type": "number",
+          "description": "The top position (in pixels) of the label div relative to the parent element."
+        },
+        {
+          "name": "fontSize",
+          "type": "number",
+          "description": "The font size of the text in the label div."
+        },
+        {
+          "name": "rotate",
+          "type": "number",
+          "description": "The rotation angle (in degrees) of the label div."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The index position for ordering the label div among other elements."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis alignment for the label div, typically 'x' or 'y'."
+        },
+        {
+          "name": "xy",
+          "type": "object",
+          "description": "An object containing the x and y coordinates for the label div."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setButtons",
+      "namespace": "DetailHeatMapView",
+      "signature": "DetailHeatMapView:setButtons()",
+      "description": "Sets up the buttons for the DetailHeatMapView by delegating the task to the DEV.setButtons function.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addDetailMap",
+      "namespace": "DMM",
+      "signature": "DMM.addDetailMap(chm, pane, mapNumber, isPrimary, restoreInfo)",
+      "description": "Adds a new detail heat map object to the DetailMaps object array. If there is no primary map, it will be populated based on an initial values template. Otherwise, it will be populated from the primary heat map object and marked as a 'Secondary' heat map.",
+      "parameters": [
+        {
+          "name": "chm",
+          "type": "object",
+          "description": "The current heat map object."
+        },
+        {
+          "name": "pane",
+          "type": "object",
+          "description": "The pane where the new map will be added."
+        },
+        {
+          "name": "mapNumber",
+          "type": "number",
+          "description": "The number identifier for the new map."
+        },
+        {
+          "name": "isPrimary",
+          "type": "boolean",
+          "description": "Flag indicating if the new map is the primary map."
+        },
+        {
+          "name": "restoreInfo",
+          "type": "object",
+          "description": "Information required to restore the map from a saved state."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DetailMaps object array by adding a new detail heat map object.",
+        "May set the new map as the primary detail map.",
+        "May resize row and column dendrograms if the map is secondary."
+      ],
+      "returns": {
+        "type": "DetailHeatMapView",
+        "description": "The newly created detail heat map object."
+      }
+    },
+    {
+      "name": "completeMapItemConfig",
+      "namespace": "DMM",
+      "signature": "DMM.completeMapItemConfig(mapItem, chm, mapNumber)",
+      "description": "The purpose of this function is to flesh out the mapItem (either initial or copy) being created. It sets various properties and callbacks for the mapItem, including dendrogram and label callbacks, and assigns elements from the chm parameter to the mapItem.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that is being configured."
+        },
+        {
+          "name": "chm",
+          "type": "HTMLElement",
+          "description": "The container HTML element that holds the children elements to be assigned to the mapItem."
+        },
+        {
+          "name": "mapNumber",
+          "type": "number",
+          "description": "The number representing the map panel."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets various properties on the mapItem object.",
+        "Initializes dendrogram and label callbacks.",
+        "Assigns children elements from chm to mapItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "RemoveDetailMap",
+      "namespace": "DMM",
+      "signature": "DMM.RemoveDetailMap(pane)",
+      "description": "The purpose of this function is to remove a detail heat map object from the DetailMaps array. If the removed map was the primary map, it switches to the next available map or sets the primary map to null if no maps are left.",
+      "parameters": [
+        {
+          "name": "pane",
+          "type": "any",
+          "description": "The pane associated with the detail map to be removed."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DVW.detailMaps array by removing the specified detail map.",
+        "May call DMM.switchToPrimary to switch to the next available primary map.",
+        "Sets DVW.primaryMap to null if the removed map was the primary map and no other maps are available."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getPrimaryDetailMap",
+      "namespace": "DMM",
+      "signature": "DMM.getPrimaryDetailMap()",
+      "description": "Retrieves the primary detail heat map object from the DetailMaps array.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "The primary detail heat map object from the DetailMaps array."
+      }
+    },
+    {
+      "name": "switchToPrimary",
+      "namespace": "DMM",
+      "signature": "DMM.switchToPrimary(mapItem)",
+      "description": "The purpose of this function is to switch one map item from Secondary to Primary and set all others to Secondary.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item to be switched to Primary."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Changes the version of the provided map item to Primary.",
+        "Changes the version of other map items to Secondary.",
+        "Updates the dataset version of the makePrimaryButton element."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setPrimaryDetailMap",
+      "namespace": "DMM",
+      "signature": "DMM.setPrimaryDetailMap(mapItem)",
+      "description": "Sets a secondary map item as the primary map item. This occurs when the primary map is closed and a secondary map is open, or when assigned by the user.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object to be set as the primary map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets mapItem.version to 'P'.",
+        "Updates DVW.primaryMap to mapItem.",
+        "Modifies the dataset.version of the make-primary button in the pane header.",
+        "Calls SUM.drawLeftCanvasBox().",
+        "Clears selected regions in SUM.rowDendro and SUM.colDendro if they exist.",
+        "Sets ribbon mode bar in SUM.rowDendro and SUM.colDendro based on mapItem properties."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resizeDetailMapCanvases",
+      "namespace": "DMM",
+      "signature": "DMM.resizeDetailMapCanvases()",
+      "description": "Set the size of all detail canvases following a potential size change, such as changes to the covariate bars.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the dimensions of canvases in DVW.detailMaps by calling DET.setCanvasDimensions on each."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDetailMapDisplay",
+      "namespace": "DMM",
+      "signature": "DMM.setDetailMapDisplay(mapItem, restoreInfo)",
+      "description": "The purpose of this function is to complete the construction of a detail heat map object and add it to the DetailMaps object array.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that contains the details of the heat map to be displayed."
+        },
+        {
+          "name": "restoreInfo",
+          "type": "object",
+          "description": "Optional object containing information to restore the map's state, such as zoom levels."
+        }
+      ],
+      "called_urls": [
+        "UTIL.getURLParameter"
+      ],
+      "side_effects": [
+        "Modifies DVW.detailMaps array by adding the mapItem.",
+        "Sets DVW.primaryMap if mapItem.version is 'P'.",
+        "Updates DOM element with id 'search_text' if URL parameter 'selected' is present."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setSelectionAsDetailView",
+      "namespace": "None",
+      "signature": "setSelectionAsDetailView(searchLabels, axis)",
+      "description": "Sets the detail view for a selected item based on the provided search labels and axis. It retrieves the currently open menu canvas and uses it to find the corresponding map item. If the map item is found, it updates the detail view with the provided search labels.",
+      "parameters": [
+        {
+          "name": "searchLabels",
+          "type": "Array",
+          "description": "An array of labels used to search and set the detail view."
+        },
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis along which the detail view is set."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the detail view of the map item based on the provided search labels.",
+        "Logs an error message if the map item cannot be found."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setDetailView",
+      "namespace": "None",
+      "signature": "setDetailView(mapItem, searchLabels)",
+      "description": "This function creates a sub-ribbon view that matches the currently selected box in the detail panel. It uses the first and last selected rows and columns to define the sub-ribbon view, making it suitable for drag-selected boxes but not for random selections across the map.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that represents the current map view."
+        },
+        {
+          "name": "searchLabels",
+          "type": "array",
+          "description": "An array of search labels used to retrieve axis search results."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears the selected region in the row dendrogram.",
+        "Clears the selected region in the column dendrogram.",
+        "Modifies the sub-ribbon view based on the selected rows and columns."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setSubRibbonView",
+      "namespace": "None",
+      "signature": "setSubRibbonView(mapItem, startRow, endRow, startCol, endCol)",
+      "description": "This is a helper function that sets a sub-ribbon view that best matches a user-selected region of the map. It adjusts the view based on the selection size and orientation, either horizontally or vertically.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that contains the data and properties for the map view."
+        },
+        {
+          "name": "startRow",
+          "type": "number",
+          "description": "The starting row index of the selected region."
+        },
+        {
+          "name": "endRow",
+          "type": "number",
+          "description": "The ending row index of the selected region."
+        },
+        {
+          "name": "startCol",
+          "type": "number",
+          "description": "The starting column index of the selected region."
+        },
+        {
+          "name": "endCol",
+          "type": "number",
+          "description": "The ending column index of the selected region."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears previous selection marks and selected regions in SUM.",
+        "Updates the mapItem object with new selection properties.",
+        "Calls DET functions to adjust the detail data size and draw the sub-ribbon view."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "switchPaneToDetail",
+      "namespace": "None",
+      "signature": "switchPaneToDetail(loc, restoreInfo)",
+      "description": "Switches a panel to the detail view, initializing necessary elements and settings for displaying a detailed heat map.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "Location object containing pane information."
+        },
+        {
+          "name": "restoreInfo",
+          "type": "object",
+          "description": "Information used to restore the pane's state, including whether it is primary and its map number."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM by appending a cloned detail heat map element.",
+        "Updates global variable DMM.nextMapNumber.",
+        "Sets various dataset attributes on the pane element.",
+        "Registers event handlers for the pane."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "constructDetailMapDOMTemplate",
+      "namespace": "None",
+      "signature": "constructDetailMapDOMTemplate()",
+      "description": "Constructs a DOM template for a Detail Heat Map and appends it to a div with id 'templates'. This function creates several canvas elements and a labels div, setting various attributes and styles for each element.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Appends a new div element with id 'detail_chm' to the div with id 'templates'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "oncontextmenu",
+      "namespace": "colLabels",
+      "signature": "colLabels.oncontextmenu(event)",
+      "description": "Handles the context menu event for column labels by delegating the event to the DEV.labelRightClick function.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "Event",
+          "description": "The context menu event triggered by the user."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Delegates the context menu event to DEV.labelRightClick."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "oncontextmenu",
+      "namespace": "rowLabels",
+      "signature": "rowLabels.oncontextmenu(event)",
+      "description": "Handles the context menu event for row labels by delegating the event to the DEV.labelRightClick function.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "Event",
+          "description": "The context menu event triggered by the user."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "cloneDetailChm",
+      "namespace": "None",
+      "signature": "cloneDetailChm(mapNumber)",
+      "description": "Clones the HTML element with the ID 'detail_chm', renames its elements based on the provided map number, and returns the cloned element.",
+      "parameters": [
+        {
+          "name": "mapNumber",
+          "type": "number",
+          "description": "A unique number used to rename the cloned element and its child elements."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Creates a new HTML element with a unique ID based on the provided map number."
+      ],
+      "returns": {
+        "type": "HTMLElement",
+        "description": "The cloned HTML element with the updated ID and renamed child elements."
+      }
+    },
+    {
+      "name": "renameElements",
+      "namespace": "None",
+      "signature": "renameElements(pClone, mapNumber)",
+      "description": "Renames all client elements on the pane by appending a map number to their IDs. It also removes certain elements based on their IDs.",
+      "parameters": [
+        {
+          "name": "pClone",
+          "type": "HTMLElement",
+          "description": "The parent HTML element whose child elements will be renamed."
+        },
+        {
+          "name": "mapNumber",
+          "type": "number",
+          "description": "The number to append to the IDs of the elements."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the IDs of the child elements of pClone by appending mapNumber.",
+        "Removes certain child elements of pClone based on their IDs."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "emptyDetailPane",
+      "namespace": "None",
+      "signature": "emptyDetailPane(loc, elements)",
+      "description": "This function clears the detail pane by removing the detail map associated with the given location and then redraws the left canvas box.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object representing the location, which includes a pane property with an id."
+        },
+        {
+          "name": "elements",
+          "type": "array",
+          "description": "An array of elements that might be associated with the detail pane."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the detail map associated with the given location's pane id.",
+        "Redraws the left canvas box."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resizeDetailPane",
+      "namespace": "None",
+      "signature": "resizeDetailPane(loc)",
+      "description": "Resizes the detail pane based on the provided location object, updates the map item, and sets a timeout for redrawing the selection.",
+      "parameters": [
+        {
+          "name": "loc",
+          "type": "object",
+          "description": "An object containing the location details, including the pane ID."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the map item associated with the pane ID.",
+        "Sets a timeout for redrawing the selection."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    }
+  ]
+}

@@ -1,0 +1,2573 @@
+{
+  "filename": "DetailHeatMapDisplay.js",
+  "namespace": "NgChm.DET",
+  "description": [
+    "This module is responsible for managing the detailed display of heat maps within the NGCHM API. It handles the initialization, drawing, and updating of detailed heat map views, including the management of covariate bars, dendrograms, and selection boxes. The module also provides functions for resizing and scaling the heat map display, as well as restoring the state of the heat map from saved configurations."
+  ],
+  "declares_functions_in": [
+    "DET"
+  ],
+  "interacts_with": [
+    "NgChm.MAPREP",
+    "NgChm.MMGR",
+    "NgChm.CMM",
+    "NgChm.SRCHSTATE",
+    "NgChm.SUM",
+    "NgChm.DVW",
+    "NgChm.UTIL",
+    "NgChm.DRAW",
+    "NgChm.UHM",
+    "NgChm.Pane"
+  ],
+  "classes": [],
+  "member_variables": [
+    {
+      "name": "DET.SIZE_NORMAL_MODE",
+      "description": "Normal mode size for the detail heat map display."
+    },
+    {
+      "name": "DET.animating",
+      "description": "Flag indicating if the heat map is currently animating."
+    },
+    {
+      "name": "DET.bullet",
+      "description": "Bullet character used in legends."
+    },
+    {
+      "name": "DET.dataViewBorder",
+      "description": "Border size for the data view."
+    },
+    {
+      "name": "DET.eventTimer",
+      "description": "Timer used to delay draw updates."
+    },
+    {
+      "name": "DET.labelLastClicked",
+      "description": "Stores the last clicked label for each axis."
+    },
+    {
+      "name": "DET.maxLabelSize",
+      "description": "Maximum size for labels."
+    },
+    {
+      "name": "DET.minPixelsForGrid",
+      "description": "Minimum element size for grid lines to display."
+    },
+    {
+      "name": "DET.paddingHeight",
+      "description": "Space between classification bars."
+    },
+    {
+      "name": "DET.redrawSelectionTimeout",
+      "description": "Drawing delay in milliseconds after the view has changed."
+    },
+    {
+      "name": "DET.redrawUpdateTimeout",
+      "description": "Drawing delay in milliseconds after a tile update."
+    },
+    {
+      "name": "DET.zoomBoxSizes",
+      "description": "Array of zoom box sizes that evenly divide the normal mode size minus the data view border."
+    }
+  ],
+  "global_variables": [],
+  "functions": [
+    {
+      "name": "setDataViewSize",
+      "namespace": "None",
+      "signature": "setDataViewSize(mapItem, axis, size)",
+      "description": "Set the display size, in canvas units, of the specified axis of the detail map view shown in mapItem. It also adjusts the covariate bar scale factor for that axis by the ratio of the new to old display sizes, preserving the relative sizes of the covariate bars and the heat map view.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing the detail map view and its properties."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis of the detail map view to be resized ('row' or 'column')."
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "description": "The new size for the specified axis in canvas units."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.rowClassScale if the axis is 'row'.",
+        "Modifies mapItem.dataViewWidth if the axis is 'row'.",
+        "Modifies mapItem.colClassScale if the axis is 'column'.",
+        "Modifies mapItem.dataViewHeight if the axis is 'column'."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updateSelections",
+      "namespace": "DET",
+      "signature": "DET.updateSelections(noResize)",
+      "defined_section": "HEAT MAP DRAWING RELATED DETAIL DISPLAY FUNCTIONS",
+      "description": "The purpose of this function is to call the updateSelection function for each detail map panel. It optionally takes a parameter to determine if resizing should be avoided.",
+      "parameters": [
+        {
+          "name": "noResize",
+          "type": "boolean",
+          "description": "A flag indicating whether to avoid resizing during the update. If undefined, resizing will occur."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls updateSelection on each detail map in DVW.detailMaps.",
+        "Sets unapplied changes to true in the heat map manager (MMGR)."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "processDetailMapUpdate",
+      "namespace": "DET",
+      "signature": "DET.processDetailMapUpdate(event, tile)",
+      "description": "This function serves as a callback that is notified every time there is an update to the heat map, such as initialization or new data. It handles the drawing of the summary heat map by flushing the drawing cache if the event is not MMGR.Event_INITIALIZED.",
+      "parameters": [
+        {
+          "name": "event",
+          "type": "String",
+          "description": "The event type that triggered the callback, such as initialization or new data."
+        },
+        {
+          "name": "tile",
+          "type": "Object",
+          "description": "The tile object that represents the current state of the heat map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Flushes the drawing cache of the tile if the event is not MMGR.Event_INITIALIZED."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDrawDetailsTimeout",
+      "namespace": "DET",
+      "signature": "DET.setDrawDetailsTimeout(ms, noResize)",
+      "description": "The purpose of this function is to call the drawing routine timer for all existing heat map panels.",
+      "parameters": [
+        {
+          "name": "ms",
+          "type": "number",
+          "description": "The timeout duration in milliseconds."
+        },
+        {
+          "name": "noResize",
+          "type": "boolean",
+          "description": "Flag indicating whether to resize the heat map panels or not."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls DET.setDrawDetailTimeout for each item in DVW.detailMaps."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDrawDetailTimeout",
+      "namespace": "DET",
+      "signature": "DET.setDrawDetailTimeout(mapItem, ms, noResize)",
+      "description": "The purpose of this function is to redraw a detail heatmap after a specified number of milliseconds to a detail heat map pane. The noResize parameter is used to skip the resize routine and help speed up the drawing routine for some cases. If noResize is true for every call to setDrawDetailTimeout, the resize routine will be skipped on the next redraw.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that contains the heatmap details and methods."
+        },
+        {
+          "name": "ms",
+          "type": "number",
+          "description": "The number of milliseconds to wait before redrawing the heatmap."
+        },
+        {
+          "name": "noResize",
+          "type": "boolean",
+          "description": "Flag to determine whether to skip the resize routine."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Sets mapItem.resizeOnNextDraw to true if noResize is false.",
+        "Modifies mapItem.nextDrawWindow with the detail window.",
+        "Updates mapItem.drawTimeoutStartTime with the current time.",
+        "Sets or clears mapItem.drawEventTimer based on the redraw delay."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns false if the map item is not visible, otherwise undefined."
+      }
+    },
+    {
+      "name": "flushDrawingCache",
+      "namespace": "DET",
+      "signature": "DET.flushDrawingCache(tile)",
+      "description": "The purpose of this function is to process the receipt of a new data tile on the primary heat map panel. It causes any cached heat map affected by the new tile to be redrawn the next time it is displayed. The currently displayed primary heat map will be redrawn after a short delay if it might be affected by the tile.",
+      "parameters": [
+        {
+          "name": "tile",
+          "type": "object",
+          "description": "The data tile that has been received, which may affect the cached heat map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Invalidates the cached heat map for the tile's layer if the tile's level matches the level of the cached heat map.",
+        "Redraws the primary heat map after a short delay if it might be affected by the tile."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setInitialDetailDisplaySize",
+      "namespace": "DET",
+      "signature": "DET.setInitialDetailDisplaySize(mapItem)",
+      "description": "Sets the initial detail display sizing for the heat map based on the number of rows and columns. If there are fewer than 42 rows or columns, it sets the box size to the nearest lower value. Otherwise, it sets the box size to show 42 rows/columns.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item containing the heat map for which the detail display size is being set."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the detail display size of the heat map in the provided mapItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "callDetailDrawFunction",
+      "namespace": "DET",
+      "signature": "DET.callDetailDrawFunction(modeVal, target)",
+      "description": "The purpose of this function is to respond to mode changes on the Summary Panel by calling the appropriate detail drawing function. It acts only on the Primary heat map pane.",
+      "parameters": [
+        {
+          "name": "modeVal",
+          "type": "string",
+          "description": "The mode value that determines which detail drawing function to call."
+        },
+        {
+          "name": "target",
+          "type": "object",
+          "description": "The target map item to act upon. If undefined, defaults to DVW.primaryMap."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "drawDetailHeatMap",
+      "namespace": "DET",
+      "signature": "DET.drawDetailHeatMap(mapItem, drawWin)",
+      "description": "The purpose of this function is to draw the region of the NGCHM specified by drawWin to a detail heat map pane. It sets up various parameters and configurations needed for rendering the heat map, including color schemes, grid visibility, and dendrograms. It also handles WebGL rendering and drawing of selection boxes.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the map item to be drawn, containing various properties and methods related to the heat map."
+        },
+        {
+          "name": "drawWin",
+          "type": "DrawWindow",
+          "description": "An object specifying the window or layer to be drawn, including properties like layer, numCols, and numRows."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.resizeOnNextDraw to false if it was true.",
+        "Updates the WebGL context and texture for rendering the heat map.",
+        "Draws dendrograms and selection boxes on the heat map."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getDetailHeatMap",
+      "namespace": "DET",
+      "signature": "DET.getDetailHeatMap(mapItem, drawWin, params)",
+      "description": "Returns a renderBuffer containing an image of the specified region of the NGCHM (Next-Generation Clustered Heat Map) as defined by the drawWin object, rendered using the parameters in the params object.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing details about the heat map, including cache and validation parameters."
+        },
+        {
+          "name": "drawWin",
+          "type": "object",
+          "description": "An object specifying the region of the heat map to be rendered, including layer, level, firstRow, firstCol, numRows, and numCols."
+        },
+        {
+          "name": "params",
+          "type": "object",
+          "description": "An object containing rendering parameters such as mapWidth, mapHeight, rowBars, colBars, grid_color, selection_color, cuts_color, showHorizontalGrid, showVerticalGrid, searchCols, and dataBoxWidth."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates mapItem.detailHeatMapParams with the desired view parameters.",
+        "Updates mapItem.detailHeatMapValidator with the current parameter check.",
+        "Updates mapItem.detailHeatMapLevel with the current drawWin level.",
+        "Updates mapItem.detailHeatMapCache with the resized or newly created renderBuffer.",
+        "Creates and keeps a reference to accessWindow to prevent garbage collection of active tileWindows."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "A renderBuffer object containing the rendered image of the specified heat map region."
+      }
+    },
+    {
+      "name": "isLineACut",
+      "namespace": "None",
+      "signature": "isLineACut(accessWindow, row)",
+      "description": "Return true if and only if the given row/line is a cut (or gap) line. The function checks if all values in the specified row are cut values, memoizing results for efficiency. If data tiles are missing, it computes a temporary answer.",
+      "parameters": [
+        {
+          "name": "accessWindow",
+          "type": "AccessWindow",
+          "description": "An object representing the window of data being accessed, including heat map data and methods to retrieve row values."
+        },
+        {
+          "name": "row",
+          "type": "number",
+          "description": "A zero-based index within the accessWindow representing the row to check."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Memoizes results in accessWindow.heatMap.datalevels[accessWindow.win.level].isLineACut"
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the specified row is a cut line, otherwise false."
+      }
+    },
+    {
+      "name": "isRowACut",
+      "namespace": "None",
+      "signature": "isRowACut(row)",
+      "description": "Determines if all values in a given row are cut values. A row is considered a cut if all its values are less than or equal to a predefined minimum value.",
+      "parameters": [
+        {
+          "name": "row",
+          "type": "number",
+          "description": "The index of the row to be checked."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if all values in the row are cut values, otherwise returns false."
+      }
+    },
+    {
+      "name": "setDetBoxCanvasSize",
+      "namespace": "DET",
+      "signature": "DET.setDetBoxCanvasSize(mapItem)",
+      "description": "Sets the size and position of the detail box canvas to match the dimensions and position of the heat map canvas.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing the heat map canvas and the detail box canvas."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the width and height properties of mapItem.boxCanvas.",
+        "Modifies the style.left and style.top properties of mapItem.boxCanvas."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getNearestBoxSize",
+      "namespace": "DET",
+      "signature": "DET.getNearestBoxSize(mapItem, axis, sizeToGet)",
+      "description": "The purpose of this function is to loop through zoomBoxSizes to pick the one that will be large enough to encompass the user-selected area.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing heatMap and dataView properties."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis to consider, either 'row' or 'column'."
+        },
+        {
+          "name": "sizeToGet",
+          "type": "number",
+          "description": "The size threshold to determine the nearest box size."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The nearest box size that is large enough to encompass the user-selected area."
+      }
+    },
+    {
+      "name": "getDetailSaveState",
+      "namespace": "DET",
+      "signature": "DET.getDetailSaveState(dm)",
+      "description": "Returns the save state required for restoring a detail view. This includes various properties of the detail map such as current column, current row, zoom levels, data box dimensions, and other relevant settings.",
+      "parameters": [
+        {
+          "name": "dm",
+          "type": "DetailMap",
+          "description": "An object representing the detail map, containing various properties needed to save the state."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "object",
+        "description": "An object containing the save state of the detail view, including properties like current column, current row, zoom levels, data box dimensions, and other settings."
+      }
+    },
+    {
+      "name": "scaleViewWidth",
+      "namespace": "DET",
+      "signature": "DET.scaleViewWidth(mapItem)",
+      "description": "Adjusts the width of the view for a map item based on the number of columns in the heat map. This ensures that matrix elements are appropriately scaled when the number of columns is less than the size of the detail panel.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing the heat map and other related data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the size of the data view for the map item.",
+        "Sets the detail data width for the map item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "scaleViewHeight",
+      "namespace": "DET",
+      "signature": "DET.scaleViewHeight(mapItem)",
+      "description": "Adjusts the height of the view for a map item based on the number of rows in the heat map. This ensures that the matrix elements are appropriately scaled when the number of rows is less than the size of the detail panel.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing the heat map and other related data."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the size of the data view for the map item.",
+        "Adjusts the detail data height for the map item."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDetailDataSize",
+      "namespace": "DET",
+      "signature": "DET.setDetailDataSize(mapItem, size)",
+      "description": "The purpose of this function is to determine and set the size of each data point in a given detail pane by setting both the width and height.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item for which the detail data size is being set."
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "description": "The size to set for the detail data points."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setDetailDataWidth",
+      "namespace": "DET",
+      "signature": "DET.setDetailDataWidth(mapItem, size)",
+      "description": "Determines and sets the detail data width for a given detail pane. It adjusts the data box width and recalculates the number of data items per row. Additionally, it adjusts the current column based on zoom without exceeding the heat map matrix dimensions.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing details about the data view and its properties."
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "description": "The new width to be set for the data box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.dataBoxWidth to the new size.",
+        "Recalculates and sets mapItem.dataPerRow.",
+        "Adjusts mapItem.currentCol based on the new data per row.",
+        "Updates mapItem.modeHistory if it is not already initialized."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setDetailDataHeight",
+      "namespace": "DET",
+      "signature": "DET.setDetailDataHeight(mapItem, size)",
+      "description": "Determines and sets the detail data height for a given detail pane.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing details about the data view and its properties."
+        },
+        {
+          "name": "size",
+          "type": "number",
+          "description": "The new height size to be set for the detail data box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates mapItem.dataBoxHeight with the new size.",
+        "Calls DVW.setDataPerColFromDet to update data per column based on the new height.",
+        "Modifies mapItem.currentRow to adjust the current row within the heat map dimensions.",
+        "Calls DVW.checkRow to validate the current row."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "clearModeHistory",
+      "namespace": "DET",
+      "signature": "DET.clearModeHistory(mapItem)",
+      "description": "Clears the mode history of the provided map item. This should be done every time the user explicitly changes the zoom mode.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item whose mode history is to be cleared."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Resets the modeHistory property of the mapItem to an empty array."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detailFullMap",
+      "namespace": "DET",
+      "signature": "DET.detailFullMap(mapItem)",
+      "description": "The purpose of this function is to show the whole map in the detail pane. It processes ribbon horizontal/vertical modes differently, keeping one axis static so that the 'full view' stays within the selected sub-dendrogram.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the map item to be displayed in full detail."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.hlpC() to perform some helper function.",
+        "Modifies mapItem by saving current row and column.",
+        "Modifies mapItem.selectedStart to 0 if setFullMap is true.",
+        "Clears selected regions in SUM.rowDendro and SUM.colDendro if they exist.",
+        "Sets the mode of mapItem to 'FULL_MAP' using DVW.setMode.",
+        "Adjusts canvas dimensions and initializes GL context for mapItem.",
+        "Updates the selection of mapItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setCanvasDimensions",
+      "namespace": "None",
+      "signature": "setCanvasDimensions(mapItem)",
+      "description": "Sets the dimensions of the canvas (width and height) based on the current data view size and the size of the currently visible covariate bars.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing the canvas and data view dimensions, as well as methods to get the scaled visible covariates."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the width and height properties of the canvas within the mapItem object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detailHRibbon",
+      "namespace": "DET",
+      "signature": "DET.detailHRibbon(mapItem, restoreInfo)",
+      "description": "Changes the view for a given heat map panel to horizontal ribbon view. Supports both full ribbon view and sub-selection ribbon view based on dendrogram selection.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The heat map panel object that contains the current state and settings of the heat map."
+        },
+        {
+          "name": "restoreInfo",
+          "type": "boolean",
+          "description": "Flag indicating whether to restore previous view settings."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.mode to 'RIBBONH' or 'RIBBONH_DETAIL'.",
+        "Updates mapItem.currentCol and mapItem.saveCol based on the view mode.",
+        "Adjusts the width and height of the detail display.",
+        "Calls various functions to update the heat map view and settings."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detailVRibbon",
+      "namespace": "DET",
+      "signature": "DET.detailVRibbon(mapItem, restoreInfo)",
+      "description": "Changes the view for a given heat map panel to vertical ribbon view. It handles both full ribbon view and sub-selection ribbon view based on user interaction with the dendrogram. If restoring from a saved state, it sets the view's mode and related state to the desired values.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The heat map panel object that contains the current view and state information."
+        },
+        {
+          "name": "restoreInfo",
+          "type": "boolean",
+          "description": "Indicates whether the view is being restored from a saved state."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.mode to set the view mode.",
+        "Updates mapItem.currentRow and mapItem.saveRow based on the view mode.",
+        "Adjusts the viewport content attribute if the viewport element is present."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detailNormal",
+      "namespace": "DET",
+      "signature": "DET.detailNormal(mapItem, restoreInfo)",
+      "description": "Handles all the processing necessary to return a heat map panel to normal mode.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The detail view map item."
+        },
+        {
+          "name": "restoreInfo",
+          "type": "boolean",
+          "description": "Flag indicating whether to restore previous information."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Changes the mode of mapItem to 'NORMAL'.",
+        "Adjusts the size of the data view and detail data based on the previous mode.",
+        "Updates mapItem's currentRow and currentCol based on the previous mode.",
+        "Adjusts the viewport content attribute if the viewport element is present."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "No return value."
+      }
+    },
+    {
+      "name": "clearDendroSelection",
+      "namespace": "None",
+      "signature": "clearDendroSelection(mapItem)",
+      "description": "Clears any dendrogram selection or restricted region for the specified mapItem. If the mapItem is the current primary map, it also clears any selection on the dendrograms of the summary map.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object for which the dendrogram selection needs to be cleared."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Resets mapItem.selectedStart, mapItem.selectedStop, and mapItem.selectedIsDendrogram to their default values.",
+        "Clears selected regions on the row and column dendrograms if mapItem is the primary map.",
+        "Redraws the row and column dendrograms of the summary map if applicable."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "restoreFromSavedState",
+      "namespace": "DET",
+      "signature": "DET.restoreFromSavedState(mapItem, savedState)",
+      "description": "Restores the detail view of a map item from a previously saved state, including various properties and view modes.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that will have its state restored."
+        },
+        {
+          "name": "savedState",
+          "type": "object",
+          "description": "The saved state object containing the properties to restore."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies properties of the mapItem object such as currentCol, currentRow, dataBoxHeight, dataBoxWidth, dataPerCol, dataPerRow, mode, subDendroMode, selectedStart, selectedStop, and selectedIsDendrogram."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawSelections",
+      "namespace": "DET",
+      "signature": "DET.drawSelections()",
+      "description": "This function iterates through the detail maps and calls a function to draw item selections on the screen. It processes the contiguous search ranges (row/col) and draws lines or boxes on the heatMap detail box canvas based on the user's selections.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawMapItemSelectionsOnScreen",
+      "namespace": "None",
+      "signature": "drawMapItemSelectionsOnScreen(mapItem)",
+      "description": "The function draws the detail map selections on the mapItem's boxCanvas.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, which includes properties such as boxCanvas."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawMapItemSelectionsOnTarget",
+      "namespace": "None",
+      "signature": "function drawMapItemSelectionsOnTarget(mapItem, target)",
+      "description": "This function draws a thin black border around the entire detail map and thicker selection color lines around any selection rectangles visible in that detail map. It uses the provided map item and target canvas to perform the drawing operations.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing the heat map and related data layers."
+        },
+        {
+          "name": "target",
+          "type": "object",
+          "description": "The canvas-like target onto which the rectangles are drawn, including its context and dimensions."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears the entire target canvas.",
+        "Draws borders and selection rectangles on the target canvas.",
+        "Logs debug information if the debug flag is set.",
+        "Modifies the mapItemVars object by adding and removing the context (ctx) property."
+      ],
+      "returns": {
+        "type": "object",
+        "description": "The mapItemVars object, which contains various properties related to the drawing context and dimensions."
+      }
+    },
+    {
+      "name": "calcMapItemVariables",
+      "namespace": "None",
+      "signature": "calcMapItemVariables(mapItem, target)",
+      "description": "Calculate various variables that depend on the mapItem but not the current search box. This includes dimensions and coordinates for rendering a heat map.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item object containing data and configuration for the heat map."
+        },
+        {
+          "name": "target",
+          "type": "Target",
+          "description": "The target object containing rendering context and dimensions for the heat map."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates global variable mapItemVars with calculated dimensions and coordinates.",
+        "If debug mode is enabled, initializes mapItemVars.strokes and mapItemVars.start with performance metrics."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "calcVisRanges",
+      "namespace": "None",
+      "signature": "calcVisRanges(axis, ranges, currentPosn, viewScale, viewportStart, viewportEnd, cellSize)",
+      "description": "Converts selection ranges into visible pixel ranges for a specified axis, considering the current position, view scale, and viewport dimensions. Only ranges that are at least partially visible within the viewport are included in the output.",
+      "parameters": [
+        {
+          "name": "axis",
+          "type": "str",
+          "description": "The axis concerned."
+        },
+        {
+          "name": "ranges",
+          "type": "array",
+          "description": "An array of selection ranges, each represented as an array of two values [selStart, selEnd]."
+        },
+        {
+          "name": "currentPosn",
+          "type": "number",
+          "description": "Start coordinate of the current view for the specified axis."
+        },
+        {
+          "name": "viewScale",
+          "type": "number",
+          "description": "Scale factor for the view."
+        },
+        {
+          "name": "viewportStart",
+          "type": "number",
+          "description": "Top/left pixel of the viewport in target coordinates."
+        },
+        {
+          "name": "viewportEnd",
+          "type": "number",
+          "description": "Bottom/right pixel of the viewport in target coordinates."
+        },
+        {
+          "name": "cellSize",
+          "type": "number",
+          "description": "Number of pixels in a cell."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "array",
+        "description": "An array of visible pixel ranges, each represented as an array of two target coordinate values [boxStart, boxEnd]."
+      }
+    },
+    {
+      "name": "calcVisColRanges",
+      "namespace": "None",
+      "signature": "calcVisColRanges(ranges, widthScale, mapItem)",
+      "description": "Converts column selection ranges into column visible ranges by calling the calcVisRanges function with appropriate parameters.",
+      "parameters": [
+        {
+          "name": "ranges",
+          "type": "Array",
+          "description": "An array of selection ranges to be converted."
+        },
+        {
+          "name": "widthScale",
+          "type": "Number",
+          "description": "The scale factor for the width of the columns."
+        },
+        {
+          "name": "mapItem",
+          "type": "Object",
+          "description": "An object containing the current column and other related properties."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of visible ranges for the columns."
+      }
+    },
+    {
+      "name": "calcVisRowRanges",
+      "namespace": "None",
+      "signature": "calcVisRowRanges(ranges, heightScale, mapItem)",
+      "description": "Convert row selection ranges into row visible ranges by utilizing the calcVisRanges function with specific parameters for rows.",
+      "parameters": [
+        {
+          "name": "ranges",
+          "type": "Array",
+          "description": "An array of selection ranges that need to be converted to visible ranges."
+        },
+        {
+          "name": "heightScale",
+          "type": "Number",
+          "description": "A scaling factor for the height of the rows."
+        },
+        {
+          "name": "mapItem",
+          "type": "Object",
+          "description": "An object containing properties related to the current map item, including currentRow."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "Array",
+        "description": "An array of visible ranges for the rows."
+      }
+    },
+    {
+      "name": "drawSearchBox",
+      "namespace": "None",
+      "signature": "drawSearchBox(mapItem, boxY, boxY2, boxX, boxX2)",
+      "description": "The purpose of this function is to draw the search box on a given heat map panel. At least one edge of the box should be visible.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing the context and other properties needed for drawing."
+        },
+        {
+          "name": "boxY",
+          "type": "number",
+          "description": "The Y-coordinate of the top edge of the search box."
+        },
+        {
+          "name": "boxY2",
+          "type": "number",
+          "description": "The Y-coordinate of the bottom edge of the search box."
+        },
+        {
+          "name": "boxX",
+          "type": "number",
+          "description": "The X-coordinate of the left edge of the search box."
+        },
+        {
+          "name": "boxX2",
+          "type": "number",
+          "description": "The X-coordinate of the right edge of the search box."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Increments mapItemVars.strokes if debug mode is enabled.",
+        "Draws lines on the mapItemVars.ctx context."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "isHorizLineVisible",
+      "namespace": "None",
+      "signature": "isHorizLineVisible(boxY)",
+      "description": "Determines if a horizontal line at a given Y-coordinate is visible within the defined map item boundaries.",
+      "parameters": [
+        {
+          "name": "boxY",
+          "type": "number",
+          "description": "The Y-coordinate of the horizontal line to check for visibility."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the horizontal line at the given Y-coordinate is within the visible map item boundaries; otherwise, returns false."
+      }
+    },
+    {
+      "name": "isVertLineVisible",
+      "namespace": "None",
+      "signature": "isVertLineVisible(boxX)",
+      "description": "Determines if a vertical line at a given x-coordinate is visible within the defined map item boundaries.",
+      "parameters": [
+        {
+          "name": "boxX",
+          "type": "number",
+          "description": "The x-coordinate to check for visibility."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the x-coordinate is within the visible range of the map item, otherwise false."
+      }
+    },
+    {
+      "name": "drawHorizLine",
+      "namespace": "None",
+      "signature": "drawHorizLine(boxX, boxX2, boxY)",
+      "description": "The purpose of this function is to draw a horizontal line on a given heat map panel. It ensures the line starts and ends within the bounds defined by the topX variable from the mapItemVars object.",
+      "parameters": [
+        {
+          "name": "boxX",
+          "type": "number",
+          "description": "The starting x-coordinate of the horizontal line."
+        },
+        {
+          "name": "boxX2",
+          "type": "number",
+          "description": "The ending x-coordinate of the horizontal line."
+        },
+        {
+          "name": "boxY",
+          "type": "number",
+          "description": "The y-coordinate of the horizontal line."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawVertLine",
+      "namespace": "None",
+      "signature": "drawVertLine(boxY, boxY2, boxX)",
+      "description": "The purpose of this function is to draw a vertical line on a given heat map panel. It ensures the line is drawn within the bounds defined by the topY property of the mapItemVars object.",
+      "parameters": [
+        {
+          "name": "boxY",
+          "type": "number",
+          "description": "The starting Y-coordinate for the vertical line."
+        },
+        {
+          "name": "boxY2",
+          "type": "number",
+          "description": "The ending Y-coordinate for the vertical line."
+        },
+        {
+          "name": "boxX",
+          "type": "number",
+          "description": "The X-coordinate for the vertical line."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "strokeLine",
+      "namespace": "None",
+      "signature": "strokeLine(fromX, fromY, toX, toY)",
+      "description": "This function draws a line on the target canvas context from the starting coordinates (fromX, fromY) to the ending coordinates (toX, toY).",
+      "parameters": [
+        {
+          "name": "fromX",
+          "type": "number",
+          "description": "The x-coordinate of the starting point of the line."
+        },
+        {
+          "name": "fromY",
+          "type": "number",
+          "description": "The y-coordinate of the starting point of the line."
+        },
+        {
+          "name": "toX",
+          "type": "number",
+          "description": "The x-coordinate of the ending point of the line."
+        },
+        {
+          "name": "toY",
+          "type": "number",
+          "description": "The y-coordinate of the ending point of the line."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the current path in the canvas context by adding a line segment."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "sizeCanvasForLabels",
+      "namespace": "None",
+      "signature": "sizeCanvasForLabels(mapItem)",
+      "description": "Resize the row heat map canvas for the specified heat map panel instance. It sets the sizes of the main canvas, the box canvas, and the row/col label DIVs. It calculates and adjusts the size of the detail canvas and box canvas to best accommodate the maximum label sizes for each axis.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The heat map panel instance containing details about the canvas and labels."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the sizes of the main canvas, box canvas, and row/col label DIVs in the mapItem object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setViewPort",
+      "namespace": "None",
+      "signature": "setViewPort(mapItem)",
+      "description": "This function resizes the heat map, row label, and column label canvases for mapItem (an open detail heat map panel). It sets the sizes of the main canvas, the box canvas, and the row/col label DIVs.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing properties such as chm, rowDendro, colDendro, canvas, boxCanvas, rowLabelDiv, and colLabelDiv."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "calcRowAndColLabels",
+      "namespace": "None",
+      "signature": "calcRowAndColLabels(mapItem)",
+      "description": "This function determines if labels are to be drawn on each axis and calls the appropriate function to calculate the maximum label size for each axis.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing properties related to the map, including row and column label fonts."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.rowLabelFont to store the calculated row label font size.",
+        "Modifies mapItem.colLabelFont to store the calculated column label font size."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "calcClassRowAndColLabels",
+      "namespace": "None",
+      "signature": "calcClassRowAndColLabels(mapItem)",
+      "description": "This function calls the functions necessary to calculate the maximum row and column class bar label sizes and update maximum label size variables if necessary.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that contains the data for which the row and column labels need to be calculated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "calcCovariateBarLabels",
+      "namespace": "None",
+      "signature": "calcCovariateBarLabels(mapItem, axis)",
+      "description": "This function calculates the maximum size of all covariate bar labels for the specified axis and updates the map item's label length for the axis if the value of any label exceeds the existing maximum.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item object containing covariate bars and related methods."
+        },
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the covariate bar labels are being calculated. Typically 'ROW' or 'COL'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates the covariate bar label font for the specified axis in the map item.",
+        "Temporarily adds labels for size calculation.",
+        "Calculates and updates the label division for the other axis."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "calcCovariateBarLabelFont",
+      "namespace": "None",
+      "signature": "calcCovariateBarLabelFont(mapItem, axis, bars)",
+      "description": "This function calculates the font size of the smallest visible covariate bar labels on the specified axis. Returns 0 if none are visible.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing the canvas and data view dimensions."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis on which the covariate bars are drawn."
+        },
+        {
+          "name": "bars",
+          "type": "array",
+          "description": "An array of bar objects, each representing a covariate bar."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The font size of the smallest visible covariate bar label, or 0 if none are visible."
+      }
+    },
+    {
+      "name": "addTmpLabelForSizeCalc",
+      "namespace": "None",
+      "signature": "addTmpLabelForSizeCalc(mapItem, text, fontSize)",
+      "description": "This function adds an entry to tmpLabelSizeElements for the specified text and fontSize. If the combination of text and fontSize has not been seen before, a pool label element for performing the width calculation is also created.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The object containing label size cache and temporary label size elements."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text for which the label size is to be calculated."
+        },
+        {
+          "name": "fontSize",
+          "type": "number",
+          "description": "The font size of the text."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.tmpLabelSizeElements by adding a new entry.",
+        "Appends a new element to mapItem.labelElement if the text and fontSize combination is new."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getPoolElement",
+      "namespace": "None",
+      "signature": "getPoolElement(mapItem)",
+      "description": "This function retrieves a 'labelSizeWidthCalc' div element from the pool if available. If the pool is empty, it creates and returns a new div element with specific styles and class name.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object that contains the 'labelSizeWidthCalcPool' array from which the div element is retrieved."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "HTMLDivElement",
+        "description": "A div element either retrieved from the pool or newly created with specific styles and class name."
+      }
+    },
+    {
+      "name": "calcAxisLabelsLen",
+      "namespace": "None",
+      "signature": "calcAxisLabelsLen(mapItem, axis, fontSize)",
+      "description": "This function calculates the maximum label length (in CSS coordinates) for the current labels on the specified axis.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing data and methods for visualization."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which the label lengths are being calculated. It can be either 'row' or 'column'."
+        },
+        {
+          "name": "fontSize",
+          "type": "number",
+          "description": "The font size to be used for the labels."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the mapItem by adding temporary labels for size calculation.",
+        "Calls calcLabelDiv which may further modify the mapItem."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "calcLabelDiv",
+      "namespace": "None",
+      "signature": "calcLabelDiv(mapItem, axis)",
+      "description": "This function assesses the size of the entries that have been added to tmpLabelSizeElements and increases the row/col label length if the longest label is longer than those already processed. rowLabelLen and colLabelLen are used to size the detail screen to accommodate labels on both axes.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing label size information and temporary label elements."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "A string indicating whether the axis is a row or column."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Updates mapItem.rowLabelLen or mapItem.colLabelLen based on the longest label length.",
+        "Removes temporary label elements from the DOM and returns them to the labelSizeWidthCalcPool."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "calcAxisLabelFontSize",
+      "namespace": "None",
+      "signature": "calcAxisLabelFontSize(mapItem, axis)",
+      "description": "This function calculates the font size to be used for matrix labels on the specified axis of mapItem. It determines the appropriate font size based on the size of the data view, dendrogram, and covariate bars in CSS coordinates, ensuring that labels have adequate spacing.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the map item containing data view, dendrogram, and covariate bars."
+        },
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "The axis for which the label font size is being calculated. It can be either 'row' or 'column'."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the fontSizeMap global variable by adding a new font size if it does not already exist.",
+        "Temporarily modifies the DOM by adding and removing a temporary element to determine label size."
+      ],
+      "returns": {
+        "type": "Number",
+        "description": "The calculated font size for the axis labels in points."
+      }
+    },
+    {
+      "name": "updateDisplayedLabels",
+      "namespace": "DET",
+      "signature": "DET.updateDisplayedLabels()",
+      "description": "This function updates detail labels when the user scrolls or zooms on the detail pane. It iterates over each detail map and updates the labels accordingly.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return any value."
+      }
+    },
+    {
+      "name": "updateMapItemLabels",
+      "namespace": "None",
+      "signature": "updateMapItemLabels(mapItem)",
+      "description": "Updates the labels of a map item by redrawing existing labels and removing old dynamic labels that were not updated. It temporarily hides the label element during the update process and restores its visibility afterward.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item whose labels are to be updated. It contains properties like labelElements, oldLabelElements, and labelElement."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Temporarily hides the labelElement of the mapItem.",
+        "Updates mapItem.labelElements with new labels.",
+        "Removes old dynamic labels from mapItem.oldLabelElements.",
+        "Restores the display style of mapItem.labelElement."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawRowAndColLabels",
+      "namespace": "DET",
+      "signature": "DET.drawRowAndColLabels(mapItem)",
+      "description": "This function determines if labels are to be drawn on each axis and calls the appropriate function to draw those labels on the screen. It checks the font size for row and column labels and draws them if they meet the minimum label size requirement.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing properties related to the map, including rowLabelFont and colLabelFont which specify the font sizes for row and column labels respectively."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawAxisLabels",
+      "namespace": "None",
+      "signature": "function drawAxisLabels(mapItem, axis, fontSize)",
+      "description": "This function draws all axis labels for the specified axis of mapItem. Labels are drawn at absolute positions on a special labelElement DIV within the mapItem pane. It calculates the correct positions for the labels by converting label indices into CSS coordinates.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item object containing the data and canvas information."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis for which the labels are to be drawn. It can be either 'row' or 'column'."
+        },
+        {
+          "name": "fontSize",
+          "type": "number",
+          "description": "The font size to be used for the labels."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resetLabelLengths",
+      "namespace": "None",
+      "signature": "resetLabelLengths(mapItem)",
+      "description": "This function resets the maximum label size variables for each axis in preparation for a screen redraw.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item whose label lengths are to be reset."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Resets the rowLabelLen and colLabelLen properties of the mapItem object to 0."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detailDrawRowClassBarLabels",
+      "namespace": "DET",
+      "signature": "DET.detailDrawRowClassBarLabels(mapItem)",
+      "description": "This function draws row class bar labels on the detail panel. It positions and scales the labels based on the visible row covariates and handles the display of hidden row covariate bars.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object containing the map and covariate bar details, including dimensions, labels, and scaling information."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM to add or remove label elements for row class bars.",
+        "Adjusts the position and scaling of labels based on the map and covariate bar dimensions."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detailDrawColClassBarLabels",
+      "namespace": "DET",
+      "signature": "DET.detailDrawColClassBarLabels(mapItem)",
+      "description": "This function draws labels for visible column covariates on the detail panel. It also handles the display of indicators for hidden column covariate bars.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object containing properties and methods related to the map and its visualization."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the DOM to add or remove label elements.",
+        "Adjusts the position and visibility of labels based on the mapItem properties."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawCovariateBarLegends",
+      "namespace": "None",
+      "signature": "drawCovariateBarLegends(mapItem, axis)",
+      "description": "This function draws all covariate bar legends for the specified axis on the specified detail panel for maps that contain bar/scatter plot covariates. It calls a second function (drawRowClassBarLegend or drawColClassBarLegend) to draw each legend.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item containing the covariate bars to be drawn."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis on which the covariate bar legends are to be drawn."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawRowClassBarLegend",
+      "namespace": "DET",
+      "signature": "DET.drawRowClassBarLegend(mapItem, currentClassBar, barStartPosn, totalHeight)",
+      "description": "This function draws a specific row class bar legend on the detail panel for maps that contain bar/scatter plot covariates. It calculates the positions and values for the legend and creates div elements to display these values.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing properties like canvas and dataViewWidth."
+        },
+        {
+          "name": "currentClassBar",
+          "type": "object",
+          "description": "An object representing the current class bar, containing properties like height, high_bound, low_bound, and label."
+        },
+        {
+          "name": "barStartPosn",
+          "type": "number",
+          "description": "The starting position of the bar in the total height of the covariate bars."
+        },
+        {
+          "name": "totalHeight",
+          "type": "number",
+          "description": "The total height of all the covariate bars."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawColClassBarLegend",
+      "namespace": "DET",
+      "signature": "DET.drawColClassBarLegend(mapItem, currentClassBar, startPosn, totalHeight)",
+      "description": "This function draws a specific column class bar legend on the detail panel for maps that contain bar/scatter plot covariates. It calculates the positions and values for the legend and creates the necessary HTML elements to display the legend on the map.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing canvas and data view height properties."
+        },
+        {
+          "name": "currentClassBar",
+          "type": "object",
+          "description": "The current class bar object containing height, high_bound, low_bound, and label properties."
+        },
+        {
+          "name": "startPosn",
+          "type": "number",
+          "description": "The starting position of the current class bar."
+        },
+        {
+          "name": "totalHeight",
+          "type": "number",
+          "description": "The total height of the class bars."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Creates and appends HTML elements to the DOM for displaying the legend."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removeClassBarLegendElements",
+      "namespace": "DET",
+      "signature": "DET.removeClassBarLegendElements(key, mapItem)",
+      "description": "This function removes any existing legend elements for a bar/scatter plot class bar that is being redrawn.",
+      "parameters": [
+        {
+          "name": "key",
+          "type": "String",
+          "description": "A unique identifier used to locate the legend elements."
+        },
+        {
+          "name": "mapItem",
+          "type": "Object",
+          "description": "An object containing details about the panel, including the panel number."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes elements from the DOM with IDs constructed from the key and mapItem.panelNbr."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "setLegendDivElement",
+      "namespace": "DET",
+      "signature": "DET.setLegendDivElement(mapItem, itemId, boundVal, topVal, leftVal, isRowVal)",
+      "description": "This function sets the position for a bar/scatter plot covariates legend on the detail panel. It creates a div element if it does not exist, sets its properties, and positions it based on the provided coordinates.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that contains the label element where the legend div will be appended."
+        },
+        {
+          "name": "itemId",
+          "type": "string",
+          "description": "The ID of the div element to be created or updated."
+        },
+        {
+          "name": "boundVal",
+          "type": "string",
+          "description": "The value to be displayed inside the div element."
+        },
+        {
+          "name": "topVal",
+          "type": "number",
+          "description": "The top position (in pixels) where the div element will be placed."
+        },
+        {
+          "name": "leftVal",
+          "type": "number",
+          "description": "The left position (in pixels) where the div element will be placed."
+        },
+        {
+          "name": "isRowVal",
+          "type": "boolean",
+          "description": "A flag indicating whether the legend is for row covariates (true) or column covariates (false)."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Creates a new div element if it does not exist.",
+        "Modifies the style and dataset properties of the div element.",
+        "Appends the div element to the mapItem's labelElement."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "removeLabel",
+      "namespace": "DET",
+      "signature": "DET.removeLabel(mapItem, label)",
+      "description": "This function removes a label from a specific detail map item by deleting the corresponding DOM element and removing the reference from the map item's oldLabelElements object.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object from which the label should be removed. It contains an oldLabelElements property that holds references to label elements."
+        },
+        {
+          "name": "label",
+          "type": "string",
+          "description": "The label to be removed from the map item."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Removes the label's DOM element from its parent node.",
+        "Deletes the label reference from the mapItem.oldLabelElements object."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "addLabelDiv",
+      "namespace": "DET",
+      "signature": "DET.addLabelDiv(mapItem, parent, id, className, text, longText, left, top, fontSize, rotate, index, axis, xy)",
+      "description": "This function adds a label div element to a specific detail map item. It checks if the label already exists and updates it if necessary, otherwise it creates a new label div with specified properties and attaches event listeners for various interactions.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object to which the label div will be added."
+        },
+        {
+          "name": "parent",
+          "type": "HTMLElement",
+          "description": "The parent HTML element to which the label div will be appended."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "description": "The unique identifier for the label div."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "description": "The class name to be assigned to the label div."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text content to be displayed inside the label div."
+        },
+        {
+          "name": "longText",
+          "type": "string",
+          "description": "The long text content for tooltip or additional information."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The left position (in pixels) for the label div."
+        },
+        {
+          "name": "top",
+          "type": "number",
+          "description": "The top position (in pixels) for the label div."
+        },
+        {
+          "name": "fontSize",
+          "type": "number",
+          "description": "The font size (in points) for the text inside the label div."
+        },
+        {
+          "name": "rotate",
+          "type": "string",
+          "description": "A flag indicating if the label should be rotated (e.g., 'T' for true)."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The index value to be stored in the label div's dataset."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis information to be stored in the label div's dataset."
+        },
+        {
+          "name": "xy",
+          "type": "object",
+          "description": "Additional coordinate information for the label div."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.oldLabelElements and mapItem.labelElements by adding or updating label div elements.",
+        "Appends the created label div to the parent element.",
+        "Attaches various event listeners to the label div for interactions like click, context menu, mouseover, touchstart, touchend, and touchmove."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "onmouseover",
+      "namespace": "div",
+      "signature": "div.onmouseover()",
+      "description": "This function is an event handler for the 'mouseover' event on a div element. When the mouse pointer moves over the div, it calls the UHM.hlp function with specific parameters.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [
+        "Calls UHM.hlp with the current context, longText, calculated width, and a fixed height."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "updateLabelDiv",
+      "namespace": "DET",
+      "signature": "DET.updateLabelDiv(mapItem, parent, id, className, text, longText, left, top, fontSize, rotate, index, axis, xy)",
+      "description": "This function updates a label DIV and removes it from the oldLabelElements array if it is no longer visible on the detail panel.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing label elements."
+        },
+        {
+          "name": "parent",
+          "type": "HTMLElement",
+          "description": "The parent HTML element of the label."
+        },
+        {
+          "name": "id",
+          "type": "string",
+          "description": "The unique identifier for the label."
+        },
+        {
+          "name": "className",
+          "type": "string",
+          "description": "The class name to be applied to the label."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "The text content of the label."
+        },
+        {
+          "name": "longText",
+          "type": "string",
+          "description": "The long text content of the label."
+        },
+        {
+          "name": "left",
+          "type": "number",
+          "description": "The left position of the label in pixels."
+        },
+        {
+          "name": "top",
+          "type": "number",
+          "description": "The top position of the label in pixels."
+        },
+        {
+          "name": "fontSize",
+          "type": "number",
+          "description": "The font size of the label in points."
+        },
+        {
+          "name": "rotate",
+          "type": "number",
+          "description": "The rotation angle of the label."
+        },
+        {
+          "name": "index",
+          "type": "number",
+          "description": "The index of the label."
+        },
+        {
+          "name": "axis",
+          "type": "string",
+          "description": "The axis related to the label."
+        },
+        {
+          "name": "xy",
+          "type": "object",
+          "description": "The coordinates of the label."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.labelElements by adding the updated label.",
+        "Deletes the label from mapItem.oldLabelElements.",
+        "Updates the style and content of the label DIV."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "Does not return a value."
+      }
+    },
+    {
+      "name": "setDendroShow",
+      "namespace": "DET",
+      "signature": "DET.setDendroShow(mapItem)",
+      "defined_section": "DENDROGRAM RELATED DETAIL DISPLAY FUNCTIONS",
+      "description": "Sets the display height and width for row and column dendrograms for a given heat map panel.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the heat map panel, containing properties such as heatMap, dendroWidth, and dendroHeight."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.dendroWidth based on the row dendrogram configuration.",
+        "Modifies mapItem.dendroHeight based on the column dendrogram configuration."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "colDendroResize",
+      "namespace": "DET",
+      "signature": "DET.colDendroResize(mapItem, drawIt)",
+      "description": "This function resizes the column dendrogram of the specified detail heat map panel instance. It adjusts the size and position of the dendrogram canvas based on the visibility and dimensions of the heat map and its components.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The detail heat map panel instance containing the column dendrogram and related properties."
+        },
+        {
+          "name": "drawIt",
+          "type": "boolean",
+          "description": "Flag indicating whether to redraw the dendrogram after resizing."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the style properties (left, height, width) of the column dendrogram canvas.",
+        "Calls the draw method of the column dendrogram if drawIt is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "rowDendroResize",
+      "namespace": "DET",
+      "signature": "DET.rowDendroResize(mapItem, drawIt)",
+      "description": "This function resizes the row dendrogram of the specified detail heat map panel instance.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The detail heat map panel instance containing the row dendrogram to be resized."
+        },
+        {
+          "name": "drawIt",
+          "type": "boolean",
+          "description": "Flag indicating whether to redraw the dendrogram after resizing."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the style properties (top, width, height) of the row dendrogram canvas.",
+        "Calls the draw method of the row dendrogram if drawIt is true."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "getColDendroPixelHeight",
+      "namespace": "DET",
+      "signature": "DET.getColDendroPixelHeight(mapItem)",
+      "description": "The purpose of this function is to get the pixel height of the column dendrogram based on the provided map item.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing properties of the map, including canvas dimensions and dendrogram height."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The pixel height of the column dendrogram."
+      }
+    },
+    {
+      "name": "getRowDendroPixelWidth",
+      "namespace": "DET",
+      "signature": "DET.getRowDendroPixelWidth(mapItem)",
+      "description": "The purpose of this function is to get the pixel width of the row dendrogram.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing properties of the map, including canvas dimensions and dendrogram width."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The pixel width of the row dendrogram."
+      }
+    },
+    {
+      "name": "getColClassPixelHeight",
+      "namespace": "DET",
+      "signature": "DET.getColClassPixelHeight(mapItem)",
+      "defined_section": "COVARIATE BAR RELATED DETAIL DISPLAY FUNCTIONS",
+      "description": "The purpose of this function is to calculate and return the pixel height of column covariate bars based on the scaled visible covariates and the canvas dimensions.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item which contains methods to get scaled visible covariates and canvas dimensions."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The pixel height of the column covariate bars."
+      }
+    },
+    {
+      "name": "getRowClassPixelWidth",
+      "namespace": "DET",
+      "signature": "DET.getRowClassPixelWidth(mapItem)",
+      "description": "Calculates the pixel width of row covariate bars based on the scaled visible covariates and the canvas dimensions.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, which includes methods for retrieving scaled visible covariates and canvas dimensions."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The calculated pixel width of the row covariate bars."
+      }
+    },
+    {
+      "name": "detailDrawColClassBars",
+      "namespace": "DET",
+      "signature": "DET.detailDrawColClassBars(mapItem, pixels)",
+      "description": "Draws column classification bars on a given detail heat map canvas. It processes the visible covariates and classification data, and then draws the appropriate color or scatter plot bars based on the classification type.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "The map item object containing heat map and classification data."
+        },
+        {
+          "name": "pixels",
+          "type": "Uint8ClampedArray",
+          "description": "The pixel array where the column classification bars will be drawn."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawColorPlotColClassBar",
+      "namespace": "DET",
+      "signature": "DET.drawColorPlotColClassBar(mapItem, pixels, pos, rowClassBarWidth, start, length, currentClassBar, classBarValues, colorMap)",
+      "description": "The purpose of this function is to draw column color plot class bars on a given detail heat map canvas.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, containing properties like dataViewWidth and dataBoxWidth."
+        },
+        {
+          "name": "pixels",
+          "type": "Uint8Array",
+          "description": "The pixel buffer where the class bar will be drawn."
+        },
+        {
+          "name": "pos",
+          "type": "number",
+          "description": "The starting position in the pixel buffer."
+        },
+        {
+          "name": "rowClassBarWidth",
+          "type": "number",
+          "description": "The width of the row class bar."
+        },
+        {
+          "name": "start",
+          "type": "number",
+          "description": "The starting index for the class bar values."
+        },
+        {
+          "name": "length",
+          "type": "number",
+          "description": "The length of the class bar values to be processed."
+        },
+        {
+          "name": "currentClassBar",
+          "type": "object",
+          "description": "An object representing the current class bar, containing properties like height."
+        },
+        {
+          "name": "classBarValues",
+          "type": "array",
+          "description": "An array of values representing the class bar."
+        },
+        {
+          "name": "colorMap",
+          "type": "object",
+          "description": "An object that provides a method getClassificationColor to get the color for a given class value."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "number",
+        "description": "The updated position in the pixel buffer after drawing the class bar."
+      }
+    },
+    {
+      "name": "drawScatterBarPlotColClassBar",
+      "namespace": "DET",
+      "signature": "DET.drawScatterBarPlotColClassBar(mapItem, pixels, pos, rowClassBarWidth, start, length, currentClassBar, classBarValues, colorMap)",
+      "description": "The purpose of this function is to draw column bar and scatter plot class bars on a given detail heat map canvas.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object containing details about the map, including dataViewWidth and dataBoxWidth."
+        },
+        {
+          "name": "pixels",
+          "type": "Uint8ClampedArray",
+          "description": "An array representing the pixel data of the canvas."
+        },
+        {
+          "name": "pos",
+          "type": "number",
+          "description": "The current position in the pixel array where drawing starts."
+        },
+        {
+          "name": "rowClassBarWidth",
+          "type": "number",
+          "description": "The width of the row class bar."
+        },
+        {
+          "name": "start",
+          "type": "number",
+          "description": "The starting index for the class bar values."
+        },
+        {
+          "name": "length",
+          "type": "number",
+          "description": "The number of class bar values to be drawn."
+        },
+        {
+          "name": "currentClassBar",
+          "type": "object",
+          "description": "An object representing the current class bar, including its height and methods to get colors."
+        },
+        {
+          "name": "classBarValues",
+          "type": "array",
+          "description": "An array of values representing the class bar data."
+        },
+        {
+          "name": "colorMap",
+          "type": "object",
+          "description": "An object mapping class bar values to colors."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the pixels array to draw the class bar.",
+        "Logs an error if negative padding is calculated."
+      ],
+      "returns": {
+        "type": "number",
+        "description": "The updated position in the pixel array after drawing the class bar."
+      }
+    },
+    {
+      "name": "detailDrawRowClassBars",
+      "namespace": "DET",
+      "signature": "DET.detailDrawRowClassBars(mapItem, pixels)",
+      "description": "The purpose of this function is to draw row class bars on a given detail heat map canvas. It processes the row classification data and renders the appropriate visual elements based on the provided map item and pixel data.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the map item containing heat map data and configuration."
+        },
+        {
+          "name": "pixels",
+          "type": "Array",
+          "description": "An array of pixel data used for rendering the row class bars."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "drawColorPlotRowClassBar",
+      "namespace": "DET",
+      "signature": "DET.drawColorPlotRowClassBar(mapItem, pixels, pos, start, length, currentClassBar, classBarValues, mapWidth, colorMap)",
+      "description": "The purpose of this function is to draw color plot class bars on a given detail heat map canvas. It iterates through the specified rows and applies the appropriate colors from the color map to the pixels array, adjusting the position accordingly.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "An object representing the map item, including its data box height."
+        },
+        {
+          "name": "pixels",
+          "type": "Uint8ClampedArray",
+          "description": "An array representing the pixel data of the canvas."
+        },
+        {
+          "name": "pos",
+          "type": "number",
+          "description": "The starting position in the pixels array where the drawing begins."
+        },
+        {
+          "name": "start",
+          "type": "number",
+          "description": "The starting row index for drawing."
+        },
+        {
+          "name": "length",
+          "type": "number",
+          "description": "The number of rows to draw."
+        },
+        {
+          "name": "currentClassBar",
+          "type": "object",
+          "description": "An object representing the current class bar, including its height."
+        },
+        {
+          "name": "classBarValues",
+          "type": "array",
+          "description": "An array of values used to determine the color classification for each row."
+        },
+        {
+          "name": "mapWidth",
+          "type": "number",
+          "description": "The width of the map in pixels."
+        },
+        {
+          "name": "colorMap",
+          "type": "object",
+          "description": "An object that provides a method getClassificationColor to get the color for a given classification value."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the pixels array to include the drawn class bars."
+      ],
+      "returns": {
+        "type": "number",
+        "description": "The updated position in the pixels array after drawing."
+      }
+    },
+    {
+      "name": "drawScatterBarPlotRowClassBar",
+      "namespace": "DET",
+      "signature": "DET.drawScatterBarPlotRowClassBar(mapItem, pixels, pos, start, length, currentClassBar, classBarValues, mapWidth, colorMap)",
+      "description": "The purpose of this function is to draw row bar and scatter plot class bars on a given detail heat map canvas.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item containing data and dimensions for the heat map."
+        },
+        {
+          "name": "pixels",
+          "type": "Uint8ClampedArray",
+          "description": "The pixel array where the scatter plot and class bars will be drawn."
+        },
+        {
+          "name": "pos",
+          "type": "number",
+          "description": "The current position in the pixel array."
+        },
+        {
+          "name": "start",
+          "type": "number",
+          "description": "The starting index for the class bar values."
+        },
+        {
+          "name": "length",
+          "type": "number",
+          "description": "The number of class bar values to process."
+        },
+        {
+          "name": "currentClassBar",
+          "type": "object",
+          "description": "The current class bar object containing height and color information."
+        },
+        {
+          "name": "classBarValues",
+          "type": "array",
+          "description": "The array of class bar values to be used for drawing."
+        },
+        {
+          "name": "mapWidth",
+          "type": "number",
+          "description": "The width of the heat map canvas."
+        },
+        {
+          "name": "colorMap",
+          "type": "object",
+          "description": "The color map used for determining the colors of the scatter plot and class bars."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the pixels array by drawing scatter plot and class bars.",
+        "Updates the pos variable to the new position in the pixel array."
+      ],
+      "returns": {
+        "type": "number",
+        "description": "The updated position in the pixel array after drawing."
+      }
+    },
+    {
+      "name": "detailResize",
+      "namespace": "DET",
+      "signature": "DET.detailResize()",
+      "description": "This function calls all of the functions necessary to resize all of the open detail panel instances.",
+      "parameters": [],
+      "called_urls": [],
+      "side_effects": [],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "resizeMapItem",
+      "namespace": "None",
+      "signature": "resizeMapItem(mapItem)",
+      "description": "Resizes and updates various components of a map item, including dendrograms, covariate bar scales, and canvas labels. This function ensures that all visual elements are properly scaled and redrawn after resizing.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object that contains the data and properties for the map to be resized and updated."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies the size and appearance of the row and column dendrograms.",
+        "Adjusts the covariate bar scales for rows and columns.",
+        "Resizes the canvas used for drawing labels, which may affect the selected fonts.",
+        "Updates the labels on the map item.",
+        "Redraws the map item selections on the screen."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "calculateCovariateBarScale",
+      "namespace": "None",
+      "signature": "calculateCovariateBarScale(mapItem, axis)",
+      "description": "Adjusts the scale of covariate bars in a heatmap to ensure they are appropriately sized based on the number of bars and the available space. The function iteratively adjusts the scale to achieve a target font size for the bars, ensuring they do not occupy more than a third of the map size.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "MapItem",
+          "description": "An object representing the heatmap, including properties for row and column scales, canvas dimensions, and methods to get scaled visible covariates."
+        },
+        {
+          "name": "axis",
+          "type": "String",
+          "description": "Specifies whether the scaling is applied to rows or columns of the heatmap."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Modifies mapItem.rowClassScale or mapItem.colClassScale based on the axis.",
+        "Calls setCanvasDimensions(mapItem) to update the canvas dimensions."
+      ],
+      "returns": {
+        "type": "void",
+        "description": "This function does not return a value."
+      }
+    },
+    {
+      "name": "detInitGl",
+      "namespace": "DET",
+      "signature": "DET.detInitGl(mapItem)",
+      "description": "Initializes a WebGL canvas for the presentation of a detail heat map. This function must be called after any context switch and before any GL functions. It ensures that the WebGL context is properly set up for rendering the heat map and covariate bars.",
+      "parameters": [
+        {
+          "name": "mapItem",
+          "type": "object",
+          "description": "The map item object containing the canvas and other properties required for initializing the WebGL context."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Initializes the WebGL context for the mapItem's canvas.",
+        "Modifies mapItem by adding a glManager property if it doesn't exist.",
+        "Sets the viewport dimensions based on the data view width and height and the scaled visible covariates."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true if the WebGL context is ready, otherwise false."
+      }
+    },
+    {
+      "name": "initDetailContext",
+      "namespace": "None",
+      "signature": "initDetailContext(manager, ctx, program)",
+      "description": "Initializes the detail context by clearing the color buffer, setting the clip and texture regions, and retrieving uniform locations for scaling and translation.",
+      "parameters": [
+        {
+          "name": "manager",
+          "type": "object",
+          "description": "The manager object responsible for handling the clip and texture regions."
+        },
+        {
+          "name": "ctx",
+          "type": "object",
+          "description": "The WebGL context used for rendering."
+        },
+        {
+          "name": "program",
+          "type": "object",
+          "description": "The WebGL program containing the shaders."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Clears the color buffer bit of the WebGL context.",
+        "Sets the clip region and texture region using the manager.",
+        "Modifies the mapItem object by adding uScale and uTranslate properties."
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "Returns true after initializing the detail context."
+      }
+    },
+    {
+      "name": "getDetVertexShader",
+      "namespace": "None",
+      "signature": "getDetVertexShader(theGL)",
+      "description": "This function creates, compiles, and returns a vertex shader for WebGL. It logs an error message if the shader compilation fails.",
+      "parameters": [
+        {
+          "name": "theGL",
+          "type": "WebGLRenderingContext",
+          "description": "The WebGL rendering context used to create and compile the shader."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs an error message to the console if shader compilation fails."
+      ],
+      "returns": {
+        "type": "WebGLShader",
+        "description": "The compiled vertex shader."
+      }
+    },
+    {
+      "name": "getDetFragmentShader",
+      "namespace": "None",
+      "signature": "getDetFragmentShader(theGL)",
+      "description": "Compiles a fragment shader from the provided WebGL context and shader source code.",
+      "parameters": [
+        {
+          "name": "theGL",
+          "type": "WebGLRenderingContext",
+          "description": "The WebGL context used to create and compile the shader."
+        }
+      ],
+      "called_urls": [],
+      "side_effects": [
+        "Logs shader compilation errors to the console."
+      ],
+      "returns": {
+        "type": "WebGLShader",
+        "description": "The compiled fragment shader."
+      }
+    }
+  ]
+}
